@@ -1,5 +1,6 @@
 import 'package:bookexample/core/widgets/bottom_navigation_bar.dart';
 import 'package:bookexample/pages/library/create_folder/create_folder_page.dart';
+import 'package:bookexample/pages/library/folder/folder_page.dart';
 import 'package:bookexample/pages/library/library_page.dart';
 import 'package:bookexample/pages/study/study_detail/study_datail_page.dart';
 import 'package:bookexample/pages/study/study_page.dart';
@@ -52,9 +53,16 @@ class AppRouter {
                 routes: [
                   GoRoute(
                     path: 'create-folder',
-                    builder: (context, state) => CreateFolderPage()
-                  )
-                ]
+                    builder: (context, state) => CreateFolderPage(),
+                  ),
+                  GoRoute(
+                    path: 'folder/:folderId',
+                    builder: (context, state) {
+                      final folderId = state.pathParameters['folderId'];
+                      return FolderPage(folderId: folderId ?? "");
+                    },
+                  ),
+                ],
               ),
             ],
           ),
@@ -86,9 +94,7 @@ class AppRouter {
         path: '/study/session/:deckId',
         builder: (context, state) {
           final deckId = state.pathParameters['deckId'];
-          return Center(
-            child: Text("${deckId}"),
-          );
+          return Center(child: Text("${deckId}"));
         },
       ),
     ],

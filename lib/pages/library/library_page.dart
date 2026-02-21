@@ -8,11 +8,11 @@ class LibraryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final folders = [
-      {'name': 'Biology', 'count': 15},
-      {'name': 'History', 'count': 8},
-      {'name': 'Physics', 'count': 12},
-      {'name': 'Chemistry', 'count': 20},
-      {'name': 'Mathematics', 'count': 25},
+      {'name': 'Biology', 'count': 15, 'id': "1"},
+      {'name': 'History', 'count': 8, 'id': "2"},
+      {'name': 'Physics', 'count': 12, 'id': "3"},
+      {'name': 'Chemistry', 'count': 20, 'id': "4"},
+      {'name': 'Mathematics', 'count': 25, 'id': "5"},
     ];
 
     return Scaffold(
@@ -31,7 +31,9 @@ class LibraryPage extends StatelessWidget {
           return FolderTile(
             folderName: folder['name'] as String,
             itemCount: folder['count'] as int,
-            onTap: () {},
+            onTap: () {
+              context.go('/library/folder/${folder["id"]}');
+            },
           );
         },
       ),
