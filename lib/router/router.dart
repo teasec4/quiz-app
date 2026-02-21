@@ -14,7 +14,6 @@ class AppRouter {
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
           return Scaffold(
-            extendBody: true,
             body: navigationShell,
             bottomNavigationBar: AppBottomBar(
               currentIndex: navigationShell.currentIndex,
