@@ -21,9 +21,10 @@ class LibraryPage extends StatelessWidget {
         onPressed: () {
           context.go('/library/create-folder');
         },
+        mini: true,
         child: const Icon(Icons.add),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: ListView.builder(
         itemCount: folders.length,
         itemBuilder: (context, index) {

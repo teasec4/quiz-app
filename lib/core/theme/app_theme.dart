@@ -17,10 +17,9 @@ class AppTheme {
     ),
     
     navigationBarTheme: NavigationBarThemeData(
-      height: 72,
       backgroundColor: Colors.white,
       
-      indicatorColor: AppColors.brandPrimary.withOpacity(0.15),
+      indicatorColor:Colors.transparent,
       
       labelTextStyle: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
@@ -53,8 +52,8 @@ class AppTheme {
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.brandPrimary,
-        foregroundColor: Colors.white
-      )
-    )
+        foregroundColor: Colors.white,
+      ),
+    ),
   );
 }

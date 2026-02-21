@@ -19,13 +19,13 @@ class AppRouter {
             bottomNavigationBar: AppBottomBar(
               currentIndex: navigationShell.currentIndex,
               onTap: (index) {
-                navigationShell.goBranch(
-                  index,
-                  initialLocation: index == navigationShell.currentIndex,
-                );
-              },
+                 navigationShell.goBranch(
+                   index,
+                   initialLocation: index == navigationShell.currentIndex,
+                 );
+               },
             ),
-          );
+           );
         },
         branches: [
           /// STUDY TAB
