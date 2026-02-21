@@ -26,9 +26,9 @@ class AppBottomBar extends StatelessWidget {
               label: "Study",
             ),
             NavigationDestination(
-              icon: Icon(Icons.view_agenda_outlined),
-              selectedIcon: Icon(Icons.view_agenda),
-              label: "Decks",
+              icon: Icon(Icons.library_books_outlined),
+              selectedIcon: Icon(Icons.library_books),
+              label: "Library",
             ),
             NavigationDestination(
               icon: Icon(Icons.bar_chart_outlined),
