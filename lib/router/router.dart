@@ -1,5 +1,6 @@
 import 'package:bookexample/core/widgets/bottom_navigation_bar.dart';
 import 'package:bookexample/pages/library/create_folder/create_folder_page.dart';
+import 'package:bookexample/pages/library/folder/deck/deck_page.dart';
 import 'package:bookexample/pages/library/folder/folder_page.dart';
 import 'package:bookexample/pages/library/library_page.dart';
 import 'package:bookexample/pages/study/study_detail/study_datail_page.dart';
@@ -19,13 +20,13 @@ class AppRouter {
             bottomNavigationBar: AppBottomBar(
               currentIndex: navigationShell.currentIndex,
               onTap: (index) {
-                 navigationShell.goBranch(
-                   index,
-                   initialLocation: index == navigationShell.currentIndex,
-                 );
-               },
+                navigationShell.goBranch(
+                  index,
+                  initialLocation: index == navigationShell.currentIndex,
+                );
+              },
             ),
-           );
+          );
         },
         branches: [
           /// STUDY TAB
@@ -61,6 +62,19 @@ class AppRouter {
                       final folderId = state.pathParameters['folderId'];
                       return FolderPage(folderId: folderId ?? "");
                     },
+                    routes: [
+                      GoRoute(
+                        path: 'deck/:deckId',
+                        builder: (context, state) {
+                          final folderId = state.pathParameters['folderId'];
+                          final deckId = state.pathParameters['deckId'];
+                          return DeckPage(
+                            folderId: folderId ?? "",
+                            deckId: deckId ?? "",
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),

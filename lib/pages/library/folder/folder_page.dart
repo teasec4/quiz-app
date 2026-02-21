@@ -1,5 +1,6 @@
 import 'package:bookexample/pages/library/folder/widgets/deck_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class FolderPage extends StatelessWidget {
   final String folderId;
@@ -17,12 +18,12 @@ class FolderPage extends StatelessWidget {
     ];
 
     final decks = [
-      {'name': 'Basic Concepts', 'cardCount': 24, 'learned': 18},
-      {'name': 'Advanced Topics', 'cardCount': 35, 'learned': 12},
-      {'name': 'Quiz Practice', 'cardCount': 20, 'learned': 20},
-      {'name': 'Vocabulary', 'cardCount': 50, 'learned': 25},
-      {'name': 'Diagrams', 'cardCount': 15, 'learned': 8},
-      {'name': 'Case Studies', 'cardCount': 10, 'learned': 5},
+      {'name': 'Basic Concepts', 'cardCount': 24, 'learned': 18, 'id': "1"},
+      {'name': 'Advanced Topics', 'cardCount': 35, 'learned': 12,'id': "2"},
+      {'name': 'Quiz Practice', 'cardCount': 20, 'learned': 20, 'id': "3"},
+      {'name': 'Vocabulary', 'cardCount': 50, 'learned': 25, 'id': "4"},
+      {'name': 'Diagrams', 'cardCount': 15, 'learned': 8, 'id': "5"},
+      {'name': 'Case Studies', 'cardCount': 10, 'learned': 5, 'id': "6"},
     ];
 
     final folder = folders.firstWhere((f) => f['id'] == folderId);
@@ -46,7 +47,9 @@ class FolderPage extends StatelessWidget {
               deckName: deck['name'] as String,
               cardCount: deck['cardCount'] as int,
               learnedCount: deck['learned'] as int,
-              onTap: () {},
+              onTap: () {
+                context.go('/library/folder/${folderId}/deck/${deck["id"]}');
+              },
             );
           },
         ),
