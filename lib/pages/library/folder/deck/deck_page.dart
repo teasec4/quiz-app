@@ -28,24 +28,27 @@ class _DeckPageState extends State<DeckPage> {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-
     return Scaffold(
       appBar: AppBar(title: const Text("Biology Basics")),
-      body: Column(
-        children: [
-          // Cards Carousel (50% of screen)
-          SizedBox(
-            height: screenHeight * 0.5,
-            child: PageView.builder(
-              onPageChanged: (index) {
-                setState(() => currentCardIndex = index);
-              },
-              itemCount: cards.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: GestureDetector(
+      body: CustomScrollView(
+        slivers: [
+          // Collapsible card carousel
+          SliverAppBar(
+            backgroundColor: Colors.transparent,
+            pinned: false,
+            floating: false,
+            expandedHeight: 400,
+            automaticallyImplyLeading: false,
+            flexibleSpace: FlexibleSpaceBar(
+              collapseMode: CollapseMode.parallax,
+              background: PageView.builder(
+                onPageChanged: (index) {
+                  setState(() => currentCardIndex = index);
+                },
+                itemCount: cards.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(24),
                     child: Card(
                       elevation: 8,
                       shape: RoundedRectangleBorder(
@@ -88,57 +91,60 @@ class _DeckPageState extends State<DeckPage> {
                         ),
                       ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
-          ),
-          // Progress indicator
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                cards.length,
-                (index) => Container(
-                  width: 8,
-                  height: 8,
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: index == currentCardIndex
-                        ? Colors.blue
-                        : Colors.grey[300],
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(40),
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(
+                    cards.length,
+                    (index) => Container(
+                      width: 8,
+                      height: 8,
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: index == currentCardIndex
+                            ? Colors.blue
+                            : Colors.grey[300],
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-          // Test options (50% remaining)
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: testOptions.length,
-              itemBuilder: (context, index) {
+          // Test options list
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
                 final option = testOptions[index];
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  child: ListTile(
-                    leading: Icon(
-                      _getIcon(option['icon'] ?? ''),
-                      color: Colors.blue,
-                      size: 28,
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  child: Card(
+                    child: ListTile(
+                      leading: Icon(
+                        _getIcon(option['icon'] ?? ''),
+                        color: Colors.blue,
+                        size: 28,
+                      ),
+                      title: Text(
+                        option['title'] ?? '',
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      subtitle: Text(option['subtitle'] ?? ''),
+                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                      onTap: () {},
                     ),
-                    title: Text(
-                      option['title'] ?? '',
-                      style: const TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    subtitle: Text(option['subtitle'] ?? ''),
-                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                    onTap: () {},
                   ),
                 );
               },
+              childCount: testOptions.length,
             ),
           ),
         ],
