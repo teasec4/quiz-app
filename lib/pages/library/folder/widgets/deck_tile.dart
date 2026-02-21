@@ -1,3 +1,4 @@
+import 'package:bookexample/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class DeckTile extends StatelessWidget {
@@ -6,6 +7,8 @@ class DeckTile extends StatelessWidget {
   final int learnedCount;
   final Color? backgroundColor;
   final VoidCallback? onTap;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
 
   const DeckTile({
     super.key,
@@ -14,6 +17,8 @@ class DeckTile extends StatelessWidget {
     this.learnedCount = 0,
     this.backgroundColor,
     this.onTap,
+    this.onEdit,
+    this.onDelete,
   });
 
   @override
@@ -28,41 +33,56 @@ class DeckTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(10),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.start,
+      
             children: [
-              // Icon and title
+              // Menu
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  const Icon(
-                    Icons.style_outlined,
-                    size: 32,
-                    color: Colors.grey,
-                  ),
-                  Text(
-                    '$cardCount',
-                    style: const TextStyle(
-                      color: Colors.black87,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
+                  
+                  PopupMenuButton(
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        child: const Row(
+                          children: [
+                            Icon(Icons.edit_outlined, size: 20),
+                            SizedBox(width: 12),
+                            Text('Edit'),
+                          ],
+                        ),
+                        onTap: onEdit,
+                      ),
+                      PopupMenuItem(
+                        child: const Row(
+                          children: [
+                            Icon(Icons.delete_outline, size: 20, color: Colors.red),
+                            SizedBox(width: 12),
+                            Text('Delete', style: TextStyle(color: Colors.red)),
+                          ],
+                        ),
+                        onTap: onDelete,
+                      ),
+                    ],
                   ),
                 ],
               ),
+              
               // Deck name
               Text(
                 deckName,
                 style: const TextStyle(
                   color: Colors.black87,
-                  fontSize: 16,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
+              
               // Progress bar
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,7 +94,7 @@ class DeckTile extends StatelessWidget {
                       minHeight: 6,
                       backgroundColor: Colors.grey[300],
                       valueColor: const AlwaysStoppedAnimation(
-                        Colors.blue,
+                        AppColors.brandPrimary,
                       ),
                     ),
                   ),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 class StudyPage extends StatelessWidget {
   const StudyPage({super.key});
@@ -10,12 +9,7 @@ class StudyPage extends StatelessWidget {
         title: Text("Study"),
       ),
       body: Center(
-        child: ElevatedButton(
-          child: const Text("Open Detail"),
-          onPressed: (){
-            context.go('/study/detail');
-          },
-        ),
+        child: Text("Coming soon")
       ),
     );
   }

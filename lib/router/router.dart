@@ -1,9 +1,8 @@
 import 'package:bookexample/core/widgets/bottom_navigation_bar.dart';
-import 'package:bookexample/pages/library/create_folder/create_folder_page.dart';
+
 import 'package:bookexample/pages/library/folder/deck/deck_page.dart';
 import 'package:bookexample/pages/library/folder/folder_page.dart';
 import 'package:bookexample/pages/library/library_page.dart';
-import 'package:bookexample/pages/study/study_detail/study_datail_page.dart';
 import 'package:bookexample/pages/study/study_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -36,10 +35,7 @@ class AppRouter {
                 path: '/study',
                 builder: (context, state) => const StudyPage(),
                 routes: [
-                  GoRoute(
-                    path: 'detail',
-                    builder: (context, state) => const StudyDatailPage(),
-                  ),
+                  
                 ],
               ),
             ],
@@ -52,10 +48,6 @@ class AppRouter {
                 path: '/library',
                 builder: (context, state) => const LibraryPage(),
                 routes: [
-                  GoRoute(
-                    path: 'create-folder',
-                    builder: (context, state) => CreateFolderPage(),
-                  ),
                   GoRoute(
                     path: 'folder/:folderId',
                     builder: (context, state) {

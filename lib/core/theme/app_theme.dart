@@ -16,6 +16,16 @@ class AppTheme {
       centerTitle: true,
     ),
     
+    floatingActionButtonTheme: FloatingActionButtonThemeData(
+      backgroundColor: AppColors.brandPrimary,
+      foregroundColor: Colors.white,
+      elevation: 4,
+      hoverElevation: 8,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+    ),
+    
     navigationBarTheme: NavigationBarThemeData(
       backgroundColor: Colors.white,
       

@@ -1,3 +1,4 @@
+import 'package:bookexample/pages/library/widgets/create_folder_sheet.dart';
 import 'package:bookexample/pages/library/widgets/folder_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -19,7 +20,12 @@ class LibraryPage extends StatelessWidget {
       appBar: AppBar(title: const Text("Library")),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.go('/library/create-folder');
+          showModalBottomSheet(
+            context: context,
+            builder: (context) => const CreateFolderSheet(),
+            isScrollControlled: true,
+            useRootNavigator: true,
+          );
         },
         mini: true,
         child: const Icon(Icons.add),

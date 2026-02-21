@@ -38,7 +38,7 @@ class FolderPage extends StatelessWidget {
             crossAxisCount: 2,
             mainAxisSpacing: 12,
             crossAxisSpacing: 12,
-            childAspectRatio: 0.85,
+            childAspectRatio: 0.75,
           ),
           itemCount: decks.length,
           itemBuilder: (context, index) {

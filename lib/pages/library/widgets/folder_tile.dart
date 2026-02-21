@@ -5,12 +5,16 @@ class FolderTile extends StatelessWidget {
   final String folderName;
   final int itemCount;
   final VoidCallback? onTap;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
 
   const FolderTile({
     super.key,
     required this.folderName,
     this.itemCount = 0,
     this.onTap,
+    this.onEdit,
+    this.onDelete,
   });
 
   @override
@@ -36,6 +40,30 @@ class FolderTile extends StatelessWidget {
             fontSize: 14,
             color: Colors.grey[600],
           ),
+        ),
+        trailing: PopupMenuButton(
+          itemBuilder: (context) => [
+            PopupMenuItem(
+              child: const Row(
+                children: [
+                  Icon(Icons.edit_outlined, size: 20),
+                  SizedBox(width: 12),
+                  Text('Edit name'),
+                ],
+              ),
+              onTap: onEdit,
+            ),
+            PopupMenuItem(
+              child: const Row(
+                children: [
+                  Icon(Icons.delete_outline, size: 20, color: Colors.red),
+                  SizedBox(width: 12),
+                  Text('Delete', style: TextStyle(color: Colors.red)),
+                ],
+              ),
+              onTap: onDelete,
+            ),
+          ],
         ),
         onTap: onTap,
       ),
