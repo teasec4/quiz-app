@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - build-windows
+  workflow_dispatch:
 
 jobs:
   build:
@@ -16,10 +17,14 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: stable # можешь убрать версию если хочешь latest
+          flutter-version: 'latest'
+          channel: 'stable'
 
       - name: Enable Windows Desktop
         run: flutter config --enable-windows-desktop
+
+      - name: Get Flutter info
+        run: flutter --version
 
       - name: Install dependencies
         run: flutter pub get
