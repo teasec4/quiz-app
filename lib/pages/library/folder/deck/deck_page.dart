@@ -1,5 +1,5 @@
-import 'package:bookexample/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class DeckPage extends StatefulWidget {
   final String folderId;
@@ -90,10 +90,7 @@ class _DeckPageState extends State<DeckPage> {
                     Text(
                       cards[index]['back'] ?? '',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                      ),
+                      style: TextStyle(color: Colors.black, fontSize: 16),
                     ),
                   ],
                 ),
@@ -128,14 +125,14 @@ class _DeckPageState extends State<DeckPage> {
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: [Colors.blue.shade300, Colors.blue.shade600],
+                      colors: [Theme.of(context).colorScheme.primary.withOpacity(0.6), Theme.of(context).colorScheme.primary],
                     ),
                   ),
                   child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.style, color: Colors.white, size: 32),
+                        Icon(Icons.style, color: Theme.of(context).colorScheme.primary, size: 32),
                         const SizedBox(height: 8),
                         Text(
                           '${cards.length} cards',
@@ -217,7 +214,7 @@ class _DeckPageState extends State<DeckPage> {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: index == currentCardIndex
-                                    ? AppColors.brandPrimary
+                                    ? Theme.of(context).colorScheme.primary
                                     : Colors.grey[500],
                               ),
                             ),
@@ -227,7 +224,7 @@ class _DeckPageState extends State<DeckPage> {
                     ),
             ),
             // Test options list
-            SliverList(
+                        SliverList(
               delegate: SliverChildBuilderDelegate((context, index) {
                 final option = testOptions[index];
                 if (index == 0) {
@@ -236,11 +233,51 @@ class _DeckPageState extends State<DeckPage> {
                       horizontal: 16,
                       vertical: 6,
                     ),
-                    child: SizedBox(
+                    child: Container(
                       height: 60,
-                      child: ElevatedButton(
-                        onPressed: (){},
-                        child: Text("Start Flashcards"),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        gradient: LinearGradient(
+                          colors: [Theme.of(context).colorScheme.primary, Theme.of(context).colorScheme.primary.withOpacity(0.8)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () {
+                            context.go('/study/session/${widget.folderId}/${widget.deckId}');
+                          },
+                          borderRadius: BorderRadius.circular(12),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.play_arrow,
+                                color: Colors.white,
+                                size: 28,
+                              ),
+                              const SizedBox(width: 12),
+                              Text(
+                                "Start Flashcards",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   );
@@ -253,10 +290,9 @@ class _DeckPageState extends State<DeckPage> {
                   child: Card(
                     color: Colors.grey.shade100,
                     child: ListTile(
-                      
                       leading: Icon(
                         _getIcon(option['icon'] ?? ''),
-                        color: AppColors.brandPrimary,
+                        color: Theme.of(context).colorScheme.primary,
                         size: 28,
                       ),
                       title: Text(

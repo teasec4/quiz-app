@@ -3,6 +3,7 @@ import 'package:bookexample/core/widgets/bottom_navigation_bar.dart';
 import 'package:bookexample/pages/library/folder/deck/deck_page.dart';
 import 'package:bookexample/pages/library/folder/folder_page.dart';
 import 'package:bookexample/pages/library/library_page.dart';
+import 'package:bookexample/pages/session/flashcards_session.dart';
 import 'package:bookexample/pages/study/study_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -97,10 +98,14 @@ class AppRouter {
 
       // :deckId
       GoRoute(
-        path: '/study/session/:deckId',
+        path: '/study/session/:folderId/:deckId',
         builder: (context, state) {
           final deckId = state.pathParameters['deckId'];
-          return Center(child: Text("${deckId}"));
+          final folderId = state.pathParameters['folderId'];
+          return FlashcardsSession(
+            deckId: deckId ?? "",
+            folderId: folderId ?? "",
+          );
         },
       ),
     ],
