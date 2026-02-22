@@ -34,7 +34,7 @@ class FolderPage extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          print("on click");
+          context.go('/library/folder/${folderId}/createdeck');
         },
         mini: true,
       ),

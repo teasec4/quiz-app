@@ -1,4 +1,5 @@
 import 'package:bookexample/core/widgets/bottom_navigation_bar.dart';
+import 'package:bookexample/pages/library/folder/create_deck/create_deck.dart';
 
 import 'package:bookexample/pages/library/folder/deck/deck_page.dart';
 import 'package:bookexample/pages/library/folder/folder_page.dart';
@@ -35,9 +36,7 @@ class AppRouter {
               GoRoute(
                 path: '/study',
                 builder: (context, state) => const StudyPage(),
-                routes: [
-                  
-                ],
+                routes: [],
               ),
             ],
           ),
@@ -65,6 +64,12 @@ class AppRouter {
                             folderId: folderId ?? "",
                             deckId: deckId ?? "",
                           );
+                        },
+                      ),
+                      GoRoute(
+                        path: 'createdeck',
+                        builder: (context, state) {
+                          return CreateDeck();
                         },
                       ),
                     ],
