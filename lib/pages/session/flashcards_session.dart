@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'widgets/session_header.dart';
+import 'widgets/flash_card.dart';
 
 class FlashcardsSession extends StatefulWidget {
   final String deckId;
@@ -43,6 +45,7 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
       vsync: this,
       duration: const Duration(milliseconds: 250),
     );
+    _animation = Tween<double>(begin: 0, end: 0).animate(_controller);
   }
 
   @override
@@ -141,40 +144,6 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
     );
   }
 
-  Widget _buildHeader() {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '${currentIndex + 1}/${cards.length}',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Row(
-                children: [
-                  _statBox('✓', correctCount, Colors.green),
-                  const SizedBox(width: 8),
-                  _statBox('✗', incorrectCount, Colors.red),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          LinearProgressIndicator(
-            value: currentIndex / cards.length,
-            minHeight: 6,
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _statBox(String icon, int value, Color color) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -192,85 +161,10 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
     );
   }
 
-  Widget _buildCard() {
-    final card = cards[currentIndex];
-
-    return GestureDetector(
-      onTap: () => setState(() => showBack = !showBack),
-      onHorizontalDragUpdate: (details) {
-        if (!isAnimating) {
-          setState(() {
-            dragOffset += details.delta.dx;
-          });
-        }
-      },
-      onHorizontalDragEnd: (details) {
-        _handleSwipe(details.primaryVelocity ?? 0);
-      },
-      child: AnimatedBuilder(
-        animation: _controller,
-        builder: (context, child) {
-          final offset =
-              _controller.isAnimating ? _animation.value : dragOffset;
-
-          final rotation = offset / 1000;
-
-          return Transform.translate(
-            offset: Offset(offset, 0),
-            child: Transform.rotate(
-              angle: rotation,
-              child: Container(
-                width: MediaQuery.of(context).size.width * 0.85,
-                height: 380,
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  gradient: LinearGradient(
-                    colors: showBack
-                        ? [
-                            Theme.of(context).colorScheme.secondary,
-                            Theme.of(context).colorScheme.secondary
-                          ]
-                        : [
-                            Theme.of(context)
-                                .colorScheme
-                                .primary
-                                .withOpacity(0.7),
-                            Theme.of(context).colorScheme.primary
-                          ],
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.15),
-                      blurRadius: 15,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: Center(
-                  child: Text(
-                    showBack ? card['back']! : card['front']!,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (currentIndex >= cards.length) {
-      return const SizedBox.shrink();
-    }
+    final displayIndex = currentIndex >= cards.length ? cards.length - 1 : currentIndex;
+    final card = cards[displayIndex];
 
     return Scaffold(
       appBar: AppBar(
@@ -288,10 +182,34 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
       ),
       body: Column(
         children: [
-          _buildHeader(),
+          SessionHeader(
+            currentIndex: displayIndex,
+            totalCards: cards.length,
+            correctCount: correctCount,
+            incorrectCount: incorrectCount,
+            statBoxBuilder: (icon, value, color) => _statBox(icon, value, color),
+          ),
           Expanded(
             child: Center(
-              child: _buildCard(),
+              child: FlashCard(
+                card: card,
+                showBack: showBack,
+                dragOffset: dragOffset,
+                isAnimating: _controller.isAnimating,
+                animation: _animation,
+                controller: _controller,
+                onTap: () => setState(() => showBack = !showBack),
+                onDragUpdate: (details) {
+                  if (!isAnimating) {
+                    setState(() {
+                      dragOffset += details.delta.dx;
+                    });
+                  }
+                },
+                onDragEnd: (details) {
+                  _handleSwipe(details.primaryVelocity ?? 0);
+                },
+              ),
             ),
           ),
         ],

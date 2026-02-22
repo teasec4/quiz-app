@@ -9,6 +9,7 @@
 !lib/
 !lib/**
 
+
 # =========================
 # Allow dependency config
 # =========================
@@ -21,6 +22,10 @@
 # =========================
 !README.md
 !.gitignore
+!.github/
+!.github/**
+!windows/
+!windows/**
 
 # =========================
 # Allow custom scripts (optional)
