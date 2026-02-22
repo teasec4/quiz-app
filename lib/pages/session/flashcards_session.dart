@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 class FlashcardsSession extends StatefulWidget {
   final String deckId;
   final String folderId;
+
   const FlashcardsSession({
     super.key,
     required this.deckId,
@@ -15,15 +16,17 @@ class FlashcardsSession extends StatefulWidget {
 }
 
 class _FlashcardsSessionState extends State<FlashcardsSession>
-    with TickerProviderStateMixin {
-  late PageController _pageController;
-  late AnimationController _cardAnimController;
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
   int currentIndex = 0;
-  bool showBack = false;
   int correctCount = 0;
   int incorrectCount = 0;
+
   double dragOffset = 0;
-  late AnimationController _dragAnimController;
+  bool showBack = false;
+  bool isAnimating = false;
 
   final List<Map<String, String>> cards = [
     {'front': 'What is Flutter?', 'back': 'A cross-platform mobile framework'},
@@ -36,72 +39,77 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
   @override
   void initState() {
     super.initState();
-    _pageController = PageController();
-    _cardAnimController = AnimationController(
-      duration: const Duration(milliseconds: 200),
+    _controller = AnimationController(
       vsync: this,
-    );
-    _dragAnimController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
+      duration: const Duration(milliseconds: 250),
     );
   }
 
   @override
   void dispose() {
-    _pageController.dispose();
-    _cardAnimController.dispose();
-    _dragAnimController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
-  void _flipCard() {
-    _cardAnimController.forward(from: 0.0);
-    setState(() => showBack = !showBack);
-  }
+  void _handleSwipe(double velocity) {
+    const threshold = 300;
 
-  void _markCorrect() {
-    _animateCardOut(true);
-    Future.delayed(const Duration(milliseconds: 300), () {
-      if (mounted) {
-        setState(() => correctCount++);
-        _nextCard();
-      }
-    });
-  }
-
-  void _markIncorrect() {
-    _animateCardOut(false);
-    Future.delayed(const Duration(milliseconds: 300), () {
-      if (mounted) {
-        setState(() => incorrectCount++);
-        _nextCard();
-      }
-    });
-  }
-
-  void _animateCardOut(bool isCorrect) {
-    _dragAnimController.forward(from: 0.0).then((_) {
-      setState(() => dragOffset = 0);
-      _dragAnimController.reset();
-    });
-  }
-
-  void _nextCard() {
-    if (currentIndex < cards.length - 1) {
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
+    if (velocity > threshold) {
+      _animateOut(800, true);
+    } else if (velocity < -threshold) {
+      _animateOut(-800, false);
     } else {
-      _showSessionComplete();
+      _resetPosition();
     }
+  }
+
+  void _animateOut(double target, bool isCorrect) {
+    if (isAnimating) return;
+    isAnimating = true;
+
+    _animation = Tween<double>(
+      begin: dragOffset,
+      end: target,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
+
+    _controller.forward(from: 0).then((_) {
+      setState(() {
+        if (isCorrect) {
+          correctCount++;
+        } else {
+          incorrectCount++;
+        }
+
+        currentIndex++;
+        dragOffset = 0;
+        showBack = false;
+        isAnimating = false;
+      });
+
+      if (currentIndex >= cards.length) {
+        _showSessionComplete();
+      }
+    });
+  }
+
+  void _resetPosition() {
+    _animation = Tween<double>(
+      begin: dragOffset,
+      end: 0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+
+    _controller.forward(from: 0).then((_) {
+      setState(() {
+        dragOffset = 0;
+      });
+    });
   }
 
   void _showSessionComplete() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      barrierDismissible: false,
+      builder: (_) => AlertDialog(
         title: const Text('Session Complete'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -133,9 +141,136 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
     );
   }
 
+  Widget _buildHeader() {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '${currentIndex + 1}/${cards.length}',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Row(
+                children: [
+                  _statBox('✓', correctCount, Colors.green),
+                  const SizedBox(width: 8),
+                  _statBox('✗', incorrectCount, Colors.red),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          LinearProgressIndicator(
+            value: currentIndex / cards.length,
+            minHeight: 6,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _statBox(String icon, int value, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        '$icon $value',
+        style: TextStyle(
+          color: color,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCard() {
+    final card = cards[currentIndex];
+
+    return GestureDetector(
+      onTap: () => setState(() => showBack = !showBack),
+      onHorizontalDragUpdate: (details) {
+        if (!isAnimating) {
+          setState(() {
+            dragOffset += details.delta.dx;
+          });
+        }
+      },
+      onHorizontalDragEnd: (details) {
+        _handleSwipe(details.primaryVelocity ?? 0);
+      },
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          final offset =
+              _controller.isAnimating ? _animation.value : dragOffset;
+
+          final rotation = offset / 1000;
+
+          return Transform.translate(
+            offset: Offset(offset, 0),
+            child: Transform.rotate(
+              angle: rotation,
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.85,
+                height: 380,
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  gradient: LinearGradient(
+                    colors: showBack
+                        ? [
+                            Theme.of(context).colorScheme.secondary,
+                            Theme.of(context).colorScheme.secondary
+                          ]
+                        : [
+                            Theme.of(context)
+                                .colorScheme
+                                .primary
+                                .withOpacity(0.7),
+                            Theme.of(context).colorScheme.primary
+                          ],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.15),
+                      blurRadius: 15,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: Text(
+                    showBack ? card['back']! : card['front']!,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
+    if (currentIndex >= cards.length) {
+      return const SizedBox.shrink();
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -153,292 +288,14 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
       ),
       body: Column(
         children: [
-          // Header with stats
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                // Progress
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '${currentIndex + 1}/${cards.length}',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.green[100],
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            '✓ $correctCount',
-                            style: TextStyle(
-                              color: Colors.green[700],
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.red[100],
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            '✗ $incorrectCount',
-                            style: TextStyle(
-                              color: Colors.red[700],
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                // Progress bar
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: LinearProgressIndicator(
-                    value: (currentIndex + 1) / cards.length,
-                    minHeight: 6,
-                    backgroundColor: Colors.grey[300],
-                    valueColor: AlwaysStoppedAnimation(Theme.of(context).colorScheme.primary),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Cards
+          _buildHeader(),
           Expanded(
-            child: PageView.builder(
-              controller: _pageController,
-              onPageChanged: (index) {
-                setState(() {
-                  currentIndex = index;
-                  showBack = false;
-                });
-              },
-              itemCount: cards.length,
-              itemBuilder: (context, index) {
-                return _buildCard(cards[index], screenHeight);
-              },
+            child: Center(
+              child: _buildCard(),
             ),
           ),
         ],
       ),
     );
-  }
-
-  Widget _buildCard(Map<String, String> card, double screenHeight) {
-    return Padding(
-      padding: const EdgeInsets.all(24),
-      child: GestureDetector(
-        onTap: _flipCard,
-        onHorizontalDragUpdate: (details) {
-          setState(() {
-            dragOffset = details.delta.dx * 5; // Увеличиваем смещение
-          });
-        },
-        onHorizontalDragEnd: (details) {
-          final velocity = details.primaryVelocity ?? 0;
-          final threshold = 500.0;
-
-          if (velocity > threshold) {
-            // Свайп вправо = знаю
-            _markCorrect();
-          } else if (velocity < -threshold) {
-            // Свайп влево = не знаю
-            _markIncorrect();
-          } else {
-            // Вернуть в исходное положение
-            setState(() => dragOffset = 0);
-          }
-        },
-        child: AnimatedBuilder(
-          animation: _cardAnimController,
-          builder: (context, child) {
-            final angle = _cardAnimController.value * 3.14159;
-            final transform = Matrix4.identity()
-              ..setEntry(3, 2, 0.001)
-              ..rotateY(angle);
-
-            // Определяем цвет на основе направления свайпа
-            Color overlayColor = Colors.transparent;
-            if (dragOffset > 30) {
-              overlayColor = Colors.green.withOpacity((dragOffset / 300).clamp(0, 0.3));
-            } else if (dragOffset < -30) {
-              overlayColor = Colors.red.withOpacity((-dragOffset / 300).clamp(0, 0.3));
-            }
-
-            return Transform(
-              alignment: Alignment.center,
-              transform: transform,
-              child: Transform.translate(
-                offset: Offset(dragOffset, 0),
-                child: Stack(
-                  children: [
-                    Card(
-                      elevation: 8,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: showBack
-                                ? [Theme.of(context).colorScheme.secondary, Theme.of(context).colorScheme.secondary]
-                                : [Theme.of(context).colorScheme.primary.withOpacity(0.6), Theme.of(context).colorScheme.primary],
-                          ),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              showBack ? 'Answer' : 'Question',
-                              style: TextStyle(
-                                color: Colors.white.withOpacity(0.7),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 24),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 24),
-                              child: Text(
-                                showBack ? card['back']! : card['front']!,
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.bold,
-                                  height: 1.4,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 32),
-                            if (!showBack) ...[
-                              Text(
-                                'Tap to reveal',
-                                style: TextStyle(
-                                  color: Colors.white.withOpacity(0.6),
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ] else ...[
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                                      child: Column(
-                                        children: [
-                                          IconButton(
-                                            icon: const Icon(Icons.close,
-                                                color: Colors.white, size: 32),
-                                            onPressed: _markIncorrect,
-                                          ),
-                                          Text(
-                                            'Swipe Left',
-                                            style: TextStyle(
-                                              color: Colors.white.withOpacity(0.8),
-                                              fontSize: 11,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                                      child: Column(
-                                        children: [
-                                          IconButton(
-                                            icon: const Icon(Icons.check,
-                                                color: Colors.white, size: 32),
-                                            onPressed: _markCorrect,
-                                          ),
-                                          Text(
-                                            'Swipe Right',
-                                            style: TextStyle(
-                                              color: Colors.white.withOpacity(0.8),
-                                              fontSize: 11,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
-                    ),
-                    // Overlay при свайпе
-                    Positioned.fill(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: overlayColor,
-                        ),
-                      ),
-                    ),
-                    // Иконка свайпа
-                    if (dragOffset > 50)
-                      Positioned(
-                        right: 20,
-                        top: 20,
-                        child: Icon(
-                          Icons.check_circle,
-                          color: Colors.green,
-                          size: 40,
-                        ),
-                      )
-                    else if (dragOffset < -50)
-                      Positioned(
-                        left: 20,
-                        top: 20,
-                        child: Icon(
-                          Icons.close_rounded,
-                          color: Colors.red,
-                          size: 40,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Можно добавить логику если нужна реактивность
   }
 }
