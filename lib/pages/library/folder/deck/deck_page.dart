@@ -1,3 +1,4 @@
+import 'package:bookexample/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class DeckPage extends StatefulWidget {
@@ -23,10 +24,18 @@ class _DeckPageState extends State<DeckPage> {
   ];
 
   final List<Map<String, String>> testOptions = [
-    {'title': 'Multiple Choice', 'subtitle': '5 questions', 'icon': 'check_circle'},
+    {
+      'title': 'Multiple Choice',
+      'subtitle': '5 questions',
+      'icon': 'check_circle',
+    },
     {'title': 'Flashcards', 'subtitle': 'Learn mode', 'icon': 'style'},
     {'title': 'Write Answer', 'subtitle': '3 questions', 'icon': 'edit'},
-    {'title': 'Matching', 'subtitle': 'Pair terms', 'icon': 'connect_without_contact'},
+    {
+      'title': 'Matching',
+      'subtitle': 'Pair terms',
+      'icon': 'connect_without_contact',
+    },
   ];
 
   @override
@@ -49,52 +58,49 @@ class _DeckPageState extends State<DeckPage> {
         },
         itemCount: cards.length,
         itemBuilder: (context, index) {
-        return Padding(
-          padding: const EdgeInsets.all(24),
-          child: Card(
-            elevation: 8,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Container(
-              decoration: BoxDecoration(
+          return Padding(
+            padding: const EdgeInsets.all(24),
+            child: Card(
+              elevation: 8,
+              shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Colors.blue.shade300,
-                    Colors.blue.shade600,
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Colors.white, Colors.grey.shade200],
+                  ),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      cards[index]['front'] ?? '',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    Text(
+                      cards[index]['back'] ?? '',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                      ),
+                    ),
                   ],
                 ),
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    cards[index]['front'] ?? '',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                  Text(
-                    cards[index]['back'] ?? '',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.9),
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
             ),
-          ),
-        );
-      },
+          );
+        },
       ),
     );
   }
@@ -122,10 +128,7 @@ class _DeckPageState extends State<DeckPage> {
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: [
-                        Colors.blue.shade300,
-                        Colors.blue.shade600,
-                      ],
+                      colors: [Colors.blue.shade300, Colors.blue.shade600],
                     ),
                   ),
                   child: Center(
@@ -157,10 +160,10 @@ class _DeckPageState extends State<DeckPage> {
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final cardHeight = screenHeight * 0.5;
-    bool isCollapsed = _scrollOffset > 0;  // любой скрол = стопка
+    bool isCollapsed = _scrollOffset > 0; // любой скрол = стопка
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Biology Basics")),
+      appBar: AppBar(title: const Text("Deck's title")),
       body: NotificationListener<ScrollUpdateNotification>(
         onNotification: (notification) {
           // Только вертикальный скрол
@@ -174,83 +177,101 @@ class _DeckPageState extends State<DeckPage> {
         child: CustomScrollView(
           controller: _scrollController,
           slivers: [
-              // Collapsible card carousel
-              SliverAppBar(
-                backgroundColor: Colors.transparent,
-                pinned: false,
-                floating: false,
-                expandedHeight: cardHeight,
-                automaticallyImplyLeading: false,
-                flexibleSpace: FlexibleSpaceBar(
-                  collapseMode: CollapseMode.parallax,
-                  background: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
-                    child: isCollapsed
-                        ? SizedBox.expand(
-                            key: const ValueKey('stack'),
-                            child: _buildCardStack(),
-                          )
-                        : SizedBox.expand(
-                            key: const ValueKey('carousel'),
-                            child: _buildCardCarousel(),
-                          ),
-                  ),
+            // Collapsible card carousel
+            SliverAppBar(
+              backgroundColor: Colors.transparent,
+              pinned: false,
+              floating: false,
+              expandedHeight: cardHeight,
+              automaticallyImplyLeading: false,
+              flexibleSpace: FlexibleSpaceBar(
+                collapseMode: CollapseMode.parallax,
+                background: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  child: isCollapsed
+                      ? SizedBox.expand(
+                          key: const ValueKey('stack'),
+                          child: _buildCardStack(),
+                        )
+                      : SizedBox.expand(
+                          key: const ValueKey('carousel'),
+                          child: _buildCardCarousel(),
+                        ),
                 ),
-                bottom: isCollapsed
-                    ? null
-                    : PreferredSize(
-                        preferredSize: const Size.fromHeight(40),
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: List.generate(
-                              cards.length,
-                              (index) => Container(
-                                width: 8,
-                                height: 8,
-                                margin: const EdgeInsets.symmetric(horizontal: 4),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: index == currentCardIndex
-                                      ? Colors.blue
-                                      : Colors.grey[300],
-                                ),
+              ),
+              // dots
+              bottom: isCollapsed
+                  ? null
+                  : PreferredSize(
+                      preferredSize: const Size.fromHeight(40),
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(
+                            cards.length,
+                            (index) => Container(
+                              width: 8,
+                              height: 8,
+                              margin: const EdgeInsets.symmetric(horizontal: 4),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: index == currentCardIndex
+                                    ? AppColors.brandPrimary
+                                    : Colors.grey[500],
                               ),
                             ),
                           ),
                         ),
-                        ),
-                        ),
-              // Test options list
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final option = testOptions[index];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                      child: Card(
-                        child: ListTile(
-                          leading: Icon(
-                            _getIcon(option['icon'] ?? ''),
-                            color: Colors.blue,
-                            size: 28,
-                          ),
-                          title: Text(
-                            option['title'] ?? '',
-                            style: const TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                          subtitle: Text(option['subtitle'] ?? ''),
-                          trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                          onTap: () {},
-                        ),
                       ),
-                    );
-                  },
-                  childCount: testOptions.length,
-                ),
-              ),
-            ],
+                    ),
+            ),
+            // Test options list
+            SliverList(
+              delegate: SliverChildBuilderDelegate((context, index) {
+                final option = testOptions[index];
+                if (index == 0) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 6,
+                    ),
+                    child: SizedBox(
+                      height: 60,
+                      child: ElevatedButton(
+                        onPressed: (){},
+                        child: Text("Start Flashcards"),
+                      ),
+                    ),
+                  );
+                }
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 6,
+                  ),
+                  child: Card(
+                    color: Colors.grey.shade100,
+                    child: ListTile(
+                      
+                      leading: Icon(
+                        _getIcon(option['icon'] ?? ''),
+                        color: AppColors.brandPrimary,
+                        size: 28,
+                      ),
+                      title: Text(
+                        option['title'] ?? '',
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      subtitle: Text(option['subtitle'] ?? ''),
+                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                      onTap: () {},
+                    ),
+                  ),
+                );
+              }, childCount: testOptions.length),
+            ),
+          ],
         ),
       ),
     );
