@@ -19,7 +19,7 @@ class FolderPage extends StatelessWidget {
 
     final decks = [
       {'name': 'Basic Concepts', 'cardCount': 24, 'learned': 18, 'id': "1"},
-      {'name': 'Advanced Topics', 'cardCount': 35, 'learned': 12,'id': "2"},
+      {'name': 'Advanced Topics', 'cardCount': 35, 'learned': 12, 'id': "2"},
       {'name': 'Quiz Practice', 'cardCount': 20, 'learned': 20, 'id': "3"},
       {'name': 'Vocabulary', 'cardCount': 50, 'learned': 25, 'id': "4"},
       {'name': 'Diagrams', 'cardCount': 15, 'learned': 8, 'id': "5"},
@@ -31,6 +31,14 @@ class FolderPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text("${folderName}")),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () {
+          print("on click");
+        },
+        mini: true,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: Padding(
         padding: const EdgeInsets.all(12),
         child: GridView.builder(
@@ -38,7 +46,7 @@ class FolderPage extends StatelessWidget {
             crossAxisCount: 2,
             mainAxisSpacing: 12,
             crossAxisSpacing: 12,
-            childAspectRatio: 0.75,
+            childAspectRatio: 1,
           ),
           itemCount: decks.length,
           itemBuilder: (context, index) {

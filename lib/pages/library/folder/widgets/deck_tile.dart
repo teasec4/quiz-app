@@ -21,6 +21,84 @@ class DeckTile extends StatelessWidget {
     this.onDelete,
   });
 
+  Widget _buildMenuButton(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (TapDownDetails details) {
+        _showCustomMenu(context, details.globalPosition);
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(4),
+        child: Icon(
+          Icons.more_horiz,
+          size: 20,
+          color: Colors.grey[600],
+        ),
+      ),
+    );
+  }
+
+  void _showCustomMenu(BuildContext context, Offset position) {
+    showMenu<String>(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        position.dx,
+        position.dy,
+        position.dx,
+        0,
+      ),
+      items: [
+        PopupMenuItem<String>(
+          padding: EdgeInsets.zero,
+          height: 40,
+          value: 'edit',
+          child: InkWell(
+            onTap: () {
+              Navigator.pop(context);
+              onEdit?.call();
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.edit_outlined, size: 18, color: Colors.grey[700]),
+                  const SizedBox(width: 10),
+                  const Text('Edit', style: TextStyle(fontSize: 14)),
+                ],
+              ),
+            ),
+          ),
+        ),
+        PopupMenuItem<String>(
+          padding: EdgeInsets.zero,
+          height: 40,
+          value: 'delete',
+          child: InkWell(
+            onTap: () {
+              Navigator.pop(context);
+              onDelete?.call();
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.delete_outline, size: 18, color: Colors.red[600]),
+                  const SizedBox(width: 10),
+                  Text('Delete', style: TextStyle(fontSize: 14, color: Colors.red[600])),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+      constraints: const BoxConstraints(
+        maxWidth: 160,
+      ),
+      elevation: 2,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final progress = cardCount > 0 ? learnedCount / cardCount : 0.0;
@@ -41,33 +119,11 @@ class DeckTile extends StatelessWidget {
             children: [
               // Menu
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: .center,
                 children: [
-                  
-                  PopupMenuButton(
-                    itemBuilder: (context) => [
-                      PopupMenuItem(
-                        child: const Row(
-                          children: [
-                            Icon(Icons.edit_outlined, size: 20),
-                            SizedBox(width: 12),
-                            Text('Edit'),
-                          ],
-                        ),
-                        onTap: onEdit,
-                      ),
-                      PopupMenuItem(
-                        child: const Row(
-                          children: [
-                            Icon(Icons.delete_outline, size: 20, color: Colors.red),
-                            SizedBox(width: 12),
-                            Text('Delete', style: TextStyle(color: Colors.red)),
-                          ],
-                        ),
-                        onTap: onDelete,
-                      ),
-                    ],
-                  ),
+                  Text("${cardCount} cards"),
+                  _buildMenuButton(context),
                 ],
               ),
               
