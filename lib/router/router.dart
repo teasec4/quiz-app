@@ -67,9 +67,12 @@ class AppRouter {
                         },
                       ),
                       GoRoute(
-                        path: 'createdeck',
+                        path: 'createdeck',                   
                         builder: (context, state) {
-                          return CreateDeck();
+                        final folderId = state.pathParameters['folderId'];
+                          return CreateDeck(
+                            folderId: folderId ?? "",
+                          );
                         },
                       ),
                     ],

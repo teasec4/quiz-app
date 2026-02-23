@@ -1,9 +1,14 @@
 import 'package:bookexample/models/card_form_text_form_field.dart';
+import 'package:bookexample/provider/mock_data_models.dart';
+import 'package:bookexample/provider/mock_data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 class CreateDeck extends StatefulWidget {
-  const CreateDeck({super.key});
+  final String folderId;
+  const CreateDeck({super.key, required this.folderId});
 
   @override
   State<CreateDeck> createState() => _CreateDeckState();
@@ -14,8 +19,14 @@ class _CreateDeckState extends State<CreateDeck> {
   List<CardFormTextFormField> cards = [CardFormTextFormField()];
   final _deckTitle = TextEditingController();
   bool _hasChanges = false;
+  late AppState _appState;
 
- 
+  @override
+  void initState() {
+    super.initState();
+    _appState = context.read<AppState>();
+  }
+
   @override
   void dispose() {
     for (var card in cards) {
@@ -26,6 +37,7 @@ class _CreateDeckState extends State<CreateDeck> {
   }
 
   void _saveCard() {
+    // Some of Cards field are empty ERROR
     if (!_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -36,7 +48,7 @@ class _CreateDeckState extends State<CreateDeck> {
       );
       return;
     }
-
+    // Deck title is Empty ERROR
     if (_deckTitle.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -47,6 +59,19 @@ class _CreateDeckState extends State<CreateDeck> {
       );
       return;
     }
+
+    final List<FlashCard> newCards = cards.map((card) {
+      return FlashCard(
+        id: Uuid().v4(),
+        deckId: "",
+        front: card.frontController.text,
+        back: card.backController.text,
+      );
+    }).toList();
+
+    _appState.addDeckWithCards(widget.folderId, _deckTitle.text, newCards);
+
+    context.pop();
 
     // save logic
     ScaffoldMessenger.of(context).showSnackBar(
@@ -64,12 +89,6 @@ class _CreateDeckState extends State<CreateDeck> {
       cards.add(CardFormTextFormField());
       _hasChanges = true;
     });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Card added'),
-        duration: Duration(seconds: 1),
-      ),
-    );
   }
 
   void _removeCard(int index) async {
@@ -128,13 +147,13 @@ class _CreateDeckState extends State<CreateDeck> {
                   ),
                 ),
                 Tooltip(
-                   message: 'Delete card',
-                   child: IconButton(
-                     icon: const Icon(Icons.delete, color: Colors.red),
-                     onPressed: () => _removeCard(index),
-                     tooltip: 'Remove this card',
-                   ),
-                 ),
+                  message: 'Delete card',
+                  child: IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.red),
+                    onPressed: () => _removeCard(index),
+                    tooltip: 'Remove this card',
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 12),
@@ -194,7 +213,9 @@ class _CreateDeckState extends State<CreateDeck> {
           context: context,
           builder: (_) => AlertDialog(
             title: const Text('Unsaved Changes'),
-            content: const Text('You have unsaved changes. Do you want to leave?'),
+            content: const Text(
+              'You have unsaved changes. Do you want to leave?',
+            ),
             actions: [
               TextButton(
                 onPressed: () => context.pop(false),
@@ -255,7 +276,10 @@ class _CreateDeckState extends State<CreateDeck> {
                   labelText: "Deck Title",
                   border: const OutlineInputBorder(),
                   prefixIcon: const Icon(Icons.book),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 16,
+                  ),
                 ),
               ),
             ),
@@ -269,7 +293,6 @@ class _CreateDeckState extends State<CreateDeck> {
                 ),
               ),
             ),
-
           ],
         ),
         floatingActionButton: FloatingActionButton.extended(

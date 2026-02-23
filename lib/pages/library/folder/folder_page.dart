@@ -46,7 +46,7 @@ class FolderPage extends StatelessWidget {
               final deck = decks[index];
               return DeckTile(
                 deckName: deck.title,
-                cardCount: deck.getCardsCount as int,
+                cardCount: deck.cardCount,
                 learnedCount: deck.learnedCount,
                 onTap: () {
                   context.go('/library/folder/${folderId}/deck/${deck.id}');

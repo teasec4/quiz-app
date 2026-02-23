@@ -55,7 +55,7 @@ class _LibraryPageState extends State<LibraryPage> {
             final folder = folders[index];
             return FolderTile(
               folderName: folder.name,
-              itemCount: folder.deckIds.length,
+              itemCount: folders.length,
               onTap: () {
                 context.go('/library/folder/${folder.id}');
               },
