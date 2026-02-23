@@ -29,17 +29,11 @@ class FolderTile extends StatelessWidget {
         ),
         title: Text(
           folderName,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
         subtitle: Text(
           itemCount == 1 ? '1 item' : '$itemCount items',
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey[600],
-          ),
+          style: TextStyle(fontSize: 14, color: Colors.grey[600]),
         ),
         trailing: PopupMenuButton(
           itemBuilder: (context) => [
@@ -54,11 +48,20 @@ class FolderTile extends StatelessWidget {
               onTap: onEdit,
             ),
             PopupMenuItem(
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(Icons.delete_outline, size: 20, color: Colors.red),
-                  SizedBox(width: 12),
-                  Text('Delete', style: TextStyle(color: Colors.red)),
+                  Icon(
+                    Icons.delete_outline,
+                    size: 20,
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    'Delete',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
                 ],
               ),
               onTap: onDelete,

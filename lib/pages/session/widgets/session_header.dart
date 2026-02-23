@@ -1,3 +1,5 @@
+import 'package:bookexample/core/theme/app_colors.dart';
+import 'package:bookexample/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class SessionHeader extends StatelessWidget {
@@ -25,10 +27,7 @@ class SessionHeader extends StatelessWidget {
         children: [
           Text(
             '${currentIndex + 1}/$totalCards',
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           LinearProgressIndicator(
@@ -40,9 +39,17 @@ class SessionHeader extends StatelessWidget {
           Row(
             mainAxisAlignment: .spaceBetween,
             children: [
-              statBoxBuilder('✗', incorrectCount, Colors.red),
+              statBoxBuilder(
+                '✗',
+                incorrectCount,
+                Theme.of(context).colorScheme.error,
+              ),
               const SizedBox(width: 8),
-              statBoxBuilder('✓', correctCount, Colors.green),
+              statBoxBuilder(
+                '✓',
+                correctCount,
+                Theme.of(context).colorScheme.tertiary,
+              ),
             ],
           ),
         ],

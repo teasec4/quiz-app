@@ -1,3 +1,4 @@
+import 'package:bookexample/core/theme/app_colors.dart';
 import 'package:bookexample/models/card_form_text_form_field.dart';
 import 'package:bookexample/provider/mock_data_models.dart';
 import 'package:bookexample/provider/mock_data_provider.dart';
@@ -20,6 +21,7 @@ class _CreateDeckState extends State<CreateDeck> {
   final _deckTitle = TextEditingController();
   late FocusNode _deckTitleFocus;
   bool _hasChanges = false;
+  bool _deckTitleError = false;
   late AppState _appState;
 
   @override
@@ -30,6 +32,13 @@ class _CreateDeckState extends State<CreateDeck> {
     // Request focus for DeckTitle after build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _deckTitleFocus.requestFocus();
+    });
+    _deckTitle.addListener(() {
+      if (_deckTitle.text.trim().isNotEmpty && _deckTitleError) {
+        setState(() {
+          _deckTitleError = false;
+        });
+      }
     });
   }
 
@@ -44,24 +53,21 @@ class _CreateDeckState extends State<CreateDeck> {
   }
 
   void _saveCard() {
+    // Deck title is Empty ERROR
+    if (_deckTitle.text.trim().isEmpty) {
+      setState(() {
+        _deckTitleError = true;
+      });
+      return;
+    }
+
     // Some of Cards field are empty ERROR
     if (!_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please fill all required fields'),
-          backgroundColor: Colors.red,
-          duration: Duration(seconds: 2),
-        ),
-      );
-      return;
-    }
-    // Deck title is Empty ERROR
-    if (_deckTitle.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter a deck title'),
-          backgroundColor: Colors.red,
-          duration: Duration(seconds: 2),
+        SnackBar(
+          content: const Text('Please fill all required fields'),
+          backgroundColor: Theme.of(context).colorScheme.error,
+          duration: const Duration(seconds: 2),
         ),
       );
       return;
@@ -82,10 +88,10 @@ class _CreateDeckState extends State<CreateDeck> {
 
     // save logic
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Deck saved successfully!'),
-        backgroundColor: Colors.green,
-        duration: Duration(seconds: 1),
+      SnackBar(
+        content: const Text('Deck saved successfully!'),
+        backgroundColor: Theme.of(context).colorScheme.tertiary,
+        duration: const Duration(seconds: 1),
       ),
     );
     _hasChanges = false;
@@ -101,16 +107,16 @@ class _CreateDeckState extends State<CreateDeck> {
   void _removeCard(int index) async {
     final confirm = await showDialog<bool>(
       context: context,
-      builder: (_) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: const Text("Delete card?"),
         content: const Text("Are you sure?"),
         actions: [
           TextButton(
-            onPressed: () => context.pop(false),
+            onPressed: () => Navigator.pop(dialogContext, false),
             child: const Text("Cancel"),
           ),
           TextButton(
-            onPressed: () => context.pop(true),
+            onPressed: () => Navigator.pop(dialogContext, true),
             child: const Text("Delete"),
           ),
         ],
@@ -156,7 +162,10 @@ class _CreateDeckState extends State<CreateDeck> {
                 Tooltip(
                   message: 'Delete card',
                   child: IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
+                    icon: Icon(
+                      Icons.delete,
+                      color: Theme.of(context).colorScheme.error,
+                    ),
                     onPressed: () => _removeCard(index),
                     tooltip: 'Remove this card',
                   ),
@@ -218,18 +227,18 @@ class _CreateDeckState extends State<CreateDeck> {
 
         final confirm = await showDialog<bool>(
           context: context,
-          builder: (_) => AlertDialog(
+          builder: (dialogContext) => AlertDialog(
             title: const Text('Unsaved Changes'),
             content: const Text(
               'You have unsaved changes. Do you want to leave?',
             ),
             actions: [
               TextButton(
-                onPressed: () => context.pop(false),
+                onPressed: () => Navigator.pop(dialogContext, false),
                 child: const Text('Stay'),
               ),
               TextButton(
-                onPressed: () => context.pop(true),
+                onPressed: () => Navigator.pop(dialogContext, true),
                 child: const Text('Leave'),
               ),
             ],
@@ -248,8 +257,35 @@ class _CreateDeckState extends State<CreateDeck> {
           actions: [
             IconButton(
               icon: const Icon(Icons.close),
-              onPressed: () {
-                context.pop();
+              onPressed: () async {
+                if (!_hasChanges) {
+                  context.pop();
+                  return;
+                }
+
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (dialogContext) => AlertDialog(
+                    title: const Text('Unsaved Changes'),
+                    content: const Text(
+                      'You have unsaved changes. Do you want to leave?',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(dialogContext, false),
+                        child: const Text('Stay'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(dialogContext, true),
+                        child: const Text('Leave'),
+                      ),
+                    ],
+                  ),
+                );
+
+                if (confirm == true && context.mounted) {
+                  context.pop();
+                }
               },
               tooltip: 'Cancel',
             ),
@@ -269,11 +305,31 @@ class _CreateDeckState extends State<CreateDeck> {
                 },
                 decoration: InputDecoration(
                   labelText: "Deck Title",
-                  border: const OutlineInputBorder(),
                   prefixIcon: const Icon(Icons.book),
+                  errorText: _deckTitleError ? 'Deck title is required' : null,
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 16,
                     vertical: 12,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: _deckTitleError
+                          ? Theme.of(context).colorScheme.error
+                          : Colors.grey.shade300,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: _deckTitleError
+                          ? Theme.of(context).colorScheme.error
+                          : Theme.of(context).colorScheme.primary,
+                      width: 2,
+                    ),
                   ),
                 ),
               ),
@@ -306,7 +362,7 @@ class _CreateDeckState extends State<CreateDeck> {
               onPressed: _saveCard,
               icon: const Icon(Icons.save),
               label: const Text("Save Deck"),
-              backgroundColor: Colors.green,
+              backgroundColor: Theme.of(context).colorScheme.tertiary,
               tooltip: 'Save this deck',
               heroTag: 'save_deck',
             ),

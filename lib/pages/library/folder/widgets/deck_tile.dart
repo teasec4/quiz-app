@@ -28,11 +28,7 @@ class DeckTile extends StatelessWidget {
       },
       child: Padding(
         padding: const EdgeInsets.all(4),
-        child: Icon(
-          Icons.more_horiz,
-          size: 20,
-          color: Colors.grey[600],
-        ),
+        child: Icon(Icons.more_horiz, size: 20, color: Colors.grey[600]),
       ),
     );
   }
@@ -40,12 +36,7 @@ class DeckTile extends StatelessWidget {
   void _showCustomMenu(BuildContext context, Offset position) {
     showMenu<String>(
       context: context,
-      position: RelativeRect.fromLTRB(
-        position.dx,
-        position.dy,
-        position.dx,
-        0,
-      ),
+      position: RelativeRect.fromLTRB(position.dx, position.dy, position.dx, 0),
       items: [
         PopupMenuItem<String>(
           padding: EdgeInsets.zero,
@@ -83,18 +74,26 @@ class DeckTile extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.delete_outline, size: 18, color: Colors.red[600]),
+                  Icon(
+                    Icons.delete_outline,
+                    size: 18,
+                    color: Theme.of(context).colorScheme.error,
+                  ),
                   const SizedBox(width: 10),
-                  Text('Delete', style: TextStyle(fontSize: 14, color: Colors.red[600])),
+                  Text(
+                    'Delete',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
         ),
       ],
-      constraints: const BoxConstraints(
-        maxWidth: 160,
-      ),
+      constraints: const BoxConstraints(maxWidth: 160),
       elevation: 2,
     );
   }
@@ -107,15 +106,13 @@ class DeckTile extends StatelessWidget {
       onTap: onTap,
       child: Card(
         elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Padding(
           padding: const EdgeInsets.all(10),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.start,
-      
+
             children: [
               // Menu
               Row(
@@ -126,7 +123,7 @@ class DeckTile extends StatelessWidget {
                   _buildMenuButton(context),
                 ],
               ),
-              
+
               // Deck name
               Text(
                 deckName,
@@ -138,7 +135,7 @@ class DeckTile extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
-              
+
               // Progress bar
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,10 +154,7 @@ class DeckTile extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     '$learnedCount/${cardCount}',
-                    style: const TextStyle(
-                      color: Colors.grey,
-                      fontSize: 12,
-                    ),
+                    style: const TextStyle(color: Colors.grey, fontSize: 12),
                   ),
                 ],
               ),

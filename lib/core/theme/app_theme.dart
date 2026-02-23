@@ -4,19 +4,37 @@ import 'package:flutter/material.dart';
 class AppTheme {
   static final colorScheme = ColorScheme.fromSeed(
       seedColor: AppColors.brandPrimary,
+      secondary: AppColors.brandSecondary,
       brightness: Brightness.light,
-    );
-
+      // puting more contrast 
+      //dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
+  ).copyWith(
+    error: AppColors.error,
+    tertiary: AppColors.success,
+  );
+  
+  // Theme.of(context).colorScheme.error
+  // Theme.of(context).colorScheme.tertiary
     
   static ThemeData lightTheme = ThemeData(
     useMaterial3: true,
     
     colorScheme: colorScheme,
     
-    scaffoldBackgroundColor: Colors.white,
+    scaffoldBackgroundColor: colorScheme.surface,
     
-    appBarTheme: const AppBarTheme(
+    cardColor: colorScheme.surfaceContainerHighest,
+    
+    appBarTheme: AppBarTheme(
+      backgroundColor: colorScheme.primaryContainer,
       centerTitle: true,
+    ),
+    
+    cardTheme: CardThemeData(
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16)
+      ),
     ),
     
     floatingActionButtonTheme: FloatingActionButtonThemeData(
@@ -28,6 +46,7 @@ class AppTheme {
         borderRadius: BorderRadius.circular(16),
       ),
     ),
+    
     
     navigationBarTheme: NavigationBarThemeData(
       backgroundColor: Colors.white,
@@ -68,5 +87,6 @@ class AppTheme {
         foregroundColor: Colors.white,
       ),
     ),
+    
   );
 }

@@ -1,3 +1,4 @@
+import 'package:bookexample/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -10,11 +11,17 @@ class CreateFolderSheet extends StatefulWidget {
 
 class _CreateFolderSheetState extends State<CreateFolderSheet> {
   late TextEditingController _nameController;
+  bool _hasError = false;
 
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController();
+    _nameController.addListener(() {
+      setState(() {
+        _hasError = false;
+      });
+    });
   }
 
   @override
@@ -42,9 +49,9 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
           children: [
             Text(
               'Create New Folder',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
             TextField(
@@ -52,8 +59,26 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
               decoration: InputDecoration(
                 hintText: 'Enter folder name',
                 prefixIcon: const Icon(Icons.folder_outlined),
+                errorText: _hasError ? 'Folder name is required' : null,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: _hasError
+                        ? Theme.of(context).colorScheme.error
+                        : Colors.grey.shade300,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: _hasError
+                        ? Theme.of(context).colorScheme.error
+                        : Theme.of(context).colorScheme.primary,
+                    width: 2,
+                  ),
                 ),
               ),
               textInputAction: TextInputAction.done,
@@ -79,9 +104,13 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      if (_nameController.text.isNotEmpty) {
-                        context.pop(_nameController.text);
+                      if (_nameController.text.trim().isEmpty) {
+                        setState(() {
+                          _hasError = true;
+                        });
+                        return;
                       }
+                      context.pop(_nameController.text);
                     },
                     child: const Text('Create'),
                   ),

@@ -1,3 +1,4 @@
+import 'package:bookexample/core/theme/app_colors.dart';
 import 'package:bookexample/provider/mock_data_models.dart';
 import 'package:bookexample/provider/mock_data_provider.dart';
 import 'package:flutter/material.dart';
@@ -126,8 +127,12 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
             LinearProgressIndicator(
               value: correctCount / cards.length,
               minHeight: 8,
-              backgroundColor: Colors.red[200],
-              valueColor: const AlwaysStoppedAnimation(Colors.green),
+              backgroundColor: Theme.of(
+                context,
+              ).colorScheme.error.withOpacity(0.2),
+              valueColor: AlwaysStoppedAnimation(
+                Theme.of(context).colorScheme.tertiary,
+              ),
             ),
           ],
         ),
