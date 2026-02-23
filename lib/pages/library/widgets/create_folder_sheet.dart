@@ -1,4 +1,6 @@
+import 'package:bookexample/pages/library/library_page.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class CreateFolderSheet extends StatefulWidget {
   const CreateFolderSheet({super.key});
@@ -62,7 +64,7 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () => context.pop(),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.grey[300],
                     ),
@@ -78,7 +80,11 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
                     onPressed: () {
                       if (_nameController.text.isNotEmpty) {
                         // Здесь можно добавить логику создания папки
-                        Navigator.pop(context, _nameController.text);
+                        context.pop(Folder(
+                          name: _nameController.text,
+                          id: "2",
+                          count: 0,
+                        ));
                       }
                     },
                     child: const Text('Create'),

@@ -11,19 +11,12 @@ class FolderPage extends StatelessWidget {
     // only for testing
     final folders = [
       {'name': 'Biology', 'count': 15, 'id': "1"},
-      {'name': 'History', 'count': 8, 'id': "2"},
-      {'name': 'Physics', 'count': 12, 'id': "3"},
-      {'name': 'Chemistry', 'count': 20, 'id': "4"},
-      {'name': 'Mathematics', 'count': 25, 'id': "5"},
+      
     ];
 
     final decks = [
       {'name': 'Basic Concepts', 'cardCount': 24, 'learned': 18, 'id': "1"},
-      {'name': 'Advanced Topics', 'cardCount': 35, 'learned': 12, 'id': "2"},
-      {'name': 'Quiz Practice', 'cardCount': 20, 'learned': 20, 'id': "3"},
-      {'name': 'Vocabulary', 'cardCount': 50, 'learned': 25, 'id': "4"},
-      {'name': 'Diagrams', 'cardCount': 15, 'learned': 8, 'id': "5"},
-      {'name': 'Case Studies', 'cardCount': 10, 'learned': 5, 'id': "6"},
+      
     ];
 
     final folder = folders.firstWhere((f) => f['id'] == folderId);
