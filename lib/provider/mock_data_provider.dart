@@ -9,8 +9,9 @@ class AppState extends ChangeNotifier {
 
   final FolderService _folderService = FolderService();
 
-  void addFolder(String name) {
-    _folderService.createFolder(name);
+  void addFolder(String name){
+    final folder =  _folderService.createFolder(name);
+    folders.add(folder);
     notifyListeners();
   }
 

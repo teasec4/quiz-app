@@ -3,7 +3,7 @@ import 'package:uuid/uuid.dart';
 
 class FolderService {
   
-  Future<Folder> createFolder(String name) async {
+  Folder createFolder(String name) {
     return Folder(
       id: Uuid().v4(),
       name: name,

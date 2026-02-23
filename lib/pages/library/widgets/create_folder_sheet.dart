@@ -1,4 +1,3 @@
-import 'package:bookexample/pages/library/library_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -81,11 +80,7 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
                   child: ElevatedButton(
                     onPressed: () {
                       if (_nameController.text.isNotEmpty) {
-                        context.pop(Folder(
-                          name: _nameController.text,
-                          id: "2",
-                          count: 0,
-                        ));
+                        context.pop(_nameController.text);
                       }
                     },
                     child: const Text('Create'),

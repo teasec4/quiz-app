@@ -1,15 +1,9 @@
 import 'package:bookexample/pages/library/widgets/create_folder_sheet.dart';
 import 'package:bookexample/pages/library/widgets/folder_tile.dart';
+import 'package:bookexample/provider/mock_data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-class Folder {
-  final String id;
-  final String name;
-  final int count;
-
-  Folder({required this.id, required this.name, this.count = 0});
-}
+import 'package:provider/provider.dart';
 
 class LibraryPage extends StatefulWidget {
   const LibraryPage({super.key});
@@ -19,30 +13,27 @@ class LibraryPage extends StatefulWidget {
 }
 
 class _LibraryPageState extends State<LibraryPage> {
-  final List<Folder> folders = [
-    Folder(name: 'Biology', count: 15, id: "1"),
-  ];
-
   Future<void> _showCreateFolder() async {
-    final newFolder = await showModalBottomSheet<Folder?>(
+    final newFolderName = await showModalBottomSheet<String?>(
       context: context,
       builder: (context) => const CreateFolderSheet(),
       isScrollControlled: true,
       useRootNavigator: true,
     );
-
-    if (newFolder != null) {
-      setState(() {
-        folders.add(newFolder);
-      });
+    
+    if (newFolderName != null) {
+      // here is creating logic
+      context.read<AppState>().addFolder(newFolderName);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Folder "${newFolder.name}" created!')),
+        SnackBar(content: Text('Folder "${newFolderName}" created!')),
       );
-    }
+    }  
   }
-
+  
   @override
   Widget build(BuildContext context) {
+    final folders = context.watch<AppState>().folders;
+
     return Scaffold(
       appBar: AppBar(title: const Text("Library")),
       floatingActionButton: FloatingActionButton(
@@ -57,7 +48,7 @@ class _LibraryPageState extends State<LibraryPage> {
           final folder = folders[index];
           return FolderTile(
             folderName: folder.name,
-            itemCount: folder.count,
+            itemCount: folder.deckIds.length,
             onTap: () {
               context.go('/library/folder/${folder.id}');
             },
