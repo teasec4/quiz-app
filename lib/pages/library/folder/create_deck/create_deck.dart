@@ -346,25 +346,26 @@ class _CreateDeckState extends State<CreateDeck> {
             ),
           ],
         ),
-        floatingActionButton: Column(
+        floatingActionButton: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           mainAxisSize: MainAxisSize.min,
           children: [
-            FloatingActionButton.extended(
+            FilledButton.tonal(
               onPressed: _addCard,
-              icon: const Icon(Icons.add),
-              label: const Text("Add Card"),
-              tooltip: 'Add a new flashcard',
-              heroTag: 'add_card',
+              // tooltip: 'Add a new flashcard',
+              // heroTag: 'add_card',
+              // child: const Icon(Icons.add),
+              child: const Text("Add Card"),
             ),
-            const SizedBox(height: 12),
-            FloatingActionButton.extended(
+            const SizedBox(width: 12),
+            FilledButton(
               onPressed: _saveCard,
-              icon: const Icon(Icons.save),
-              label: const Text("Save Deck"),
-              backgroundColor: Theme.of(context).colorScheme.tertiary,
-              tooltip: 'Save this deck',
-              heroTag: 'save_deck',
+
+              // backgroundColor: Theme.of(context).colorScheme.tertiary,
+              // tooltip: 'Save this deck',
+              // heroTag: 'save_deck',
+              // child: const Icon(Icons.save),
+              child: const Text("Save"),
             ),
           ],
         ),
