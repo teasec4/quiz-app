@@ -140,6 +140,10 @@ class _CreateDeckState extends State<CreateDeck> {
             const SizedBox(height: 12),
             TextFormField(
               controller: card.frontController,
+              textInputAction: TextInputAction.done,
+              onFieldSubmitted: (_) {
+                FocusScope.of(context).unfocus();
+              },
               decoration: const InputDecoration(
                 labelText: "Front",
                 border: OutlineInputBorder(),
@@ -155,6 +159,10 @@ class _CreateDeckState extends State<CreateDeck> {
             const SizedBox(height: 12),
             TextFormField(
               controller: card.backController,
+              textInputAction: TextInputAction.done,
+              onFieldSubmitted: (_) {
+                FocusScope.of(context).unfocus();
+              },
               decoration: const InputDecoration(
                 labelText: "Back",
                 border: OutlineInputBorder(),
@@ -173,36 +181,37 @@ class _CreateDeckState extends State<CreateDeck> {
     );
   }
 
-  Future<bool> _onWillPop() async {
-    if (!_hasChanges) {
-      return true;
-    }
-
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Unsaved Changes'),
-        content: const Text('You have unsaved changes. Do you want to leave?'),
-        actions: [
-          TextButton(
-            onPressed: () => context.pop(false),
-            child: const Text('Stay'),
-          ),
-          TextButton(
-            onPressed: () => context.pop(true),
-            child: const Text('Leave'),
-          ),
-        ],
-      ),
-    );
-
-    return confirm ?? false;
-  }
-
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onWillPop,
+    return PopScope(
+      canPop: !_hasChanges,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) {
+          return;
+        }
+
+        final confirm = await showDialog<bool>(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: const Text('Unsaved Changes'),
+            content: const Text('You have unsaved changes. Do you want to leave?'),
+            actions: [
+              TextButton(
+                onPressed: () => context.pop(false),
+                child: const Text('Stay'),
+              ),
+              TextButton(
+                onPressed: () => context.pop(true),
+                child: const Text('Leave'),
+              ),
+            ],
+          ),
+        );
+
+        if (confirm == true && context.mounted) {
+          context.pop();
+        }
+      },
       child: Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
@@ -217,11 +226,7 @@ class _CreateDeckState extends State<CreateDeck> {
                   IconButton(
                     icon: const Icon(Icons.close),
                     onPressed: () {
-                      if (_hasChanges) {
-                        _onWillPop();
-                      } else {
-                        context.pop();
-                      }
+                      context.pop();
                     },
                     tooltip: 'Cancel',
                   ),

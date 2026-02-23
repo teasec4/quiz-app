@@ -62,6 +62,7 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
             const SizedBox(height: 20),
             Row(
               children: [
+                // cancel modal
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () => context.pop(),
@@ -75,11 +76,11 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
                   ),
                 ),
                 const SizedBox(width: 12),
+                // create a new folder
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
                       if (_nameController.text.isNotEmpty) {
-                        // Здесь можно добавить логику создания папки
                         context.pop(Folder(
                           name: _nameController.text,
                           id: "2",
