@@ -1,9 +1,16 @@
 import 'package:bookexample/core/theme/app_theme.dart';
+import 'package:bookexample/provider/mock_data_provider.dart';
 import 'package:bookexample/router/router.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => AppState(),
+      child: const MyApp(),
+    )
+  );
 }
 
 class MyApp extends StatelessWidget {
