@@ -28,7 +28,9 @@ class _LibraryPageState extends State<LibraryPage> {
       // here is creating logic
       context.read<AppState>().addFolder(newFolderName);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Folder "${newFolderName}" created!')),
+        SnackBar(
+          duration: Duration(seconds: 1),
+          content: Text('Folder "${newFolderName}" created!')),
       );
     }  
   }

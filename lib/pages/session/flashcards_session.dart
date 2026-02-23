@@ -1,7 +1,10 @@
+import 'package:bookexample/provider/mock_data_models.dart';
+import 'package:bookexample/provider/mock_data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'widgets/session_header.dart';
-import 'widgets/flash_card.dart';
+import 'widgets/flash_card.dart' as flash_card_widget;
 
 class FlashcardsSession extends StatefulWidget {
   final String deckId;
@@ -30,13 +33,7 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
   bool showBack = false;
   bool isAnimating = false;
 
-  final List<Map<String, String>> cards = [
-    {'front': 'What is Flutter?', 'back': 'A cross-platform mobile framework'},
-    {'front': 'What is Dart?', 'back': 'A programming language for Flutter'},
-    {'front': 'What is Material Design?', 'back': 'Google design system'},
-    {'front': 'What is a Widget?', 'back': 'Basic building block in Flutter'},
-    {'front': 'What is State?', 'back': 'Data that determines widget behavior'},
-  ];
+  late List<FlashCard> cards;
 
   @override
   void initState() {
@@ -46,6 +43,10 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
       duration: const Duration(milliseconds: 250),
     );
     _animation = Tween<double>(begin: 0, end: 0).animate(_controller);
+    
+    // Get cards from AppState
+    final appState = context.read<AppState>();
+    cards = appState.getCardsByDeck(widget.deckId);
   }
 
   @override
@@ -104,6 +105,7 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
     _controller.forward(from: 0).then((_) {
       setState(() {
         dragOffset = 0;
+        showBack = false;
       });
     });
   }
@@ -189,9 +191,51 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
             incorrectCount: incorrectCount,
             statBoxBuilder: (icon, value, color) => _statBox(icon, value, color),
           ),
+          // Counter hints row
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  children: [
+                    const Text(
+                      '← Incorrect',
+                      style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      '$incorrectCount/${cards.length}',
+                      style: const TextStyle(
+                        color: Colors.red,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    const Text(
+                      'Correct →',
+                      style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      '$correctCount/${cards.length}',
+                      style: const TextStyle(
+                        color: Colors.green,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
           Expanded(
             child: Center(
-              child: FlashCard(
+              child: flash_card_widget.FlashCardWidget(
                 card: card,
                 showBack: showBack,
                 dragOffset: dragOffset,

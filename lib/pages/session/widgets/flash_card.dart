@@ -1,7 +1,8 @@
+import 'package:bookexample/provider/mock_data_models.dart' as models;
 import 'package:flutter/material.dart';
 
-class FlashCard extends StatelessWidget {
-  final Map<String, String> card;
+class FlashCardWidget extends StatelessWidget {
+  final models.FlashCard card;
   final bool showBack;
   final double dragOffset;
   final bool isAnimating;
@@ -11,7 +12,7 @@ class FlashCard extends StatelessWidget {
   final Function(DragUpdateDetails) onDragUpdate;
   final Function(DragEndDetails) onDragEnd;
 
-  const FlashCard({
+  const FlashCardWidget({
     super.key,
     required this.card,
     required this.showBack,
@@ -70,7 +71,7 @@ class FlashCard extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    showBack ? card['back']! : card['front']!,
+                    showBack ? card.back : card.front,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       color: Colors.white,

@@ -78,7 +78,7 @@ class _CreateDeckState extends State<CreateDeck> {
       const SnackBar(
         content: Text('Deck saved successfully!'),
         backgroundColor: Colors.green,
-        duration: Duration(seconds: 2),
+        duration: Duration(seconds: 1),
       ),
     );
     _hasChanges = false;
