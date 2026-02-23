@@ -1,66 +1,47 @@
 class Folder {
   final String id;
   final String name;
-  final List<String> deckIds;
 
-  Folder({required this.id, required this.name, required this.deckIds});
+  Folder({
+    required this.id,
+    required this.name,
+  });
 
-  Folder copyWith({String? name, List<String>? deckIds}) {
+  Folder copyWith({String? name}) {
     return Folder(
       id: id,
       name: name ?? this.name,
-      deckIds: deckIds ?? List.from(this.deckIds),
     );
   }
-
-  List<String> getDecks() {
-    return deckIds;
-  }
-
-  // FOR FUTURE USING IN creating DECK
-  // void addDeckToFolder(String folderId, String deckId) {
-  //   final index = folders.indexWhere((f) => f.id == folderId);
-  //   if (index == -1) return;
-
-  //   final folder = folders[index];
-
-  //   final updatedFolder = folder.copyWith(
-  //     deckIds: [...folder.deckIds, deckId],
-  //   );
-
-  //   folders[index] = updatedFolder;
-
-  //   notifyListeners();
-  // }
 }
 
 class Deck {
   final String id;
   final String folderId;
   final String title;
-  final List<String> cardsId;
+  final int cardCount;
   final int learnedCount;
 
   Deck({
     required this.id,
     required this.folderId,
     required this.title,
-    required this.cardsId,
-    this.learnedCount = 0
+    this.cardCount = 0,
+    this.learnedCount = 0,
   });
 
-  Deck copyWith({String? title, List<String>? cardsId}) {
+  Deck copyWith({
+    String? title,
+    int? cardCount,
+    int? learnedCount,
+  }) {
     return Deck(
       id: id,
       folderId: folderId,
       title: title ?? this.title,
-      cardsId: cardsId ?? List.from(this.cardsId),
-      learnedCount: learnedCount
+      cardCount: cardCount ?? this.cardCount,
+      learnedCount: learnedCount ?? this.learnedCount,
     );
-  }
-
-  int getCardsCount() {
-    return cardsId.length;
   }
 }
 
@@ -77,10 +58,14 @@ class FlashCard {
     required this.back,
   });
 
-  FlashCard copyWith({String? front, String? back}) {
+  FlashCard copyWith({
+    String? deckId,
+    String? front,
+    String? back,
+  }) {
     return FlashCard(
       id: id,
-      deckId: deckId,
+      deckId: deckId ?? this.deckId,
       front: front ?? this.front,
       back: back ?? this.back,
     );
