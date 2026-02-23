@@ -14,6 +14,31 @@ class AppState extends ChangeNotifier {
     folders.add(folder);
     notifyListeners();
   }
+  
+  void deleteFolder(String folderId) {
+    // удалить деки этой папки
+    final folderDecks =
+        decks.where((d) => d.folderId == folderId).toList();
+    for (final deck in folderDecks) {
+      // удалить карточки этой деки
+      cards.removeWhere((c) => c.deckId == deck.id);
+    }  
+    // удалить деки
+    decks.removeWhere((d) => d.folderId == folderId);
+    // удалить папку
+    folders.removeWhere((f) => f.id == folderId);
+    notifyListeners();
+  }
+  
+  void renameFolder(String folderId, String newName) {
+    final index = folders.indexWhere((f) => f.id == folderId);
+    if (index == -1) return;
+    final updatedFolder = folders[index].copyWith(name: newName);
+  
+    folders[index] = updatedFolder;
+  
+    notifyListeners();
+  }
 
   void addDeck(String folderId, String title) {
     notifyListeners();

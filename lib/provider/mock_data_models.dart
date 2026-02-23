@@ -5,10 +5,31 @@ class Folder {
 
   Folder({required this.id, required this.name, required this.deckIds});
 
-  Folder copyWith({String? name}) {
-    return Folder(id: id, name: name ?? this.name, deckIds: deckIds);
+  Folder copyWith({
+    String? name,
+    List<String>? deckIds
+  }) {
+    return Folder(
+      id: id, 
+      name: name ?? this.name, 
+      deckIds: deckIds ?? List.from(this.deckIds));
   }
   
+  // FOR FUTURE USING IN creating DECK
+  // void addDeckToFolder(String folderId, String deckId) {
+  //   final index = folders.indexWhere((f) => f.id == folderId);
+  //   if (index == -1) return;
+  
+  //   final folder = folders[index];
+  
+  //   final updatedFolder = folder.copyWith(
+  //     deckIds: [...folder.deckIds, deckId],
+  //   );
+  
+  //   folders[index] = updatedFolder;
+  
+  //   notifyListeners();
+  // }
 }
 
 class Deck {
