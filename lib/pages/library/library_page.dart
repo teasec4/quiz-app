@@ -21,6 +21,9 @@ class _LibraryPageState extends State<LibraryPage> {
       useRootNavigator: true,
     );
     
+    // avoid async gap 
+    if (!mounted) return;
+    
     if (newFolderName != null) {
       // here is creating logic
       context.read<AppState>().addFolder(newFolderName);
@@ -42,18 +45,44 @@ class _LibraryPageState extends State<LibraryPage> {
         child: const Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: ListView.builder(
-        itemCount: folders.length,
-        itemBuilder: (context, index) {
-          final folder = folders[index];
-          return FolderTile(
-            folderName: folder.name,
-            itemCount: folder.deckIds.length,
-            onTap: () {
-              context.go('/library/folder/${folder.id}');
-            },
-          );
-        },
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 500),
+        child: folders.isEmpty
+        ? _buildEmptyState()
+        : ListView.builder(
+          itemCount: folders.length,
+          itemBuilder: (context, index) {
+            final folder = folders[index];
+            return FolderTile(
+              folderName: folder.name,
+              itemCount: folder.deckIds.length,
+              onTap: () {
+                context.go('/library/folder/${folder.id}');
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
+  
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: const [
+          Icon(Icons.folder_open, size: 64, color: Colors.grey),
+          SizedBox(height: 16),
+          Text(
+            'No folders yet',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+          ),
+          SizedBox(height: 8),
+          Text(
+            'Tap + to create your first folder',
+            style: TextStyle(color: Colors.grey),
+          ),
+        ],
       ),
     );
   }

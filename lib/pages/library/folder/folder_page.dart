@@ -1,6 +1,8 @@
 import 'package:bookexample/pages/library/folder/widgets/deck_tile.dart';
+import 'package:bookexample/provider/mock_data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class FolderPage extends StatelessWidget {
   final String folderId;
@@ -8,22 +10,16 @@ class FolderPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // only for testing
-    final folders = [
-      {'name': 'Biology', 'count': 15, 'id': "1"},
-      
-    ];
+    
+    final appState = context.watch<AppState>();
+    
+    final folder =
+        appState.folders.firstWhere((f) => f.id == folderId);
 
-    final decks = [
-      {'name': 'Basic Concepts', 'cardCount': 24, 'learned': 18, 'id': "1"},
-      
-    ];
-
-    final folder = folders.firstWhere((f) => f['id'] == folderId);
-    final folderName = folder['name'];
+    final decks = appState.getDecksByFolder(folder.id);
 
     return Scaffold(
-      appBar: AppBar(title: Text("${folderName}")),
+      appBar: AppBar(title: Text("${folder.name}")),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
@@ -32,28 +28,54 @@ class FolderPage extends StatelessWidget {
         mini: true,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: Padding(
-        padding: const EdgeInsets.all(12),
-        child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 12,
-            crossAxisSpacing: 12,
-            childAspectRatio: 1,
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 500),
+        child: decks.isEmpty
+        ? _buildEmptyState()
+        :Padding(
+          padding: const EdgeInsets.all(12),
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              childAspectRatio: 1,
+            ),
+            itemCount: decks.length,
+            itemBuilder: (context, index) {
+              final deck = decks[index];
+              return DeckTile(
+                deckName: deck.title,
+                cardCount: deck.getCardsCount as int,
+                learnedCount: deck.learnedCount,
+                onTap: () {
+                  context.go('/library/folder/${folderId}/deck/${deck.id}');
+                },
+              );
+            },
           ),
-          itemCount: decks.length,
-          itemBuilder: (context, index) {
-            final deck = decks[index];
-            return DeckTile(
-              deckName: deck['name'] as String,
-              cardCount: deck['cardCount'] as int,
-              learnedCount: deck['learned'] as int,
-              onTap: () {
-                context.go('/library/folder/${folderId}/deck/${deck["id"]}');
-              },
-            );
-          },
         ),
+      ),
+    );
+  }
+  
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: const [
+          Icon(Icons.card_giftcard, size: 64, color: Colors.grey),
+          SizedBox(height: 16),
+          Text(
+            'No Decks yet',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+          ),
+          SizedBox(height: 8),
+          Text(
+            'Tap + to create your first decks',
+            style: TextStyle(color: Colors.grey),
+          ),
+        ],
       ),
     );
   }
