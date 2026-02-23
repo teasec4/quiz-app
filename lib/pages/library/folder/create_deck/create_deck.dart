@@ -1,5 +1,6 @@
 import 'package:bookexample/models/card_form_text_form_field.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class CreateDeck extends StatefulWidget {
   const CreateDeck({super.key});
@@ -11,9 +12,15 @@ class CreateDeck extends StatefulWidget {
 class _CreateDeckState extends State<CreateDeck> {
   final _formKey = GlobalKey<FormState>();
   List<CardFormTextFormField> cards = [CardFormTextFormField()];
+  final _deckTitle = TextEditingController();
 
+ 
   @override
   void dispose() {
+    for (var card in cards) {
+      card.dispose();
+    }
+    _deckTitle.dispose();
     super.dispose();
   }
 
@@ -37,11 +44,11 @@ class _CreateDeckState extends State<CreateDeck> {
         content: const Text("Are you sure?"),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context, false),
+            onPressed: () => context.pop(false),
             child: const Text("Cancel"),
           ),
           TextButton(
-            onPressed: () => Navigator.pop(context, true),
+            onPressed: () => context.pop(true),
             child: const Text("Delete"),
           ),
         ],
@@ -58,7 +65,7 @@ class _CreateDeckState extends State<CreateDeck> {
 
   Widget _buildCardForm(int index) {
     final card = cards[index];
-  
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       elevation: 3,
@@ -70,26 +77,30 @@ class _CreateDeckState extends State<CreateDeck> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Card ${index + 1}",
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold)),
+                Text(
+                  "Card ${index + 1}",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 IconButton(
                   icon: const Icon(Icons.delete, color: Colors.red),
                   onPressed: () => _removeCard(index),
-                )
+                ),
               ],
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: card.frontController,
               decoration: const InputDecoration(
-                labelText: "Question",
+                labelText: "Front",
                 border: OutlineInputBorder(),
               ),
               maxLines: 3,
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return "Question required";
+                  return "Front required";
                 }
                 return null;
               },
@@ -98,13 +109,13 @@ class _CreateDeckState extends State<CreateDeck> {
             TextFormField(
               controller: card.backController,
               decoration: const InputDecoration(
-                labelText: "Answer",
+                labelText: "Back",
                 border: OutlineInputBorder(),
               ),
               maxLines: 4,
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return "Answer required";
+                  return "Back required";
                 }
                 return null;
               },
@@ -121,6 +132,16 @@ class _CreateDeckState extends State<CreateDeck> {
       appBar: AppBar(title: Text("Create Deck")),
       body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _deckTitle,
+              decoration: const InputDecoration(
+                labelText: "Deck Title",
+                border: OutlineInputBorder()
+              ),
+            ),
+          ),
           Expanded(
             child: Form(
               key: _formKey,
@@ -131,17 +152,27 @@ class _CreateDeckState extends State<CreateDeck> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(16),
-            child: ElevatedButton(
-              onPressed: (){
-                if (_formKey.currentState!.validate()) {
-                  // сохранить все карточки
-                }
-              },
-              child: const Text("Save All"),
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: .spaceEvenly,
+              crossAxisAlignment: .center,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    _addCard();
+                  },
+                  child: const Text("Add a New Card"),
+                ),
+
+                ElevatedButton(
+                  onPressed: () {
+                    _saveCard();
+                  },
+                  child: const Text("Save All"),
+                ),
+              ],
             ),
-          )
-          
+          ),
         ],
       ),
     );
