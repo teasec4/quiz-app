@@ -2,13 +2,16 @@ import 'package:bookexample/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class AppTheme {
+  static final colorScheme = ColorScheme.fromSeed(
+      seedColor: AppColors.brandPrimary,
+      brightness: Brightness.light,
+    );
+
+    
   static ThemeData lightTheme = ThemeData(
     useMaterial3: true,
     
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: AppColors.brandPrimary,
-      brightness: Brightness.light
-    ),
+    colorScheme: colorScheme,
     
     scaffoldBackgroundColor: Colors.white,
     
@@ -17,7 +20,7 @@ class AppTheme {
     ),
     
     floatingActionButtonTheme: FloatingActionButtonThemeData(
-      backgroundColor: AppColors.brandPrimary,
+      backgroundColor: colorScheme.primary,
       foregroundColor: Colors.white,
       elevation: 4,
       hoverElevation: 8,
@@ -47,9 +50,9 @@ class AppTheme {
       
       iconTheme: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
-          return const IconThemeData(
+          return IconThemeData(
             size: 26,
-            color: AppColors.brandPrimary,
+            color: colorScheme.primary,
           );
         }
         return const IconThemeData(
@@ -61,7 +64,7 @@ class AppTheme {
     
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.brandPrimary,
+        backgroundColor: colorScheme.primary,
         foregroundColor: Colors.white,
       ),
     ),

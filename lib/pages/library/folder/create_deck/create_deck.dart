@@ -18,6 +18,7 @@ class _CreateDeckState extends State<CreateDeck> {
   final _formKey = GlobalKey<FormState>();
   List<CardFormTextFormField> cards = [CardFormTextFormField()];
   final _deckTitle = TextEditingController();
+  late FocusNode _deckTitleFocus;
   bool _hasChanges = false;
   late AppState _appState;
 
@@ -25,6 +26,11 @@ class _CreateDeckState extends State<CreateDeck> {
   void initState() {
     super.initState();
     _appState = context.read<AppState>();
+    _deckTitleFocus = FocusNode();
+    // Request focus for DeckTitle after build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _deckTitleFocus.requestFocus();
+    });
   }
 
   @override
@@ -33,6 +39,7 @@ class _CreateDeckState extends State<CreateDeck> {
       card.dispose();
     }
     _deckTitle.dispose();
+    _deckTitleFocus.dispose();
     super.dispose();
   }
 
@@ -167,7 +174,7 @@ class _CreateDeckState extends State<CreateDeck> {
                 labelText: "Front",
                 border: OutlineInputBorder(),
               ),
-              maxLines: 3,
+              maxLines: 2,
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
                   return "Front required";
@@ -186,7 +193,7 @@ class _CreateDeckState extends State<CreateDeck> {
                 labelText: "Back",
                 border: OutlineInputBorder(),
               ),
-              maxLines: 4,
+              maxLines: 2,
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
                   return "Back required";
@@ -239,25 +246,12 @@ class _CreateDeckState extends State<CreateDeck> {
           title: const Text("Create Deck"),
           elevation: 2,
           actions: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () {
-                      context.pop();
-                    },
-                    tooltip: 'Cancel',
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.save),
-                    onPressed: _saveCard,
-                    tooltip: 'Save deck',
-                  ),
-                ],
-              ),
+            IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: () {
+                context.pop();
+              },
+              tooltip: 'Cancel',
             ),
           ],
         ),
@@ -266,6 +260,7 @@ class _CreateDeckState extends State<CreateDeck> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: TextField(
+                focusNode: _deckTitleFocus,
                 controller: _deckTitle,
                 onChanged: (_) {
                   setState(() {
@@ -278,7 +273,7 @@ class _CreateDeckState extends State<CreateDeck> {
                   prefixIcon: const Icon(Icons.book),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 16,
-                    vertical: 16,
+                    vertical: 12,
                   ),
                 ),
               ),
@@ -287,7 +282,7 @@ class _CreateDeckState extends State<CreateDeck> {
               child: Form(
                 key: _formKey,
                 child: ListView.builder(
-                  padding: const EdgeInsets.only(bottom: 80),
+                  padding: const EdgeInsets.only(bottom: 100),
                   itemCount: cards.length,
                   itemBuilder: (context, index) => _buildCardForm(index),
                 ),
@@ -295,11 +290,27 @@ class _CreateDeckState extends State<CreateDeck> {
             ),
           ],
         ),
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: _addCard,
-          icon: const Icon(Icons.add),
-          label: const Text("Add Card"),
-          tooltip: 'Add a new flashcard',
+        floatingActionButton: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FloatingActionButton.extended(
+              onPressed: _addCard,
+              icon: const Icon(Icons.add),
+              label: const Text("Add Card"),
+              tooltip: 'Add a new flashcard',
+              heroTag: 'add_card',
+            ),
+            const SizedBox(height: 12),
+            FloatingActionButton.extended(
+              onPressed: _saveCard,
+              icon: const Icon(Icons.save),
+              label: const Text("Save Deck"),
+              backgroundColor: Colors.green,
+              tooltip: 'Save this deck',
+              heroTag: 'save_deck',
+            ),
+          ],
         ),
       ),
     );

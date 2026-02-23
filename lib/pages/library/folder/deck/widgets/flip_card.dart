@@ -75,10 +75,7 @@ class _FlipCardState extends State<FlipCard>
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: isBack
-                        ? [
-                            Colors.blue.shade100,
-                            Colors.blue.shade200,
-                          ]
+                        ? [Colors.white, Colors.grey.shade200]
                         : [Colors.white, Colors.grey.shade200],
                   ),
                 ),

@@ -1,6 +1,6 @@
+import 'package:bookexample/pages/library/folder/deck/widgets/flip_card.dart';
 import 'package:bookexample/provider/mock_data_models.dart';
 import 'package:bookexample/provider/mock_data_provider.dart';
-import 'package:bookexample/widgets/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';

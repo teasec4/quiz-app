@@ -43,7 +43,7 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
       duration: const Duration(milliseconds: 250),
     );
     _animation = Tween<double>(begin: 0, end: 0).animate(_controller);
-    
+
     // Get cards from AppState
     final appState = context.read<AppState>();
     cards = appState.getCardsByDeck(widget.deckId);
@@ -155,17 +155,16 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
       ),
       child: Text(
         '$icon $value',
-        style: TextStyle(
-          color: color,
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(color: color, fontWeight: FontWeight.bold),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final displayIndex = currentIndex >= cards.length ? cards.length - 1 : currentIndex;
+    final displayIndex = currentIndex >= cards.length
+        ? cards.length - 1
+        : currentIndex;
     final card = cards[displayIndex];
 
     return Scaffold(
@@ -189,50 +188,9 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
             totalCards: cards.length,
             correctCount: correctCount,
             incorrectCount: incorrectCount,
-            statBoxBuilder: (icon, value, color) => _statBox(icon, value, color),
+            statBoxBuilder: (icon, value, color) =>
+                _statBox(icon, value, color),
           ),
-          // Counter hints row
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  children: [
-                    const Text(
-                      '← Incorrect',
-                      style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      '$incorrectCount/${cards.length}',
-                      style: const TextStyle(
-                        color: Colors.red,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    const Text(
-                      'Correct →',
-                      style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      '$correctCount/${cards.length}',
-                      style: const TextStyle(
-                        color: Colors.green,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-
           Expanded(
             child: Center(
               child: flash_card_widget.FlashCardWidget(

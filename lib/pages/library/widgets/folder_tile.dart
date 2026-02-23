@@ -22,10 +22,10 @@ class FolderTile extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: ListTile(
-        leading: const Icon(
+        leading: Icon(
           Icons.folder_outlined,
           size: 32,
-          color: AppColors.brandPrimary,
+          color: Theme.of(context).colorScheme.primary,
         ),
         title: Text(
           folderName,
