@@ -1,5 +1,8 @@
+import 'package:bookexample/provider/mock_data_models.dart';
+import 'package:bookexample/provider/mock_data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class DeckPage extends StatefulWidget {
   final String folderId;
@@ -10,18 +13,12 @@ class DeckPage extends StatefulWidget {
   State<DeckPage> createState() => _DeckPageState();
 }
 
-class _DeckPageState extends State<DeckPage> {
+class _DeckPageState extends State<DeckPage> with SingleTickerProviderStateMixin {
   int currentCardIndex = 0;
   late ScrollController _scrollController;
   double _scrollOffset = 0;
-
-  final List<Map<String, String>> cards = [
-    {'front': 'What is Flutter?', 'back': 'A cross-platform mobile framework'},
-    {'front': 'What is Dart?', 'back': 'A programming language for Flutter'},
-    {'front': 'What is Material Design?', 'back': 'Google design system'},
-    {'front': 'What is a Widget?', 'back': 'Basic building block in Flutter'},
-    {'front': 'What is State?', 'back': 'Data that determines widget behavior'},
-  ];
+  late Deck _deck;
+  late List<FlashCard> _cards;
 
   final List<Map<String, String>> testOptions = [
     {
@@ -42,6 +39,11 @@ class _DeckPageState extends State<DeckPage> {
   void initState() {
     super.initState();
     _scrollController = ScrollController();
+    
+    // Get deck and cards from AppState
+    final appState = context.read<AppState>();
+    _deck = appState.getDeckById(widget.deckId)!;
+    _cards = appState.getCardsByDeck(widget.deckId);
   }
 
   @override
@@ -56,48 +58,50 @@ class _DeckPageState extends State<DeckPage> {
         onPageChanged: (index) {
           setState(() => currentCardIndex = index);
         },
-        itemCount: cards.length,
+        itemCount: _cards.length,
         itemBuilder: (context, index) {
+          final card = _cards[index];
           return Padding(
             padding: const EdgeInsets.all(24),
-            child: Card(
-              elevation: 8,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Colors.white, Colors.grey.shade200],
-                  ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      cards[index]['front'] ?? '',
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    Text(
-                      cards[index]['back'] ?? '',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.black, fontSize: 16),
-                    ),
-                  ],
-                ),
-              ),
+            child: FlipCard(
+              front: card.front,
+              back: card.back,
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildFlipCard(String front, String back) {
+    return Card(
+      elevation: 8,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Colors.white, Colors.grey.shade200],
+          ),
+        ),
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Text(
+              front,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -135,13 +139,13 @@ class _DeckPageState extends State<DeckPage> {
                         Icon(Icons.style, color: Theme.of(context).colorScheme.primary, size: 32),
                         const SizedBox(height: 8),
                         Text(
-                          '${cards.length} cards',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+                           '${_cards.length} cards',
+                           style: const TextStyle(
+                             color: Colors.white,
+                             fontSize: 14,
+                             fontWeight: FontWeight.w600,
+                           ),
+                         ),
                       ],
                     ),
                   ),
@@ -160,7 +164,7 @@ class _DeckPageState extends State<DeckPage> {
     bool isCollapsed = _scrollOffset > 0; // любой скрол = стопка
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Deck's title")),
+      appBar: AppBar(title: Text(_deck.title)),
       body: NotificationListener<ScrollUpdateNotification>(
         onNotification: (notification) {
           // Только вертикальный скрол
@@ -206,8 +210,8 @@ class _DeckPageState extends State<DeckPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: List.generate(
-                            cards.length,
-                            (index) => Container(
+                             _cards.length,
+                             (index) => Container(
                               width: 8,
                               height: 8,
                               margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -326,5 +330,115 @@ class _DeckPageState extends State<DeckPage> {
       default:
         return Icons.help_outline;
     }
+  }
+}
+
+class FlipCard extends StatefulWidget {
+  final String front;
+  final String back;
+
+  const FlipCard({
+    required this.front,
+    required this.back,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<FlipCard> createState() => _FlipCardState();
+}
+
+class _FlipCardState extends State<FlipCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  bool _isFront = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+
+    _animation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _toggleFlip() {
+    if (_isFront) {
+      _controller.forward();
+    } else {
+      _controller.reverse();
+    }
+    setState(() => _isFront = !_isFront);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: _toggleFlip,
+      child: AnimatedBuilder(
+        animation: _animation,
+        builder: (context, child) {
+          final angle = _animation.value * 3.14159; // π
+          final isBack = _animation.value > 0.5;
+
+          return Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.identity()
+              ..setEntry(3, 2, 0.001)
+              ..rotateY(angle),
+            child: Card(
+              elevation: 8,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: isBack
+                        ? [
+                            Colors.blue.shade100,
+                            Colors.blue.shade200,
+                          ]
+                        : [Colors.white, Colors.grey.shade200],
+                  ),
+                ),
+                child: Transform(
+                  alignment: Alignment.center,
+                  transform: Matrix4.identity()
+                    ..rotateY(isBack ? 3.14159 : 0),
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Text(
+                        isBack ? widget.back : widget.front,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: isBack ? 18 : 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 }
