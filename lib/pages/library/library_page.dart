@@ -20,21 +20,22 @@ class _LibraryPageState extends State<LibraryPage> {
       isScrollControlled: true,
       useRootNavigator: true,
     );
-    
-    // avoid async gap 
+
+    // avoid async gap
     if (!mounted) return;
-    
+
     if (newFolderName != null) {
       // here is creating logic
       context.read<AppState>().addFolder(newFolderName);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           duration: Duration(seconds: 1),
-          content: Text('Folder "${newFolderName}" created!')),
+          content: Text('Folder "${newFolderName}" created!'),
+        ),
       );
-    }  
+    }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final folders = context.watch<AppState>().folders;
@@ -50,24 +51,24 @@ class _LibraryPageState extends State<LibraryPage> {
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 500),
         child: folders.isEmpty
-        ? _buildEmptyState()
-        : ListView.builder(
-          itemCount: folders.length,
-          itemBuilder: (context, index) {
-            final folder = folders[index];
-            return FolderTile(
-              folderName: folder.name,
-              itemCount: folders.length,
-              onTap: () {
-                context.go('/library/folder/${folder.id}');
-              },
-            );
-          },
-        ),
+            ? _buildEmptyState()
+            : ListView.builder(
+                itemCount: folders.length,
+                itemBuilder: (context, index) {
+                  final folder = folders[index];
+                  return FolderTile(
+                    folderName: folder.name,
+                    itemCount: folders.length,
+                    onTap: () {
+                      context.go('/library/folder/${folder.id}');
+                    },
+                  );
+                },
+              ),
       ),
     );
   }
-  
+
   Widget _buildEmptyState() {
     return Center(
       child: Column(

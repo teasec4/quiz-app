@@ -1,3 +1,4 @@
+import 'package:bookexample/core/theme/theme_preview_page.dart';
 import 'package:bookexample/core/widgets/bottom_navigation_bar.dart';
 import 'package:bookexample/pages/library/folder/create_deck/create_deck.dart';
 
@@ -35,7 +36,7 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: '/study',
-                builder: (context, state) => const StudyPage(),
+                builder: (context, state) => const ThemePreviewPage(),
                 routes: [],
               ),
             ],
