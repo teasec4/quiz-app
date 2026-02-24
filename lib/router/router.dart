@@ -7,6 +7,7 @@ import 'package:bookexample/pages/library/folder/folder_page.dart';
 import 'package:bookexample/pages/library/library_page.dart';
 import 'package:bookexample/pages/session/flashcards_session.dart';
 import 'package:bookexample/pages/settings/settings_page.dart';
+import 'package:bookexample/pages/stats/stats_page.dart';
 import 'package:bookexample/pages/study/study_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -89,7 +90,7 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: '/stats',
-                builder: (context, state) => const Center(child: Text("3")),
+                builder: (context, state) => const StatsPage(),
               ),
             ],
           ),

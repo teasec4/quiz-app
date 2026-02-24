@@ -1,4 +1,5 @@
 import 'package:bookexample/pages/library/folder/deck/widgets/flip_card.dart';
+import 'package:bookexample/pages/library/folder/deck/widgets/study_mode_tile.dart';
 import 'package:bookexample/provider/mock_data_models.dart';
 import 'package:bookexample/provider/mock_data_provider.dart';
 import 'package:flutter/material.dart';
@@ -14,37 +15,52 @@ class DeckPage extends StatefulWidget {
   State<DeckPage> createState() => _DeckPageState();
 }
 
-class _DeckPageState extends State<DeckPage> with SingleTickerProviderStateMixin {
+class _DeckPageState extends State<DeckPage>
+    with SingleTickerProviderStateMixin {
   int currentCardIndex = 0;
   late ScrollController _scrollController;
   double _scrollOffset = 0;
   late Deck _deck;
   late List<FlashCard> _cards;
-
-  final List<Map<String, String>> testOptions = [
-    {
-      'title': 'Multiple Choice',
-      'subtitle': '5 questions',
-      'icon': 'check_circle',
-    },
-    {'title': 'Flashcards', 'subtitle': 'Learn mode', 'icon': 'style'},
-    {'title': 'Write Answer', 'subtitle': '3 questions', 'icon': 'edit'},
-    {
-      'title': 'Matching',
-      'subtitle': 'Pair terms',
-      'icon': 'connect_without_contact',
-    },
-  ];
+  late List<StudyMode> studyModes;
 
   @override
   void initState() {
     super.initState();
     _scrollController = ScrollController();
-    
+
     // Get deck and cards from AppState
     final appState = context.read<AppState>();
     _deck = appState.getDeckById(widget.deckId)!;
     _cards = appState.getCardsByDeck(widget.deckId);
+    
+    studyModes = [
+        StudyMode(
+          title: 'Flashcards',
+          subtitle: '${_cards.length} cards',
+          icon: Icons.style,
+          onTap: () {
+            context.go(
+              '/study/session/${widget.folderId}/${widget.deckId}',
+            );
+          },
+        ),
+        StudyMode(
+          title: 'Multiple Choice',
+          subtitle: '5 questions',
+          icon: Icons.check_circle_outline,
+        ),
+        StudyMode(
+          title: 'Write Answer',
+          subtitle: '3 questions',
+          icon: Icons.edit,
+        ),
+        StudyMode(
+          title: 'Matching',
+          subtitle: 'Pair terms',
+          icon: Icons.connect_without_contact,
+        ),
+      ];
   }
 
   @override
@@ -64,10 +80,7 @@ class _DeckPageState extends State<DeckPage> with SingleTickerProviderStateMixin
           final card = _cards[index];
           return Padding(
             padding: const EdgeInsets.all(24),
-            child: FlipCard(
-              front: card.front,
-              back: card.back,
-            ),
+            child: FlipCard(front: card.front, back: card.back),
           );
         },
       ),
@@ -97,23 +110,30 @@ class _DeckPageState extends State<DeckPage> with SingleTickerProviderStateMixin
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: [Theme.of(context).colorScheme.primary.withOpacity(0.6), Theme.of(context).colorScheme.primary],
+                      colors: [
+                        Theme.of(context).colorScheme.primary.withOpacity(0.6),
+                        Theme.of(context).colorScheme.primary,
+                      ],
                     ),
                   ),
                   child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.style, color: Theme.of(context).colorScheme.primary, size: 32),
+                        Icon(
+                          Icons.style,
+                          color: Theme.of(context).colorScheme.primary,
+                          size: 32,
+                        ),
                         const SizedBox(height: 8),
                         Text(
-                           '${_cards.length} cards',
-                           style: const TextStyle(
-                             color: Colors.white,
-                             fontSize: 14,
-                             fontWeight: FontWeight.w600,
-                           ),
-                         ),
+                          '${_cards.length} cards',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -148,7 +168,7 @@ class _DeckPageState extends State<DeckPage> with SingleTickerProviderStateMixin
           slivers: [
             // Collapsible card carousel
             SliverAppBar(
-              backgroundColor: Colors.transparent,
+              backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
               pinned: false,
               floating: false,
               expandedHeight: cardHeight,
@@ -178,8 +198,8 @@ class _DeckPageState extends State<DeckPage> with SingleTickerProviderStateMixin
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: List.generate(
-                             _cards.length,
-                             (index) => Container(
+                            _cards.length,
+                            (index) => Container(
                               width: 8,
                               height: 8,
                               margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -196,107 +216,27 @@ class _DeckPageState extends State<DeckPage> with SingleTickerProviderStateMixin
                     ),
             ),
             // Test options list
-                        SliverList(
-              delegate: SliverChildBuilderDelegate((context, index) {
-                final option = testOptions[index];
-                if (index == 0) {
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  final mode = studyModes[index];
+            
                   return Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 6,
                     ),
-                    child: Container(
-                      height: 60,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        gradient: LinearGradient(
-                          colors: [Theme.of(context).colorScheme.primary, Theme.of(context).colorScheme.primary.withOpacity(0.8)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: () {
-                            context.go('/study/session/${widget.folderId}/${widget.deckId}');
-                          },
-                          borderRadius: BorderRadius.circular(12),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Icons.play_arrow,
-                                color: Colors.white,
-                                size: 28,
-                              ),
-                              const SizedBox(width: 12),
-                              Text(
-                                "Start Flashcards",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 0.5,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                    child: ModeTile(
+                      mode: mode,
                     ),
                   );
-                }
-                return Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 6,
-                  ),
-                  child: Card(
-                    color: Colors.grey.shade100,
-                    child: ListTile(
-                      leading: Icon(
-                        _getIcon(option['icon'] ?? ''),
-                        color: Theme.of(context).colorScheme.primary,
-                        size: 28,
-                      ),
-                      title: Text(
-                        option['title'] ?? '',
-                        style: const TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                      subtitle: Text(option['subtitle'] ?? ''),
-                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                      onTap: () {},
-                    ),
-                  ),
-                );
-              }, childCount: testOptions.length),
+                },
+                childCount: studyModes.length,
+              ),
             ),
           ],
         ),
       ),
     );
-  }
-
-  IconData _getIcon(String iconName) {
-    switch (iconName) {
-      case 'check_circle':
-        return Icons.check_circle_outline;
-      case 'style':
-        return Icons.style;
-      case 'edit':
-        return Icons.edit;
-      case 'connect_without_contact':
-        return Icons.connect_without_contact;
-      default:
-        return Icons.help_outline;
-    }
   }
 }
