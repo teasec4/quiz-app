@@ -75,6 +75,35 @@ class _CreateDeckState extends State<CreateDeck> {
   }
 
   Future<void> _showSaveConfirmation() async {
+    // Validate before showing confirmation
+    // Deck title is Empty ERROR
+    if (_deckTitle.text.trim().isEmpty) {
+      setState(() {
+        _deckTitleError = true;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Deck title is required'),
+          backgroundColor: Theme.of(context).colorScheme.error,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
+    // Some of Cards field are empty ERROR
+    if (!_formKey.currentState!.validate()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Please fill all required fields'),
+          backgroundColor: Theme.of(context).colorScheme.error,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
+    // If validation passed, show confirmation dialog
     final confirm = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -107,25 +136,6 @@ class _CreateDeckState extends State<CreateDeck> {
   }
 
   void _saveCard() {
-    // Deck title is Empty ERROR
-    if (_deckTitle.text.trim().isEmpty) {
-      setState(() {
-        _deckTitleError = true;
-      });
-      return;
-    }
-
-    // Some of Cards field are empty ERROR
-    if (!_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Please fill all required fields'),
-          backgroundColor: Theme.of(context).colorScheme.error,
-          duration: const Duration(seconds: 2),
-        ),
-      );
-      return;
-    }
 
     final List<FlashCard> newCards = cards.map((card) {
       return FlashCard(
