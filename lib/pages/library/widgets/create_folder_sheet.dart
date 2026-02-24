@@ -1,9 +1,9 @@
-import 'package:bookexample/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class CreateFolderSheet extends StatefulWidget {
-  const CreateFolderSheet({super.key});
+  final String? oldName;
+  const CreateFolderSheet({super.key,this.oldName});
 
   @override
   State<CreateFolderSheet> createState() => _CreateFolderSheetState();
@@ -16,7 +16,7 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController();
+    _nameController = TextEditingController(text: widget.oldName ?? "");
     _nameController.addListener(() {
       setState(() {
         _hasError = false;
@@ -48,6 +48,7 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
+              widget.oldName != null ? "Rename Folder" : 
               'Create New Folder',
               style: Theme.of(
                 context,
@@ -55,6 +56,7 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
             ),
             const SizedBox(height: 20),
             TextField(
+              
               controller: _nameController,
               decoration: InputDecoration(
                 hintText: 'Enter folder name',
@@ -112,7 +114,7 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
                       }
                       context.pop(_nameController.text);
                     },
-                    child: const Text('Create'),
+                    child: Text(widget.oldName != null ? 'Rename' : 'Create'),
                   ),
                 ),
               ],

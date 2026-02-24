@@ -1,9 +1,8 @@
-import 'package:bookexample/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class FolderTile extends StatelessWidget {
   final String folderName;
-  final int itemCount;
+  final int deckCount;
   final VoidCallback? onTap;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
@@ -11,7 +10,7 @@ class FolderTile extends StatelessWidget {
   const FolderTile({
     super.key,
     required this.folderName,
-    this.itemCount = 0,
+    this.deckCount = 0,
     this.onTap,
     this.onEdit,
     this.onDelete,
@@ -32,12 +31,13 @@ class FolderTile extends StatelessWidget {
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
         subtitle: Text(
-          itemCount == 1 ? '1 item' : '$itemCount items',
+          "${deckCount} decks",
           style: TextStyle(fontSize: 14, color: Colors.grey[600]),
         ),
         trailing: PopupMenuButton(
           itemBuilder: (context) => [
             PopupMenuItem(
+              onTap: onEdit,
               child: const Row(
                 children: [
                   Icon(Icons.edit_outlined, size: 20),
@@ -45,9 +45,9 @@ class FolderTile extends StatelessWidget {
                   Text('Edit name'),
                 ],
               ),
-              onTap: onEdit,
             ),
             PopupMenuItem(
+              onTap: onDelete,
               child: Row(
                 children: [
                   Icon(
@@ -64,7 +64,6 @@ class FolderTile extends StatelessWidget {
                   ),
                 ],
               ),
-              onTap: onDelete,
             ),
           ],
         ),

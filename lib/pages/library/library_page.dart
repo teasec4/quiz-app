@@ -13,6 +13,7 @@ class LibraryPage extends StatefulWidget {
 }
 
 class _LibraryPageState extends State<LibraryPage> {
+  // creating folder bottom sheet
   Future<void> _showCreateFolder() async {
     final newFolderName = await showModalBottomSheet<String?>(
       context: context,
@@ -35,6 +36,30 @@ class _LibraryPageState extends State<LibraryPage> {
       );
     }
   }
+  
+  // rename folder bottom sheet
+  Future<void> _showRenameFolder(String folderId, String oldName) async {
+    final newFolderName = await showModalBottomSheet<String?>(
+      context: context,
+      builder: (context) => CreateFolderSheet(oldName:oldName),
+      isScrollControlled: true,
+      useRootNavigator: true,
+    );
+
+    // avoid async gap
+    if (!mounted) return;
+
+    if (newFolderName != null) {
+      // here is creating logic
+      context.read<AppState>().renameFolder(folderId, newFolderName);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          duration: Duration(seconds: 1),
+          content: Text('Folder "$oldName" renamed to "$newFolderName"'),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,18 +74,26 @@ class _LibraryPageState extends State<LibraryPage> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 500),
+        duration: const Duration(seconds: 1),
         child: folders.isEmpty
             ? _buildEmptyState()
             : ListView.builder(
                 itemCount: folders.length,
                 itemBuilder: (context, index) {
                   final folder = folders[index];
+                  final decks = context.watch<AppState>().decks;
+                  final deckCount = decks.where((d) => d.folderId == folder.id).length;
                   return FolderTile(
                     folderName: folder.name,
-                    itemCount: folders.length,
+                    deckCount: deckCount,
                     onTap: () {
                       context.go('/library/folder/${folder.id}');
+                    },
+                    onDelete: () {
+                      context.read<AppState>().deleteFolder(folder.id);
+                    },
+                    onEdit: () {
+                      _showRenameFolder(folder.id ,folder.name);
                     },
                   );
                 },

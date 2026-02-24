@@ -33,34 +33,32 @@ class _DeckPageState extends State<DeckPage>
     final appState = context.read<AppState>();
     _deck = appState.getDeckById(widget.deckId)!;
     _cards = appState.getCardsByDeck(widget.deckId);
-    
+
     studyModes = [
-        StudyMode(
-          title: 'Flashcards',
-          subtitle: '${_cards.length} cards',
-          icon: Icons.style,
-          onTap: () {
-            context.go(
-              '/study/session/${widget.folderId}/${widget.deckId}',
-            );
-          },
-        ),
-        StudyMode(
-          title: 'Multiple Choice',
-          subtitle: '5 questions',
-          icon: Icons.check_circle_outline,
-        ),
-        StudyMode(
-          title: 'Write Answer',
-          subtitle: '3 questions',
-          icon: Icons.edit,
-        ),
-        StudyMode(
-          title: 'Matching',
-          subtitle: 'Pair terms',
-          icon: Icons.connect_without_contact,
-        ),
-      ];
+      StudyMode(
+        title: 'Flashcards',
+        subtitle: '${_cards.length} cards',
+        icon: Icons.style,
+        onTap: () {
+          context.go('/study/session/${widget.folderId}/${widget.deckId}');
+        },
+      ),
+      StudyMode(
+        title: 'Multiple Choice',
+        subtitle: '5 questions',
+        icon: Icons.check_circle_outline,
+      ),
+      StudyMode(
+        title: 'Write Answer',
+        subtitle: '3 questions',
+        icon: Icons.edit,
+      ),
+      StudyMode(
+        title: 'Matching',
+        subtitle: 'Pair terms',
+        icon: Icons.connect_without_contact,
+      ),
+    ];
   }
 
   @override
@@ -152,7 +150,10 @@ class _DeckPageState extends State<DeckPage>
     bool isCollapsed = _scrollOffset > 0; // любой скрол = стопка
 
     return Scaffold(
-      appBar: AppBar(title: Text(_deck.title)),
+      appBar: AppBar(
+        title: Text(_deck.title),
+        
+      ),
       body: NotificationListener<ScrollUpdateNotification>(
         onNotification: (notification) {
           // Только вертикальный скрол
@@ -168,7 +169,9 @@ class _DeckPageState extends State<DeckPage>
           slivers: [
             // Collapsible card carousel
             SliverAppBar(
-              backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
+              backgroundColor: Theme.of(
+                context,
+              ).colorScheme.surfaceContainerLow,
               pinned: false,
               floating: false,
               expandedHeight: cardHeight,
@@ -217,22 +220,17 @@ class _DeckPageState extends State<DeckPage>
             ),
             // Test options list
             SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final mode = studyModes[index];
-            
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 6,
-                    ),
-                    child: ModeTile(
-                      mode: mode,
-                    ),
-                  );
-                },
-                childCount: studyModes.length,
-              ),
+              delegate: SliverChildBuilderDelegate((context, index) {
+                final mode = studyModes[index];
+
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 6,
+                  ),
+                  child: ModeTile(mode: mode),
+                );
+              }, childCount: studyModes.length),
             ),
           ],
         ),
