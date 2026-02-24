@@ -3,6 +3,7 @@ import 'package:bookexample/models/card_form_text_form_field.dart';
 import 'package:bookexample/provider/mock_data_models.dart';
 import 'package:bookexample/provider/mock_data_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -21,6 +22,7 @@ class _CreateDeckState extends State<CreateDeck> {
   List<CardFormTextFormField> cards = [CardFormTextFormField()];
   final _deckTitle = TextEditingController();
   late FocusNode _deckTitleFocus;
+  late ScrollController _scrollController;
   bool _hasChanges = false;
   bool _deckTitleError = false;
   late AppState _appState;
@@ -30,6 +32,7 @@ class _CreateDeckState extends State<CreateDeck> {
     super.initState();
     _appState = context.read<AppState>();
     _deckTitleFocus = FocusNode();
+    _scrollController = ScrollController();
     
     // Load existing deck if editing
     if (widget.deckId != null) {
@@ -67,7 +70,40 @@ class _CreateDeckState extends State<CreateDeck> {
     }
     _deckTitle.dispose();
     _deckTitleFocus.dispose();
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  Future<void> _showSaveConfirmation() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(widget.deckId == null ? "Create Deck?" : "Save Changes?"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Deck: ${_deckTitle.text}"),
+            const SizedBox(height: 8),
+            Text("Cards: ${cards.length}"),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text("Edit More"),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text("Save"),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      _saveCard();
+    }
   }
 
   void _saveCard() {
@@ -131,6 +167,20 @@ class _CreateDeckState extends State<CreateDeck> {
       cards.add(CardFormTextFormField());
       _hasChanges = true;
     });
+    
+    // Request focus on the new card's front field and scroll to it
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      cards.last.frontFocus.requestFocus();
+      
+      // Scroll to the new card
+      final newCardIndex = cards.length - 1;
+      final scrollPosition = newCardIndex * 350.0; // Approx height of one card
+      _scrollController.animateTo(
+        scrollPosition,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+      );
+    });
   }
 
   void _removeCard(int index) async {
@@ -162,6 +212,25 @@ class _CreateDeckState extends State<CreateDeck> {
         const SnackBar(
           content: Text('Card deleted'),
           duration: Duration(seconds: 1),
+        ),
+      );
+    }
+  }
+
+  Future<void> _pasteToField(TextEditingController controller) async {
+    try {
+      final ClipboardData? data = await Clipboard.getData('text/plain');
+      if (data != null && data.text != null) {
+        controller.text = data.text!;
+        setState(() {
+          _hasChanges = true;
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Could not paste from clipboard'),
+          backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );
     }
@@ -203,14 +272,20 @@ class _CreateDeckState extends State<CreateDeck> {
             ),
             const SizedBox(height: 12),
             TextFormField(
+              focusNode: card.frontFocus,
               controller: card.frontController,
-              textInputAction: TextInputAction.done,
+              textInputAction: TextInputAction.next,
               onFieldSubmitted: (_) {
-                FocusScope.of(context).unfocus();
+                FocusScope.of(context).requestFocus(card.backFocus);
               },
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: "Front",
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.paste),
+                  onPressed: () => _pasteToField(card.frontController),
+                  tooltip: "Paste from clipboard",
+                ),
               ),
               maxLines: 2,
               validator: (value) {
@@ -222,14 +297,20 @@ class _CreateDeckState extends State<CreateDeck> {
             ),
             const SizedBox(height: 12),
             TextFormField(
+              focusNode: card.backFocus,
               controller: card.backController,
               textInputAction: TextInputAction.done,
               onFieldSubmitted: (_) {
                 FocusScope.of(context).unfocus();
               },
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: "Back",
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.paste),
+                  onPressed: () => _pasteToField(card.backController),
+                  tooltip: "Paste from clipboard",
+                ),
               ),
               maxLines: 2,
               validator: (value) {
@@ -323,7 +404,7 @@ class _CreateDeckState extends State<CreateDeck> {
         body: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               child: TextField(
                 focusNode: _deckTitleFocus,
                 controller: _deckTitle,
@@ -332,32 +413,47 @@ class _CreateDeckState extends State<CreateDeck> {
                     _hasChanges = true;
                   });
                 },
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
                 decoration: InputDecoration(
                   labelText: "Deck Title",
-                  prefixIcon: const Icon(Icons.book),
+                  labelStyle: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  prefixIcon: Icon(
+                    Icons.menu_book,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 28,
+                  ),
                   errorText: _deckTitleError ? 'Deck title is required' : null,
+                  filled: true,
+                  fillColor: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 16,
-                    vertical: 12,
+                    vertical: 16,
                   ),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(16),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide(
                       color: _deckTitleError
                           ? Theme.of(context).colorScheme.error
-                          : Colors.grey.shade300,
+                          : Theme.of(context).colorScheme.primaryContainer.withOpacity(0.5),
+                      width: 1.5,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide(
                       color: _deckTitleError
                           ? Theme.of(context).colorScheme.error
                           : Theme.of(context).colorScheme.primary,
-                      width: 2,
+                      width: 2.5,
                     ),
                   ),
                 ),
@@ -367,6 +463,7 @@ class _CreateDeckState extends State<CreateDeck> {
               child: Form(
                 key: _formKey,
                 child: ListView.builder(
+                  controller: _scrollController,
                   padding: const EdgeInsets.only(bottom: 100),
                   itemCount: cards.length,
                   itemBuilder: (context, index) => _buildCardForm(index),
@@ -388,7 +485,7 @@ class _CreateDeckState extends State<CreateDeck> {
             ),
             const SizedBox(width: 12),
             FilledButton(
-              onPressed: _saveCard,
+              onPressed: _showSaveConfirmation,
 
               // backgroundColor: Theme.of(context).colorScheme.tertiary,
               // tooltip: 'Save this deck',

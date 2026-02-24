@@ -11,22 +11,37 @@ class CreateFolderSheet extends StatefulWidget {
 
 class _CreateFolderSheetState extends State<CreateFolderSheet> {
   late TextEditingController _nameController;
+  late FocusNode _folderNameFocus;
   bool _hasError = false;
 
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.oldName ?? "");
+    _folderNameFocus = FocusNode();
     _nameController.addListener(() {
       setState(() {
         _hasError = false;
       });
+    });
+    
+    // Request focus after build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _folderNameFocus.requestFocus();
+      // Select all text if editing
+      if (widget.oldName != null) {
+        _nameController.selection = TextSelection(
+          baseOffset: 0,
+          extentOffset: _nameController.text.length,
+        );
+      }
     });
   }
 
   @override
   void dispose() {
     _nameController.dispose();
+    _folderNameFocus.dispose();
     super.dispose();
   }
 
@@ -56,34 +71,63 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
             ),
             const SizedBox(height: 20),
             TextField(
-              
+              focusNode: _folderNameFocus,
               controller: _nameController,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
               decoration: InputDecoration(
                 hintText: 'Enter folder name',
-                prefixIcon: const Icon(Icons.folder_outlined),
+                labelText: 'Folder Name',
+                labelStyle: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+                prefixIcon: Icon(
+                  Icons.folder,
+                  color: Theme.of(context).colorScheme.primary,
+                  size: 24,
+                ),
                 errorText: _hasError ? 'Folder name is required' : null,
+                filled: true,
+                fillColor: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.25),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide(
                     color: _hasError
                         ? Theme.of(context).colorScheme.error
-                        : Colors.grey.shade300,
+                        : Theme.of(context).colorScheme.primaryContainer.withOpacity(0.5),
+                    width: 1.5,
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide(
                     color: _hasError
                         ? Theme.of(context).colorScheme.error
                         : Theme.of(context).colorScheme.primary,
-                    width: 2,
+                    width: 2.5,
                   ),
                 ),
               ),
               textInputAction: TextInputAction.done,
+              onSubmitted: (_) {
+                if (_nameController.text.trim().isEmpty) {
+                  setState(() {
+                    _hasError = true;
+                  });
+                  return;
+                }
+                context.pop(_nameController.text);
+              },
             ),
             const SizedBox(height: 20),
             Row(
