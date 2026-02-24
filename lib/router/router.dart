@@ -78,6 +78,17 @@ class AppRouter {
                           );
                         },
                       ),
+                      GoRoute(
+                        path: 'editdeck/:deckId',
+                        builder: (context, state) {
+                          final folderId = state.pathParameters['folderId'];
+                          final deckId = state.pathParameters['deckId'];
+                          return CreateDeck(
+                            folderId: folderId ?? "",
+                            deckId: deckId,
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ],

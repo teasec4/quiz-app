@@ -36,12 +36,12 @@ class _LibraryPageState extends State<LibraryPage> {
       );
     }
   }
-  
+
   // rename folder bottom sheet
   Future<void> _showRenameFolder(String folderId, String oldName) async {
     final newFolderName = await showModalBottomSheet<String?>(
       context: context,
-      builder: (context) => CreateFolderSheet(oldName:oldName),
+      builder: (context) => CreateFolderSheet(oldName: oldName),
       isScrollControlled: true,
       useRootNavigator: true,
     );
@@ -59,6 +59,34 @@ class _LibraryPageState extends State<LibraryPage> {
         ),
       );
     }
+  }
+
+  void _showDeleteConfirmation(String folderId, String folderName) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Delete Folder - $folderName?'),
+        content: const Text(
+          'This will also delete all decks and cards inside.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              context.read<AppState>().deleteFolder(folderId);
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Folder "$folderName" deleted')),
+              );
+            },
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -82,7 +110,9 @@ class _LibraryPageState extends State<LibraryPage> {
                 itemBuilder: (context, index) {
                   final folder = folders[index];
                   final decks = context.watch<AppState>().decks;
-                  final deckCount = decks.where((d) => d.folderId == folder.id).length;
+                  final deckCount = decks
+                      .where((d) => d.folderId == folder.id)
+                      .length;
                   return FolderTile(
                     folderName: folder.name,
                     deckCount: deckCount,
@@ -90,10 +120,10 @@ class _LibraryPageState extends State<LibraryPage> {
                       context.go('/library/folder/${folder.id}');
                     },
                     onDelete: () {
-                      context.read<AppState>().deleteFolder(folder.id);
+                      _showDeleteConfirmation(folder.id, folder.name);
                     },
                     onEdit: () {
-                      _showRenameFolder(folder.id ,folder.name);
+                      _showRenameFolder(folder.id, folder.name);
                     },
                   );
                 },

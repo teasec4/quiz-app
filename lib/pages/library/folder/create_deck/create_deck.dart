@@ -9,7 +9,8 @@ import 'package:uuid/uuid.dart';
 
 class CreateDeck extends StatefulWidget {
   final String folderId;
-  const CreateDeck({super.key, required this.folderId});
+  final String? deckId;
+  const CreateDeck({super.key, required this.folderId, this.deckId});
 
   @override
   State<CreateDeck> createState() => _CreateDeckState();
@@ -29,6 +30,23 @@ class _CreateDeckState extends State<CreateDeck> {
     super.initState();
     _appState = context.read<AppState>();
     _deckTitleFocus = FocusNode();
+    
+    // Load existing deck if editing
+    if (widget.deckId != null) {
+      final deck = _appState.getDeckById(widget.deckId!);
+      if (deck != null) {
+        _deckTitle.text = deck.title;
+        final deckCards = _appState.getCardsByDeck(widget.deckId!);
+        cards.clear();
+        for (var card in deckCards) {
+          final cardForm = CardFormTextFormField();
+          cardForm.frontController.text = card.front;
+          cardForm.backController.text = card.back;
+          cards.add(cardForm);
+        }
+      }
+    }
+    
     // Request focus for DeckTitle after build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _deckTitleFocus.requestFocus();
@@ -82,18 +100,29 @@ class _CreateDeckState extends State<CreateDeck> {
       );
     }).toList();
 
-    _appState.addDeckWithCards(widget.folderId, _deckTitle.text, newCards);
+    if (widget.deckId == null) {
+      // Creating new deck
+      _appState.addDeckWithCards(widget.folderId, _deckTitle.text, newCards);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Deck saved successfully!'),
+          backgroundColor: Theme.of(context).colorScheme.tertiary,
+          duration: const Duration(seconds: 1),
+        ),
+      );
+    } else {
+      // Editing existing deck
+      _appState.updateDeckWithCards(widget.deckId!, _deckTitle.text, newCards);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Deck updated successfully!'),
+          backgroundColor: Theme.of(context).colorScheme.tertiary,
+          duration: const Duration(seconds: 1),
+        ),
+      );
+    }
 
     context.pop();
-
-    // save logic
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Deck saved successfully!'),
-        backgroundColor: Theme.of(context).colorScheme.tertiary,
-        duration: const Duration(seconds: 1),
-      ),
-    );
     _hasChanges = false;
   }
 
@@ -252,7 +281,7 @@ class _CreateDeckState extends State<CreateDeck> {
       child: Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
-          title: const Text("Create Deck"),
+          title: Text(widget.deckId == null ? "Create Deck" : "Edit Deck"),
           elevation: 2,
           actions: [
             IconButton(

@@ -1,33 +1,71 @@
 import 'package:bookexample/pages/library/folder/widgets/deck_tile.dart';
+import 'package:bookexample/pages/library/widgets/create_folder_sheet.dart';
 import 'package:bookexample/provider/mock_data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-class FolderPage extends StatelessWidget {
+class FolderPage extends StatefulWidget {
   final String folderId;
   const FolderPage({super.key, required this.folderId});
+
+  @override
+  State<FolderPage> createState() => _FolderPageState();
+}
+
+class _FolderPageState extends State<FolderPage> {
+  // edit deck
+  void _editDeck(String deckId) {
+    context.go('/library/folder/${widget.folderId}/editdeck/$deckId');
+  }
+
+  // delete deck
+  void _showDeleteConfirmation(String deckId, String deckTitle) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Deck?'),
+        content: Text('All $deckTitle cards will be deleted.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              context.read<AppState>().deleteDeck(deckId);
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Deck "$deckTitle" deleted')),
+              );
+            },
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppState>();
 
-    final folder = appState.folders.firstWhere((f) => f.id == folderId);
+    final folder = appState.folders.firstWhere((f) => f.id == widget.folderId);
 
     final decks = appState.getDecksByFolder(folder.id);
 
     return Scaffold(
-      appBar: AppBar(title: Text("${folder.name}")),
+      appBar: AppBar(title: Text(folder.name)),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.go('/library/folder/${folderId}/createdeck');
+          context.go('/library/folder/${widget.folderId}/createdeck');
         },
         mini: true,
         child: const Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 500),
+        duration: const Duration(seconds: 1),
         child: decks.isEmpty
             ? _buildEmptyState()
             : Padding(
@@ -48,8 +86,14 @@ class FolderPage extends StatelessWidget {
                       learnedCount: deck.learnedCount,
                       onTap: () {
                         context.go(
-                          '/library/folder/${folderId}/deck/${deck.id}',
+                          '/library/folder/${widget.folderId}/deck/${deck.id}',
                         );
+                      },
+                      onEdit: () {
+                        _editDeck(deck.id);
+                      },
+                      onDelete: () {
+                        _showDeleteConfirmation(deck.id, deck.title);
                       },
                     );
                   },

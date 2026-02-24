@@ -74,6 +74,36 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void renameDeck(String deckId, String newTitle) {
+    final index = decks.indexWhere((d) => d.id == deckId);
+    if (index == -1) return;
+    decks[index] = decks[index].copyWith(title: newTitle);
+    notifyListeners();
+  }
+
+  void updateDeckWithCards(String deckId, String newTitle, List<FlashCard> newCards) {
+    // Update deck title
+    final deckIndex = decks.indexWhere((d) => d.id == deckId);
+    if (deckIndex == -1) return;
+    
+    // Remove old cards
+    cards.removeWhere((c) => c.deckId == deckId);
+    
+    // Update deck with new title and card count
+    decks[deckIndex] = decks[deckIndex].copyWith(
+      title: newTitle,
+      cardCount: newCards.length,
+    );
+    
+    // Add new cards with correct deckId
+    final cardsWithDeckId = newCards.map((card) {
+      return card.copyWith(deckId: deckId);
+    }).toList();
+    cards.addAll(cardsWithDeckId);
+    
+    notifyListeners();
+  }
+
   // === CARD OPERATIONS ===
 
   void addCard(String deckId, String front, String back) {
