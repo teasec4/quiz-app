@@ -13,7 +13,6 @@ class AppBottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NavigationBar(
-      overlayColor: WidgetStateProperty.all(Colors.transparent),
       selectedIndex: currentIndex,
       onDestinationSelected: onTap,
       destinations: const [
@@ -36,6 +35,11 @@ class AppBottomBar extends StatelessWidget {
           icon: Icon(Icons.settings_outlined),
           selectedIcon: Icon(Icons.settings),
           label: "Settings",
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.color_lens_outlined),
+          selectedIcon: Icon(Icons.color_lens),
+          label: "Theme",
         ),
       ],
     );

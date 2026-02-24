@@ -56,6 +56,7 @@ class AppTheme {
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: scheme.surface,
         indicatorColor: Colors.transparent,
+        overlayColor: WidgetStateProperty.all(Colors.transparent),
 
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {

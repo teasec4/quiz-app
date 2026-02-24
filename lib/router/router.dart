@@ -115,6 +115,15 @@ class AppRouter {
               ),
             ],
           ),
+          
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/colors',
+                builder: (context, state) => const ThemePreviewPage()
+              )
+            ]
+          )
         ],
       ),
 

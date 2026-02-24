@@ -146,8 +146,8 @@ class DeckTile extends StatelessWidget {
                       value: progress,
                       minHeight: 6,
                       backgroundColor: Colors.grey[300],
-                      valueColor: const AlwaysStoppedAnimation(
-                        AppColors.brandPrimary,
+                      valueColor:  AlwaysStoppedAnimation(
+                        Theme.of(context).colorScheme.primary,
                       ),
                     ),
                   ),
