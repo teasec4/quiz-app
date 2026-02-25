@@ -1,8 +1,8 @@
-import 'package:bookexample/provider/mock_data_models.dart' as models;
+import 'package:bookexample/domain/models/flash_card.dart';
 import 'package:flutter/material.dart';
 
 class FlashCardWidget extends StatelessWidget {
-  final models.FlashCard card;
+  final FlashCard card;
   final bool showBack;
   final double dragOffset;
   final bool isAnimating;

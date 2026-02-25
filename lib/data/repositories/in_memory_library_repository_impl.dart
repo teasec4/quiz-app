@@ -2,6 +2,7 @@ import 'package:bookexample/domain/models/deck.dart';
 import 'package:bookexample/domain/models/flash_card.dart';
 import 'package:bookexample/domain/models/folder.dart';
 import 'package:bookexample/domain/repositories/library_repository.dart';
+import 'package:uuid/uuid.dart';
 
 class InMemoryLibraryRepositoryImpl implements LibraryRepository {
   final List<Folder> _folders = [];
@@ -47,21 +48,48 @@ class InMemoryLibraryRepositoryImpl implements LibraryRepository {
   }
 
   @override
-  void addDeck(Deck deck) {
-    _decks.add(deck);
-  }
-
-  @override
   void deleteDeck(String deckId) {
     _cards.removeWhere((c) => c.deckId == deckId);
     _decks.removeWhere((d) => d.id == deckId);
   }
 
   @override
-  void updateDeck(String deckId, Deck updatedDeck) {
-    final i = _decks.indexWhere((d) => d.id == deckId);
-    if (i != -1) {
-      _decks[i] = updatedDeck;
+  void addDeckWithCards(String folderId, String title, List<FlashCard> cards) {
+    final deckId = const Uuid().v4();
+    final deck = Deck(
+      id: deckId,
+      folderId: folderId,
+      title: title,
+      cardCount: cards.length,
+    );
+
+    _decks.add(deck);
+    for (var card in cards) {
+      final cardWithDeckId = card.copyWith(deckId: deckId);
+      _addCard(cardWithDeckId);
+    }
+  }
+
+  @override
+  void updateDeckWithCards(String deckId, String title, List<FlashCard> newCards) {
+    final deckIndex = _decks.indexWhere((d) => d.id == deckId);
+    if (deckIndex != -1) {
+      final oldDeck = _decks[deckIndex];
+      _decks[deckIndex] = oldDeck.copyWith(
+        title: title,
+        cardCount: newCards.length,
+      );
+
+      // Delete old cards
+      for (var card in _cards.where((c) => c.deckId == deckId).toList()) {
+        _deleteCard(card.id);
+      }
+
+      // Add new cards
+      for (var card in newCards) {
+        final cardWithDeckId = card.copyWith(deckId: deckId);
+        _addCard(cardWithDeckId);
+      }
     }
   }
 
@@ -71,21 +99,11 @@ class InMemoryLibraryRepositoryImpl implements LibraryRepository {
     return _cards.where((c) => c.deckId == deckId).toList();
   }
 
-  @override
-  void addCard(FlashCard card) {
+  void _addCard(FlashCard card) {
     _cards.add(card);
   }
 
-  @override
-  void updateCard(String cardId, String front, String back) {
-    final i = _cards.indexWhere((c) => c.id == cardId);
-    if (i != -1) {
-      _cards[i] = _cards[i].copyWith(front: front, back: back);
-    }
-  }
-
-  @override
-  void deleteCard(String cardId) {
+  void _deleteCard(String cardId) {
     _cards.removeWhere((c) => c.id == cardId);
   }
 }

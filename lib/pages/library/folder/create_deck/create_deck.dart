@@ -1,6 +1,6 @@
 import 'package:bookexample/core/theme/app_colors.dart';
+import 'package:bookexample/domain/models/flash_card.dart';
 import 'package:bookexample/models/card_form_text_form_field.dart';
-import 'package:bookexample/provider/mock_data_models.dart';
 import 'package:bookexample/provider/mock_data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

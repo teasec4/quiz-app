@@ -11,13 +11,10 @@ abstract class LibraryRepository {
 
   // Decks
   List<Deck> getDecksByFolder(String folderId);
-  void addDeck(Deck deck);
   void deleteDeck(String deckId);
-  void updateDeck(String deckId, Deck updatedDeck);
+  void addDeckWithCards(String folderId, String title, List<FlashCard> cards);
+  void updateDeckWithCards(String deckId, String title, List<FlashCard> newCards);
 
   // Cards
   List<FlashCard> getCardsByDeck(String deckId);
-  void addCard(FlashCard card);
-  void updateCard(String cardId, String front, String back);
-  void deleteCard(String cardId);
 }

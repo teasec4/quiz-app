@@ -1,5 +1,4 @@
 import 'package:bookexample/pages/library/folder/widgets/deck_tile.dart';
-import 'package:bookexample/pages/library/widgets/create_folder_sheet.dart';
 import 'package:bookexample/provider/mock_data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -52,7 +51,7 @@ class _FolderPageState extends State<FolderPage> {
 
     final folder = appState.folders.firstWhere((f) => f.id == widget.folderId);
 
-    final decks = appState.getDecksByFolder(folder.id);
+    final decks = appState.getDecks(folder.id);
 
     return Scaffold(
       appBar: AppBar(title: Text(folder.name)),

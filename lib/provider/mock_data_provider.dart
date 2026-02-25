@@ -12,11 +12,32 @@ class AppState extends ChangeNotifier {
 
   List<Folder> get folders => repository.getFolders();
 
+  List<Deck> get decks {
+    final folders = repository.getFolders();
+    final allDecks = <Deck>[];
+    for (var folder in folders) {
+      allDecks.addAll(repository.getDecksByFolder(folder.id));
+    }
+    return allDecks;
+  }
+
   List<Deck> getDecks(String folderId) =>
       repository.getDecksByFolder(folderId);
 
+  Deck? getDeckById(String deckId) {
+    try {
+      return decks.firstWhere((d) => d.id == deckId);
+    } catch (e) {
+      return null;
+    }
+  }
+
   List<FlashCard> getCards(String deckId) =>
       repository.getCardsByDeck(deckId);
+
+  // Alias for backward compatibility
+  List<FlashCard> getCardsByDeck(String deckId) =>
+      getCards(deckId);
 
   void addFolder(String name) {
     final folder = Folder(
@@ -38,46 +59,18 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addDeck(String folderId, String title) {
-    final deck = Deck(
-      id: const Uuid().v4(),
-      folderId: folderId,
-      title: title,
-    );
-
-    repository.addDeck(deck);
-    notifyListeners();
-  }
-
-  void updateDeck(String deckId, Deck updatedDeck) {
-    repository.updateDeck(deckId, updatedDeck);
-    notifyListeners();
-  }
-
   void deleteDeck(String deckId) {
     repository.deleteDeck(deckId);
     notifyListeners();
   }
 
-  void addCard(String deckId, String front, String back) {
-    final card = FlashCard(
-      id: const Uuid().v4(),
-      deckId: deckId,
-      front: front,
-      back: back,
-    );
-
-    repository.addCard(card);
+  void addDeckWithCards(String folderId, String title, List<FlashCard> cards) {
+    repository.addDeckWithCards(folderId, title, cards);
     notifyListeners();
   }
 
-  void updateCard(String cardId, String front, String back) {
-    repository.updateCard(cardId, front, back);
-    notifyListeners();
-  }
-
-  void deleteCard(String cardId) {
-    repository.deleteCard(cardId);
+  void updateDeckWithCards(String deckId, String title, List<FlashCard> newCards) {
+    repository.updateDeckWithCards(deckId, title, newCards);
     notifyListeners();
   }
 }
