@@ -1,146 +1,83 @@
-import 'package:bookexample/provider/mock_data_models.dart';
-import 'package:bookexample/service/deck_service.dart';
-import 'package:bookexample/service/folder_service.dart';
+import 'package:bookexample/domain/models/deck.dart';
+import 'package:bookexample/domain/models/flash_card.dart';
+import 'package:bookexample/domain/models/folder.dart';
+import 'package:bookexample/domain/repositories/library_repository.dart';
+import 'package:uuid/uuid.dart';
 import 'package:flutter/material.dart';
 
 class AppState extends ChangeNotifier {
-  final List<Folder> folders = [];
-  final List<Deck> decks = [];
-  final List<FlashCard> cards = [];
+  final LibraryRepository repository;
 
-  final FolderService _folderService = FolderService();
-  final DeckService _deckService = DeckService();
+  AppState(this.repository);
 
-  
-  // === FOLDER OPERATIONS ===
+  List<Folder> get folders => repository.getFolders();
+
+  List<Deck> getDecks(String folderId) =>
+      repository.getDecksByFolder(folderId);
+
+  List<FlashCard> getCards(String deckId) =>
+      repository.getCardsByDeck(deckId);
 
   void addFolder(String name) {
-    final folder = _folderService.createFolder(name);
-    folders.add(folder);
+    final folder = Folder(
+      id: const Uuid().v4(),
+      name: name,
+    );
+
+    repository.addFolder(folder);
     notifyListeners();
   }
 
-  void deleteFolder(String folderId) {
-    // удалить деки этой папки
-    final folderDecks = decks.where((d) => d.folderId == folderId).toList();
-    for (final deck in folderDecks) {
-      // удалить карточки этой деки
-      cards.removeWhere((c) => c.deckId == deck.id);
-    }
-    // удалить деки
-    decks.removeWhere((d) => d.folderId == folderId);
-    // удалить папку
-    folders.removeWhere((f) => f.id == folderId);
+  void renameFolder(String id, String newName) {
+    repository.renameFolder(id, newName);
     notifyListeners();
   }
 
-  void renameFolder(String folderId, String newName) {
-    final index = folders.indexWhere((f) => f.id == folderId);
-    if (index == -1) return;
-    folders[index] = folders[index].copyWith(name: newName);
+  void deleteFolder(String id) {
+    repository.deleteFolder(id);
     notifyListeners();
   }
 
-  // === DECK OPERATIONS ===
+  void addDeck(String folderId, String title) {
+    final deck = Deck(
+      id: const Uuid().v4(),
+      folderId: folderId,
+      title: title,
+    );
 
-  void addDeckWithCards(
-    String folderId,
-    String deckTitle,
-    List<FlashCard> newCards,
-  ) {
-    // create deck
-    final deck = _deckService.createDeck(folderId, deckTitle);
-    decks.add(deck);
-    
-    // update cards with correct deckId
-    final cardsWithDeckId = newCards.map((card) {
-      return card.copyWith(deckId: deck.id);
-    }).toList();
-    cards.addAll(cardsWithDeckId);
-    
-    // update deck cardCount
-    final index = decks.indexWhere((d) => d.id == deck.id);
-    if (index != -1) {
-      decks[index] = decks[index].copyWith(cardCount: cardsWithDeckId.length);
-    }
+    repository.addDeck(deck);
+    notifyListeners();
+  }
+
+  void updateDeck(String deckId, Deck updatedDeck) {
+    repository.updateDeck(deckId, updatedDeck);
     notifyListeners();
   }
 
   void deleteDeck(String deckId) {
-    // удалить карточки деки
-    cards.removeWhere((c) => c.deckId == deckId);
-    // удалить деку
-    decks.removeWhere((d) => d.id == deckId);
+    repository.deleteDeck(deckId);
     notifyListeners();
   }
-
-  void renameDeck(String deckId, String newTitle) {
-    final index = decks.indexWhere((d) => d.id == deckId);
-    if (index == -1) return;
-    decks[index] = decks[index].copyWith(title: newTitle);
-    notifyListeners();
-  }
-
-  void updateDeckWithCards(String deckId, String newTitle, List<FlashCard> newCards) {
-    // Update deck title
-    final deckIndex = decks.indexWhere((d) => d.id == deckId);
-    if (deckIndex == -1) return;
-    
-    // Remove old cards
-    cards.removeWhere((c) => c.deckId == deckId);
-    
-    // Update deck with new title and card count
-    decks[deckIndex] = decks[deckIndex].copyWith(
-      title: newTitle,
-      cardCount: newCards.length,
-    );
-    
-    // Add new cards with correct deckId
-    final cardsWithDeckId = newCards.map((card) {
-      return card.copyWith(deckId: deckId);
-    }).toList();
-    cards.addAll(cardsWithDeckId);
-    
-    notifyListeners();
-  }
-
-  // === CARD OPERATIONS ===
 
   void addCard(String deckId, String front, String back) {
-    final card = _deckService.createCard(deckId, front, back);
-    cards.add(card);
-    // update deck cardCount
-    final deckIndex = decks.indexWhere((d) => d.id == deckId);
-    if (deckIndex != -1) {
-      final newCount = getCardsByDeck(deckId).length + 1;
-      decks[deckIndex] = decks[deckIndex].copyWith(cardCount: newCount);
-    }
+    final card = FlashCard(
+      id: const Uuid().v4(),
+      deckId: deckId,
+      front: front,
+      back: back,
+    );
+
+    repository.addCard(card);
+    notifyListeners();
+  }
+
+  void updateCard(String cardId, String front, String back) {
+    repository.updateCard(cardId, front, back);
     notifyListeners();
   }
 
   void deleteCard(String cardId) {
-    final card = cards.firstWhere((c) => c.id == cardId);
-    cards.remove(card);
-    // update deck cardCount
-    final deckIndex = decks.indexWhere((d) => d.id == card.deckId);
-    if (deckIndex != -1) {
-      final newCount = getCardsByDeck(card.deckId).length;
-      decks[deckIndex] = decks[deckIndex].copyWith(cardCount: newCount);
-    }
+    repository.deleteCard(cardId);
     notifyListeners();
   }
-
-  // === QUERIES ===
-
-  List<Deck> getDecksByFolder(String folderId) =>
-      decks.where((d) => d.folderId == folderId).toList();
-
-  List<FlashCard> getCardsByDeck(String deckId) =>
-      cards.where((c) => c.deckId == deckId).toList();
-
-  Folder? getFolderById(String folderId) =>
-      folders.firstWhere((f) => f.id == folderId);
-
-  Deck? getDeckById(String deckId) =>
-      decks.firstWhere((d) => d.id == deckId);
 }

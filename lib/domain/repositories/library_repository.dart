@@ -13,11 +13,11 @@ abstract class LibraryRepository {
   List<Deck> getDecksByFolder(String folderId);
   void addDeck(Deck deck);
   void deleteDeck(String deckId);
-  void renameDeck(String deckId, String newTitle);
-  // только тут не просто ринейм а еще и изменение карточек может быть
+  void updateDeck(String deckId, Deck updatedDeck);
 
   // Cards
   List<FlashCard> getCardsByDeck(String deckId);
   void addCard(FlashCard card);
+  void updateCard(String cardId, String front, String back);
   void deleteCard(String cardId);
 }
