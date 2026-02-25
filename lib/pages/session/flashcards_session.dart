@@ -1,4 +1,4 @@
-import 'package:bookexample/core/theme/app_colors.dart';
+import 'package:bookexample/core/theme/app_theme.dart';
 import 'package:bookexample/domain/models/flash_card.dart';
 import 'package:bookexample/provider/mock_data_provider.dart';
 import 'package:flutter/material.dart';
@@ -72,17 +72,23 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
     if (isAnimating) return;
     isAnimating = true;
 
+    final currentCard = cards[currentIndex];
+
     _animation = Tween<double>(
       begin: dragOffset,
       end: target,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
 
     _controller.forward(from: 0).then((_) {
+      final appState = context.read<AppState>();
+      
       setState(() {
         if (isCorrect) {
           correctCount++;
+          appState.markCardAsLearned(currentCard.id);
         } else {
           incorrectCount++;
+          appState.markCardAsNotLearned(currentCard.id);
         }
 
         currentIndex++;

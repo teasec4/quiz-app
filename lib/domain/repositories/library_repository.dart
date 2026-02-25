@@ -17,4 +17,5 @@ abstract class LibraryRepository {
 
   // Cards
   List<FlashCard> getCardsByDeck(String deckId);
+  void setCardLearned(String cardId, bool isLearned);
 }

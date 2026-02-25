@@ -1,4 +1,4 @@
-import 'package:bookexample/core/theme/app_colors.dart';
+import 'package:bookexample/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class DeckTile extends StatelessWidget {

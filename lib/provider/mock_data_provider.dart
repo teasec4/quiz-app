@@ -39,6 +39,14 @@ class AppState extends ChangeNotifier {
   List<FlashCard> getCardsByDeck(String deckId) =>
       getCards(deckId);
 
+  List<FlashCard> get allCards {
+    final allCards = <FlashCard>[];
+    for (var deck in decks) {
+      allCards.addAll(repository.getCardsByDeck(deck.id));
+    }
+    return allCards;
+  }
+
   void addFolder(String name) {
     final folder = Folder(
       id: const Uuid().v4(),
@@ -61,6 +69,16 @@ class AppState extends ChangeNotifier {
 
   void deleteDeck(String deckId) {
     repository.deleteDeck(deckId);
+    notifyListeners();
+  }
+
+  void markCardAsLearned(String cardId) {
+    repository.setCardLearned(cardId, true);
+    notifyListeners();
+  }
+
+  void markCardAsNotLearned(String cardId) {
+    repository.setCardLearned(cardId, false);
     notifyListeners();
   }
 

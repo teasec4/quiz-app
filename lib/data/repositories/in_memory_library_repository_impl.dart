@@ -60,7 +60,6 @@ class InMemoryLibraryRepositoryImpl implements LibraryRepository {
       id: deckId,
       folderId: folderId,
       title: title,
-      cardCount: cards.length,
     );
 
     _decks.add(deck);
@@ -75,10 +74,7 @@ class InMemoryLibraryRepositoryImpl implements LibraryRepository {
     final deckIndex = _decks.indexWhere((d) => d.id == deckId);
     if (deckIndex != -1) {
       final oldDeck = _decks[deckIndex];
-      _decks[deckIndex] = oldDeck.copyWith(
-        title: title,
-        cardCount: newCards.length,
-      );
+      _decks[deckIndex] = oldDeck.copyWith(title: title);
 
       // Delete old cards
       for (var card in _cards.where((c) => c.deckId == deckId).toList()) {
@@ -97,6 +93,14 @@ class InMemoryLibraryRepositoryImpl implements LibraryRepository {
   @override
   List<FlashCard> getCardsByDeck(String deckId) {
     return _cards.where((c) => c.deckId == deckId).toList();
+  }
+
+  @override
+  void setCardLearned(String cardId, bool isLearned) {
+    final i = _cards.indexWhere((c) => c.id == cardId);
+    if (i != -1) {
+      _cards[i] = _cards[i].copyWith(isLearned: isLearned);
+    }
   }
 
   void _addCard(FlashCard card) {

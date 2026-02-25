@@ -52,6 +52,7 @@ class _FolderPageState extends State<FolderPage> {
     final folder = appState.folders.firstWhere((f) => f.id == widget.folderId);
 
     final decks = appState.getDecks(folder.id);
+    final allCards = appState.allCards;
 
     return Scaffold(
       appBar: AppBar(title: Text(folder.name)),
@@ -79,10 +80,13 @@ class _FolderPageState extends State<FolderPage> {
                   itemCount: decks.length,
                   itemBuilder: (context, index) {
                     final deck = decks[index];
+                    final deckCards = allCards.where((c) => c.deckId == deck.id).toList();
+                    final cardCount = deckCards.length;
+                    final learnedCount = deckCards.where((c) => c.isLearned).length;
                     return DeckTile(
                       deckName: deck.title,
-                      cardCount: deck.cardCount,
-                      learnedCount: deck.learnedCount,
+                      cardCount: cardCount,
+                      learnedCount: learnedCount,
                       onTap: () {
                         context.go(
                           '/library/folder/${widget.folderId}/deck/${deck.id}',

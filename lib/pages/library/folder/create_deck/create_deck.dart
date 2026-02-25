@@ -1,4 +1,4 @@
-import 'package:bookexample/core/theme/app_colors.dart';
+import 'package:bookexample/core/theme/app_theme.dart';
 import 'package:bookexample/domain/models/flash_card.dart';
 import 'package:bookexample/models/card_form_text_form_field.dart';
 import 'package:bookexample/provider/mock_data_provider.dart';

@@ -1,6 +1,12 @@
-import 'package:bookexample/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
+class AppColors {
+  // Success / Green (Emerald-600 palette - matches modern design)
+  static const Color success = Color(0xFF059669);
+  
+  // Error / Red (Red-600 palette - matches modern design)
+  static const Color error = Color(0xFFDC2626);
+}
 
 class AppTheme {
   static ThemeData lightTheme(ColorScheme scheme) {
