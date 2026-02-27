@@ -5,6 +5,7 @@ import 'package:bookexample/domain/repositories/library_repository.dart';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:bookexample/pages/study/widgets/stats_header.dart';
 import 'widgets/session_header.dart';
 import 'widgets/flash_card.dart' as flash_card_widget;
 
@@ -236,6 +237,13 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
           ),
           body: Column(
             children: [
+              StatsHeader(
+                totalCards: cards.length,
+                accuracyRate: cards.isEmpty
+                    ? 0
+                    : (correctCount / (correctCount + incorrectCount)) * 100,
+                streakDays: 0,
+              ),
               SessionHeader(
                 currentIndex: displayIndex,
                 totalCards: cards.length,

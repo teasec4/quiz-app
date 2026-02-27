@@ -146,7 +146,22 @@ class LibraryPage extends StatelessWidget {
           final folders = asyncSnapshot.data ?? [];
           return folders.isEmpty
               ? _buildEmptyState()
-              : ListView.builder(
+              : Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Text(
+                          'Folders',
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView.builder(
                   itemCount: folders.length,
                   itemBuilder: (context, index) {
                     final folder = folders[index];
@@ -169,6 +184,9 @@ class LibraryPage extends StatelessWidget {
                       },
                     );
                   },
+                ),
+                    ),
+                  ],
                 );
         },
       ),

@@ -1,4 +1,5 @@
 import 'package:bookexample/pages/study/widgets/mode_tile.dart';
+import 'package:bookexample/pages/study/widgets/stats_header.dart';
 import 'package:flutter/material.dart';
 
 class StudyPage extends StatefulWidget {
@@ -19,6 +20,27 @@ class _StudyPageState extends State<StudyPage> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          Text(
+            'Stats',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          const SizedBox(height: 12),
+          StatsHeader(
+            totalCards: 1254,
+            accuracyRate: 87,
+            streakDays: 5,
+          ),
+          const SizedBox(height: 32),
+          Text(
+            'Study Modes',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          const SizedBox(height: 12),
+
           // Continue Last Session
           ModeCard(
             icon: Icons.play_arrow,

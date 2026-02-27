@@ -101,9 +101,24 @@ class _FolderPageState extends State<FolderPage> {
               final decks = asyncSnapshot.data ?? [];
               return decks.isEmpty
                   ? _buildEmptyState()
-                  : Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: GridView.builder(
+                  : Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Text(
+                              'Decks',
+                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: GridView.builder(
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
@@ -138,6 +153,9 @@ class _FolderPageState extends State<FolderPage> {
                           );
                         },
                       ),
+                          ),
+                        ),
+                      ],
                     );
             },
           ),
