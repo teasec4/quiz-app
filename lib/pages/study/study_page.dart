@@ -40,18 +40,7 @@ class _StudyPageState extends State<StudyPage> {
                 ),
           ),
           const SizedBox(height: 12),
-
-          // Continue Last Session
-          ModeCard(
-            icon: Icons.play_arrow,
-            title: 'Continue Last Session',
-            subtitle: 'Resume where you left off',
-            onTap: () {
-              
-            },
-          ),
-          const SizedBox(height: 12),
-
+          
           // Start New Session
           ModeCard(
             icon: Icons.book,
@@ -62,7 +51,17 @@ class _StudyPageState extends State<StudyPage> {
             },
           ),
           const SizedBox(height: 12),
-
+          // Continue Last Session
+          ModeCard(
+            icon: Icons.play_arrow,
+            title: 'Continue Last Session',
+            subtitle: 'Resume where you left off',
+            onTap: () {
+              
+            },
+            disabled: true,
+          ),
+          const SizedBox(height: 12),
           // Random Cards
           ModeCard(
             icon: Icons.shuffle,
@@ -71,18 +70,10 @@ class _StudyPageState extends State<StudyPage> {
             onTap: () {
               
             },
+            disabled: true,
           ),
-          const SizedBox(height: 12),
-
-          // Study by Folder
-          ModeCard(
-            icon: Icons.folder_open,
-            title: 'Study by Folder',
-            subtitle: 'Choose a folder to study from',
-            onTap: () {
-              
-            },
-          ),
+          
+          
         ],
       ),
     );

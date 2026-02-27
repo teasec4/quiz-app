@@ -144,16 +144,19 @@ class _DeckPageState extends State<DeckPage>
             title: 'Multiple Choice',
             subtitle: '${cards.length} questions',
             icon: Icons.check_circle_outline,
+            disabled: true,
           ),
           StudyMode(
             title: 'Write Answer',
             subtitle: '${cards.length} questions',
             icon: Icons.edit,
+            disabled: true,
           ),
           StudyMode(
             title: 'Matching',
             subtitle: 'Pair terms',
             icon: Icons.connect_without_contact,
+            disabled: true,
           ),
         ];
 
