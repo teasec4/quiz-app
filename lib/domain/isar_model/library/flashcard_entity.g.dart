@@ -25,6 +25,11 @@ const FlashCardEntitySchema = CollectionSchema(
     ),
     r'deckId': PropertySchema(id: 2, name: r'deckId', type: IsarType.long),
     r'front': PropertySchema(id: 3, name: r'front', type: IsarType.string),
+    r'isLearned': PropertySchema(
+      id: 4,
+      name: r'isLearned',
+      type: IsarType.bool,
+    ),
   },
 
   estimateSize: _flashCardEntityEstimateSize,
@@ -84,6 +89,7 @@ void _flashCardEntitySerialize(
   writer.writeDateTime(offsets[1], object.createdAt);
   writer.writeLong(offsets[2], object.deckId);
   writer.writeString(offsets[3], object.front);
+  writer.writeBool(offsets[4], object.isLearned);
 }
 
 FlashCardEntity _flashCardEntityDeserialize(
@@ -98,6 +104,7 @@ FlashCardEntity _flashCardEntityDeserialize(
   object.deckId = reader.readLong(offsets[2]);
   object.front = reader.readString(offsets[3]);
   object.id = id;
+  object.isLearned = reader.readBool(offsets[4]);
   return object;
 }
 
@@ -116,6 +123,8 @@ P _flashCardEntityDeserializeProp<P>(
       return (reader.readLong(offset)) as P;
     case 3:
       return (reader.readString(offset)) as P;
+    case 4:
+      return (reader.readBool(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -775,6 +784,15 @@ extension FlashCardEntityQueryFilter
       );
     });
   }
+
+  QueryBuilder<FlashCardEntity, FlashCardEntity, QAfterFilterCondition>
+  isLearnedEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'isLearned', value: value),
+      );
+    });
+  }
 }
 
 extension FlashCardEntityQueryObject
@@ -852,6 +870,20 @@ extension FlashCardEntityQuerySortBy
       return query.addSortBy(r'front', Sort.desc);
     });
   }
+
+  QueryBuilder<FlashCardEntity, FlashCardEntity, QAfterSortBy>
+  sortByIsLearned() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isLearned', Sort.asc);
+    });
+  }
+
+  QueryBuilder<FlashCardEntity, FlashCardEntity, QAfterSortBy>
+  sortByIsLearnedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isLearned', Sort.desc);
+    });
+  }
 }
 
 extension FlashCardEntityQuerySortThenBy
@@ -920,6 +952,20 @@ extension FlashCardEntityQuerySortThenBy
       return query.addSortBy(r'id', Sort.desc);
     });
   }
+
+  QueryBuilder<FlashCardEntity, FlashCardEntity, QAfterSortBy>
+  thenByIsLearned() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isLearned', Sort.asc);
+    });
+  }
+
+  QueryBuilder<FlashCardEntity, FlashCardEntity, QAfterSortBy>
+  thenByIsLearnedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isLearned', Sort.desc);
+    });
+  }
 }
 
 extension FlashCardEntityQueryWhereDistinct
@@ -950,6 +996,13 @@ extension FlashCardEntityQueryWhereDistinct
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'front', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<FlashCardEntity, FlashCardEntity, QDistinct>
+  distinctByIsLearned() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isLearned');
     });
   }
 }
@@ -984,6 +1037,12 @@ extension FlashCardEntityQueryProperty
   QueryBuilder<FlashCardEntity, String, QQueryOperations> frontProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'front');
+    });
+  }
+
+  QueryBuilder<FlashCardEntity, bool, QQueryOperations> isLearnedProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isLearned');
     });
   }
 }

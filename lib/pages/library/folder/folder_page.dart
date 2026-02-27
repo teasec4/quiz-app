@@ -3,14 +3,13 @@ import 'package:bookexample/domain/isar_model/library/deck_entity.dart';
 import 'package:bookexample/domain/isar_model/library/folder_entity.dart';
 import 'package:bookexample/domain/repositories/library_repository.dart';
 import 'package:bookexample/pages/library/folder/widgets/deck_tile.dart';
-import 'package:bookexample/provider/mock_data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
 class FolderPage extends StatefulWidget {
   final int folderId;
-  const FolderPage({super.key, required this.folderId});
+  final LibraryRepository repository;
+  const FolderPage({super.key, required this.folderId, required this.repository});
 
   @override
   State<FolderPage> createState() => _FolderPageState();
@@ -22,18 +21,18 @@ class _FolderPageState extends State<FolderPage> {
   @override
   void initState() {
     super.initState();
-    _folderFuture = getIt<LibraryRepository>().getFolderById(widget.folderId);
+    _folderFuture = widget.repository.getFolderById(widget.folderId);
   }
 
   // edit deck
-  void _editDeck(BuildContext context, String deckId) {
+  void _editDeck(BuildContext context, int deckId) {
     context.go('/library/folder/${widget.folderId}/editdeck/$deckId');
   }
 
   // delete deck
   void _showDeleteConfirmation(
     BuildContext context,
-    String deckId,
+    int deckId,
     String deckTitle,
   ) {
     showDialog(
@@ -47,12 +46,26 @@ class _FolderPageState extends State<FolderPage> {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () {
-              context.read<AppState>().deleteDeck(deckId);
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Deck "$deckTitle" deleted')),
-              );
+            onPressed: () async {
+              try {
+                await widget.repository.deleteDeck(deckId);
+                if (context.mounted) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Deck "$deckTitle" deleted')),
+                  );
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error deleting deck: $e'),
+                      backgroundColor: Theme.of(context).colorScheme.error,
+                    ),
+                  );
+                }
+              }
             },
             child: Text(
               'Delete',
@@ -101,25 +114,26 @@ class _FolderPageState extends State<FolderPage> {
                         itemCount: decks.length,
                         itemBuilder: (context, index) {
                           final deck = decks[index];
-                          final deckCards = [];
-                          final cardCount = deckCards.length;
-                          final learnedCount = deckCards
-                              .where((c) => c.isLearned)
-                              .length;
                           return DeckTile(
                             deckName: deck.title,
-                            cardCount: cardCount,
-                            learnedCount: learnedCount,
+                            cardCount: deck.cards.length,
+                            learnedCount: deck.cards
+                                .where((c) => c.isLearned)
+                                .length,
                             onTap: () {
                               context.go(
                                 '/library/folder/${widget.folderId}/deck/${deck.id}',
                               );
                             },
                             onEdit: () {
-                              _editDeck(context,deck.id);
+                              _editDeck(context, deck.id);
                             },
                             onDelete: () {
-                              _showDeleteConfirmation(context,deck.id, deck.title);
+                              _showDeleteConfirmation(
+                                context,
+                                deck.id,
+                                deck.title,
+                              );
                             },
                           );
                         },

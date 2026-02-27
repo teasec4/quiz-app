@@ -1,4 +1,3 @@
-import 'package:bookexample/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class DeckTile extends StatelessWidget {
@@ -28,7 +27,7 @@ class DeckTile extends StatelessWidget {
       },
       child: Padding(
         padding: const EdgeInsets.all(4),
-        child: Icon(Icons.more_horiz, size: 20, color: Colors.grey[600]),
+        child: Icon(Icons.more_horiz, size: 20, color: Theme.of(context).colorScheme.secondary),
       ),
     );
   }
@@ -145,7 +144,7 @@ class DeckTile extends StatelessWidget {
                     child: LinearProgressIndicator(
                       value: progress,
                       minHeight: 6,
-                      backgroundColor: Colors.grey[300],
+                      backgroundColor: Theme.of(context).colorScheme.primary,
                       valueColor:  AlwaysStoppedAnimation(
                         Theme.of(context).colorScheme.primary,
                       ),

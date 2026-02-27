@@ -1,16 +1,14 @@
-import 'package:bookexample/core/theme/app_theme.dart';
-import 'package:bookexample/domain/models/flash_card.dart';
+import 'package:bookexample/core/service_locator.dart';
+import 'package:bookexample/domain/isar_model/library/flashcard_entity.dart';
+import 'package:bookexample/domain/repositories/library_repository.dart';
 import 'package:bookexample/models/card_form_text_form_field.dart';
-import 'package:bookexample/provider/mock_data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
-import 'package:uuid/uuid.dart';
 
 class CreateDeck extends StatefulWidget {
-  final String folderId;
-  final String? deckId;
+  final int folderId;
+  final int? deckId;
   const CreateDeck({super.key, required this.folderId, this.deckId});
 
   @override
@@ -25,29 +23,17 @@ class _CreateDeckState extends State<CreateDeck> {
   late ScrollController _scrollController;
   bool _hasChanges = false;
   bool _deckTitleError = false;
-  late AppState _appState;
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    _appState = context.read<AppState>();
     _deckTitleFocus = FocusNode();
     _scrollController = ScrollController();
     
     // Load existing deck if editing
     if (widget.deckId != null) {
-      final deck = _appState.getDeckById(widget.deckId!);
-      if (deck != null) {
-        _deckTitle.text = deck.title;
-        final deckCards = _appState.getCardsByDeck(widget.deckId!);
-        cards.clear();
-        for (var card in deckCards) {
-          final cardForm = CardFormTextFormField();
-          cardForm.frontController.text = card.front;
-          cardForm.backController.text = card.back;
-          cards.add(cardForm);
-        }
-      }
+      _loadDeck();
     }
     
     // Request focus for DeckTitle after build
@@ -61,6 +47,37 @@ class _CreateDeckState extends State<CreateDeck> {
         });
       }
     });
+  }
+
+  Future<void> _loadDeck() async {
+    final repository = getIt<LibraryRepository>();
+    try {
+      final deck = await repository.getDeckById(widget.deckId!);
+      if (mounted) {
+        setState(() {
+          _deckTitle.text = deck.title;
+          cards.clear();
+          for (var card in deck.cards) {
+            final cardForm = CardFormTextFormField();
+            cardForm.frontController.text = card.front;
+            cardForm.backController.text = card.back;
+            cards.add(cardForm);
+          }
+          if (cards.isEmpty) {
+            cards.add(CardFormTextFormField());
+          }
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error loading deck: $e'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -135,41 +152,74 @@ class _CreateDeckState extends State<CreateDeck> {
     }
   }
 
-  void _saveCard() {
+  void _saveCard() async {
+    if (_isLoading) return;
+    
+    setState(() {
+      _isLoading = true;
+    });
 
-    final List<FlashCard> newCards = cards.map((card) {
-      return FlashCard(
-        id: Uuid().v4(),
-        deckId: "",
-        front: card.frontController.text,
-        back: card.backController.text,
-      );
-    }).toList();
+    try {
+      final repository = getIt<LibraryRepository>();
+      
+      final List<FlashCardEntity> newCards = cards.map((card) {
+        return FlashCardEntity()
+          ..front = card.frontController.text
+          ..back = card.backController.text;
+      }).toList();
 
-    if (widget.deckId == null) {
-      // Creating new deck
-      _appState.addDeckWithCards(widget.folderId, _deckTitle.text, newCards);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Deck saved successfully!'),
-          backgroundColor: Theme.of(context).colorScheme.tertiary,
-          duration: const Duration(seconds: 1),
-        ),
-      );
-    } else {
-      // Editing existing deck
-      _appState.updateDeckWithCards(widget.deckId!, _deckTitle.text, newCards);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Deck updated successfully!'),
-          backgroundColor: Theme.of(context).colorScheme.tertiary,
-          duration: const Duration(seconds: 1),
-        ),
-      );
+      if (widget.deckId == null) {
+        // Creating new deck
+        await repository.createDeckWithCard(
+          widget.folderId,
+          _deckTitle.text,
+          newCards,
+        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Deck saved successfully!'),
+              backgroundColor: Theme.of(context).colorScheme.tertiary,
+              duration: const Duration(seconds: 1),
+            ),
+          );
+          context.pop();
+        }
+      } else {
+        // Editing existing deck
+        await repository.updateDeckWithCards(
+          widget.deckId!,
+          _deckTitle.text,
+          newCards,
+        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Deck updated successfully!'),
+              backgroundColor: Theme.of(context).colorScheme.tertiary,
+              duration: const Duration(seconds: 1),
+            ),
+          );
+          context.pop();
+        }
+      }
+      _hasChanges = false;
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error saving deck: $e'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
-
-    context.pop();
-    _hasChanges = false;
   }
 
   void _addCard() {

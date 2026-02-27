@@ -3,13 +3,11 @@ import 'package:bookexample/core/theme/app_theme.dart';
 import 'package:bookexample/domain/isar_model/library/deck_entity.dart';
 import 'package:bookexample/domain/isar_model/library/flashcard_entity.dart';
 import 'package:bookexample/domain/isar_model/library/folder_entity.dart';
-import 'package:bookexample/domain/repositories/library_repository.dart';
-import 'package:bookexample/provider/mock_data_provider.dart';
 import 'package:bookexample/router/router.dart';
 import 'package:flutter/material.dart';
 import 'package:isar_community/isar.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:provider/provider.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,10 +21,7 @@ void main() async {
   setupServiceLocator(isar);
 
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => AppState(getIt<LibraryRepository>()),
-      child: const MyApp(),
-    ),
+    const MyApp(),
   );
 }
 

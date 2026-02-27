@@ -51,44 +51,69 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: '/library',
-                builder: (context, state) =>  LibraryPage(repository: getIt<LibraryRepository>(),),
+                builder: (context, state) =>
+                    LibraryPage(repository: getIt<LibraryRepository>()),
                 routes: [
                   GoRoute(
                     path: 'folder/:folderId',
                     builder: (context, state) {
-                      final folderId = state.pathParameters['folderId'];
-                      return FolderPage(folderId: folderId ?? "");
+                      final idParam = state.pathParameters['folderId'];
+                      final folderId = int.tryParse(idParam ?? '');
+                      if (folderId == null) {
+                        return const Scaffold(
+                          body: Center(child: Text('Invalid project id')),
+                        );
+                      }
+                      return FolderPage(
+                        folderId: folderId,
+                        repository: getIt<LibraryRepository>(),
+                      );
                     },
                     routes: [
                       GoRoute(
                         path: 'deck/:deckId',
                         builder: (context, state) {
-                          final folderId = state.pathParameters['folderId'];
-                          final deckId = state.pathParameters['deckId'];
-                          return DeckPage(
-                            folderId: folderId ?? "",
-                            deckId: deckId ?? "",
-                          );
+                          final folderIdParam =
+                              state.pathParameters['folderId'];
+                          final deckIdParam = state.pathParameters['deckId'];
+                          final folderId = int.tryParse(folderIdParam ?? "");
+                          final deckId = int.tryParse(deckIdParam ?? "");
+                          if (folderId == null || deckId == null) {
+                            return Center(child: Text("Invalid deck id"));
+                          }
+                          return DeckPage(folderId: folderId, deckId: deckId);
                         },
                       ),
                       GoRoute(
-                        path: 'createdeck',                   
+                        path: 'createdeck',
                         builder: (context, state) {
-                        final folderId = state.pathParameters['folderId'];
-                          return CreateDeck(
-                            folderId: folderId ?? "",
-                          );
+                          final folderIdParam =
+                              state.pathParameters['folderId'];
+                          final folderId = int.tryParse(folderIdParam ?? '');
+                          if (folderId == null) {
+                            return const Scaffold(
+                              body: Center(child: Text('Invalid folder id')),
+                            );
+                          }
+                          return CreateDeck(folderId: folderId);
                         },
                       ),
                       GoRoute(
                         path: 'editdeck/:deckId',
                         builder: (context, state) {
-                          final folderId = state.pathParameters['folderId'];
-                          final deckId = state.pathParameters['deckId'];
-                          return CreateDeck(
-                            folderId: folderId ?? "",
-                            deckId: deckId,
-                          );
+                          final folderIdParam =
+                              state.pathParameters['folderId'];
+                          final deckIdParam = state.pathParameters['deckId'];
+                          final folderId = int.tryParse(folderIdParam ?? '');
+                          final deckId = int.tryParse(deckIdParam ?? '');
+                          if (folderId == null || deckId == null) {
+                            return const Scaffold(
+                              body: Center(
+                                child: Text('Invalid folder or deck id'),
+                              ),
+                            );
+                          }
+                          return CreateDeck(folderId: folderId, deckId: deckId);
                         },
                       ),
                     ],
@@ -117,15 +142,15 @@ class AppRouter {
               ),
             ],
           ),
-          
+
           StatefulShellBranch(
             routes: [
               GoRoute(
                 path: '/colors',
-                builder: (context, state) => const ThemePreviewPage()
-              )
-            ]
-          )
+                builder: (context, state) => const ThemePreviewPage(),
+              ),
+            ],
+          ),
         ],
       ),
 
@@ -133,11 +158,20 @@ class AppRouter {
       GoRoute(
         path: '/study/session/:folderId/:deckId',
         builder: (context, state) {
-          final deckId = state.pathParameters['deckId'];
-          final folderId = state.pathParameters['folderId'];
+          final folderIdParam = state.pathParameters['folderId'];
+          final deckIdParam = state.pathParameters['deckId'];
+          final folderId = int.tryParse(folderIdParam ?? '');
+          final deckId = int.tryParse(deckIdParam ?? '');
+          if (folderId == null || deckId == null) {
+            return const Scaffold(
+              body: Center(
+                child: Text('Invalid folder or deck id'),
+              ),
+            );
+          }
           return FlashcardsSession(
-            deckId: deckId ?? "",
-            folderId: folderId ?? "",
+            deckId: deckId,
+            folderId: folderId,
           );
         },
       ),

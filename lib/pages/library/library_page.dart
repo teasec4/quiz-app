@@ -2,10 +2,8 @@ import 'package:bookexample/core/service_locator.dart';
 import 'package:bookexample/domain/repositories/library_repository.dart';
 import 'package:bookexample/pages/library/widgets/create_folder_sheet.dart';
 import 'package:bookexample/pages/library/widgets/folder_tile.dart';
-import 'package:bookexample/provider/mock_data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
 class LibraryPage extends StatelessWidget {
   final LibraryRepository repository;
@@ -24,14 +22,24 @@ class LibraryPage extends StatelessWidget {
     if (!context.mounted) return;
 
     if (newFolderName != null) {
-      // here is creating logic
-      context.read<AppState>().addFolder(newFolderName);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          duration: Duration(seconds: 1),
-          content: Text('Folder "${newFolderName}" created!'),
-        ),
-      );
+      try {
+        await repository.addFolder(newFolderName);
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            duration: const Duration(seconds: 1),
+            content: Text('Folder "$newFolderName" created!'),
+          ),
+        );
+      } catch (e) {
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error creating folder: $e'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
     }
   }
 
@@ -52,14 +60,24 @@ class LibraryPage extends StatelessWidget {
     if (!context.mounted) return;
 
     if (newFolderName != null) {
-      // here is creating logic
-      repository.renameFolder(folderId, newFolderName);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          duration: Duration(seconds: 1),
-          content: Text('Folder "$oldName" renamed to "$newFolderName"'),
-        ),
-      );
+      try {
+        await repository.renameFolder(folderId, newFolderName);
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            duration: const Duration(seconds: 1),
+            content: Text('Folder "$oldName" renamed to "$newFolderName"'),
+          ),
+        );
+      } catch (e) {
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error renaming folder: $e'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
     }
   }
 
@@ -81,12 +99,26 @@ class LibraryPage extends StatelessWidget {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () {
-              repository.deleteFolder(folderId);
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Folder "$folderName" deleted')),
-              );
+            onPressed: () async {
+              try {
+                await repository.deleteFolder(folderId);
+                if (context.mounted) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Folder "$folderName" deleted')),
+                  );
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error deleting folder: $e'),
+                      backgroundColor: Theme.of(context).colorScheme.error,
+                    ),
+                  );
+                }
+              }
             },
             child: const Text('Delete', style: TextStyle(color: Colors.red)),
           ),
@@ -117,24 +149,27 @@ class LibraryPage extends StatelessWidget {
                   itemCount: folders.length,
                   itemBuilder: (context, index) {
                     final folder = folders[index];
-                    // final decks = await isar.deckEntitys.where().findAll();
-                    // .filter().projectIdEqualTo(id)
-                    // and .lenght() - deckCount
-                    return FolderTile(
-                      folderName: folder.name,
-                      deckCount: 1,
-                      onTap: () {
-                        context.go('/library/folder/${folder.id}');
-                      },
-                      onDelete: () {
-                        _showDeleteConfirmation(
-                          context,
-                          folder.id,
-                          folder.name,
+                    return FutureBuilder<int>(
+                      future: repository.getDeckCountByFolder(folder.id),
+                      builder: (context, deckCountSnapshot) {
+                        final deckCount = deckCountSnapshot.data ?? 0;
+                        return FolderTile(
+                          folderName: folder.name,
+                          deckCount: deckCount,
+                          onTap: () {
+                            context.go('/library/folder/${folder.id}');
+                          },
+                          onDelete: () {
+                            _showDeleteConfirmation(
+                              context,
+                              folder.id,
+                              folder.name,
+                            );
+                          },
+                          onEdit: () {
+                            _showRenameFolder(context, folder.id, folder.name);
+                          },
                         );
-                      },
-                      onEdit: () {
-                        _showRenameFolder(context, folder.id, folder.name);
                       },
                     );
                   },

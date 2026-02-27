@@ -47,7 +47,31 @@ class IsarLibraryRepositoryImpl implements LibraryRepository {
 
   @override
   Future<void> deleteFolder(int folderId) async {
-    await isar.folderEntitys.delete(folderId);
+    await isar.writeTxn(() async {
+      // Удалить все деки в папке
+      final decks = await isar.deckEntitys
+          .filter()
+          .folderIdEqualTo(folderId)
+          .findAll();
+      
+      for (var deck in decks) {
+        // Удалить все карточки деки
+        final cards = await isar.flashCardEntitys
+            .filter()
+            .deckIdEqualTo(deck.id)
+            .findAll();
+        
+        for (var card in cards) {
+          await isar.flashCardEntitys.delete(card.id);
+        }
+        
+        // Удалить саму деку
+        await isar.deckEntitys.delete(deck.id);
+      }
+      
+      // Удалить саму папку
+      await isar.folderEntitys.delete(folderId);
+    });
   }
 
   @override
@@ -74,9 +98,30 @@ class IsarLibraryRepositoryImpl implements LibraryRepository {
   }
 
   @override
-  Future<List<DeckEntity>> getDecksByFolder(int folderId) {
-    // TODO: implement getDecksByFolder
-    throw UnimplementedError();
+  Future<List<DeckEntity>> getDecksByFolder(int folderId) async {
+    return await isar.deckEntitys
+        .filter()
+        .folderIdEqualTo(folderId)
+        .findAll();
+  }
+
+  @override
+  Future<DeckEntity> getDeckById(int deckId) async {
+    final deck = await isar.deckEntitys.get(deckId);
+    if (deck == null) {
+      throw Exception('Deck not found');
+    }
+    // Загружаем все карточки для деки
+    await deck.cards.load();
+    return deck;
+  }
+
+  @override
+  Future<int> getDeckCountByFolder(int folderId) async {
+    return await isar.deckEntitys
+        .filter()
+        .folderIdEqualTo(folderId)
+        .count();
   }
 
   @override
@@ -112,4 +157,94 @@ class IsarLibraryRepositoryImpl implements LibraryRepository {
       isar.deckEntitys.put(deck);
     });
   }
-}
+
+  @override
+  Future<void> deleteDeck(int deckId) async {
+    await isar.writeTxn(() async {
+      // Удалить все карточки деки
+      final cards = await isar.flashCardEntitys
+          .filter()
+          .deckIdEqualTo(deckId)
+          .findAll();
+      
+      for (var card in cards) {
+        await isar.flashCardEntitys.delete(card.id);
+      }
+      
+      // Удалить саму деку
+      await isar.deckEntitys.delete(deckId);
+    });
+  }
+
+  @override
+  Future<void> updateDeckWithCards(
+    int deckId,
+    String title,
+    List<FlashCardEntity> newCards,
+  ) async {
+    await isar.writeTxn(() async {
+      final deck = await isar.deckEntitys.get(deckId);
+      if (deck == null) return;
+      
+      // Обновить название деки
+      deck.title = title;
+      
+      // Удалить старые карточки
+      final oldCards = await isar.flashCardEntitys
+          .filter()
+          .deckIdEqualTo(deckId)
+          .findAll();
+      
+      for (var card in oldCards) {
+        await isar.flashCardEntitys.delete(card.id);
+      }
+      
+      // Добавить новые карточки
+      for (var card in newCards) {
+        final cardEntity = FlashCardEntity()
+          ..front = card.front
+          ..back = card.back
+          ..createdAt = DateTime.now()
+          ..deckId = deckId
+          ..deck.value = deck;
+        
+        await isar.flashCardEntitys.put(cardEntity);
+        deck.cards.add(cardEntity);
+      }
+      
+      await isar.deckEntitys.put(deck);
+      await deck.cards.save();
+    });
+  }
+
+  @override
+  Future<List<FlashCardEntity>> getCardsByDeck(int deckId) async {
+    return await isar.flashCardEntitys
+        .filter()
+        .deckIdEqualTo(deckId)
+        .findAll();
+  }
+
+  @override
+  Future<void> setCardLearned(int cardId, bool isLearned) async {
+    await isar.writeTxn(() async {
+      final card = await isar.flashCardEntitys.get(cardId);
+      if (card == null) return;
+      card.isLearned = isLearned;
+      await isar.flashCardEntitys.put(card);
+    });
+  }
+
+  @override
+  Future<void> setCardsLearned(List<int> cardIds, bool isLearned) async {
+    await isar.writeTxn(() async {
+      for (var cardId in cardIds) {
+        final card = await isar.flashCardEntitys.get(cardId);
+        if (card != null) {
+          card.isLearned = isLearned;
+          await isar.flashCardEntitys.put(card);
+        }
+      }
+    });
+  }
+  }

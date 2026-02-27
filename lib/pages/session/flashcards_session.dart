@@ -1,15 +1,16 @@
-import 'package:bookexample/core/theme/app_theme.dart';
-import 'package:bookexample/domain/models/flash_card.dart';
-import 'package:bookexample/provider/mock_data_provider.dart';
+
+import 'package:bookexample/core/service_locator.dart';
+import 'package:bookexample/domain/isar_model/library/flashcard_entity.dart';
+import 'package:bookexample/domain/repositories/library_repository.dart';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 import 'widgets/session_header.dart';
 import 'widgets/flash_card.dart' as flash_card_widget;
 
 class FlashcardsSession extends StatefulWidget {
-  final String deckId;
-  final String folderId;
+  final int deckId;
+  final int folderId;
 
   const FlashcardsSession({
     super.key,
@@ -34,7 +35,8 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
   bool showBack = false;
   bool isAnimating = false;
 
-  late List<FlashCard> cards;
+  late Future<List<FlashCardEntity>> _cardsFuture;
+  List<FlashCardEntity> cards = [];
 
   @override
   void initState() {
@@ -45,9 +47,8 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
     );
     _animation = Tween<double>(begin: 0, end: 0).animate(_controller);
 
-    // Get cards from AppState
-    final appState = context.read<AppState>();
-    cards = appState.getCardsByDeck(widget.deckId);
+    // Get cards from repository
+    _cardsFuture = getIt<LibraryRepository>().getCardsByDeck(widget.deckId);
   }
 
   @override
@@ -79,26 +80,47 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
       end: target,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
 
-    _controller.forward(from: 0).then((_) {
-      final appState = context.read<AppState>();
-      
-      setState(() {
+    _controller.forward(from: 0).then((_) async {
+      try {
         if (isCorrect) {
-          correctCount++;
-          appState.markCardAsLearned(currentCard.id);
+          await getIt<LibraryRepository>().setCardLearned(
+            currentCard.id,
+            true,
+          );
         } else {
-          incorrectCount++;
-          appState.markCardAsNotLearned(currentCard.id);
+          await getIt<LibraryRepository>().setCardLearned(
+            currentCard.id,
+            false,
+          );
         }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error saving card status: $e'),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+        }
+      }
+      
+      if (mounted) {
+        setState(() {
+          if (isCorrect) {
+            correctCount++;
+          } else {
+            incorrectCount++;
+          }
 
-        currentIndex++;
-        dragOffset = 0;
-        showBack = false;
-        isAnimating = false;
-      });
+          currentIndex++;
+          dragOffset = 0;
+          showBack = false;
+          isAnimating = false;
+        });
 
-      if (currentIndex >= cards.length) {
-        _showSessionComplete();
+        if (currentIndex >= cards.length) {
+          _showSessionComplete();
+        }
       }
     });
   }
@@ -135,7 +157,7 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
               minHeight: 8,
               backgroundColor: Theme.of(
                 context,
-              ).colorScheme.error.withOpacity(0.2),
+              ).colorScheme.error.withValues(alpha: 0.2),
               valueColor: AlwaysStoppedAnimation(
                 Theme.of(context).colorScheme.tertiary,
               ),
@@ -161,7 +183,7 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
+        color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
@@ -173,60 +195,89 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
 
   @override
   Widget build(BuildContext context) {
-    final displayIndex = currentIndex >= cards.length
-        ? cards.length - 1
-        : currentIndex;
-    final card = cards[displayIndex];
+    return FutureBuilder<List<FlashCardEntity>>(
+      future: _cardsFuture,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Flashcard Session'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: () {
-              context.go(
-                '/library/folder/${widget.folderId}/deck/${widget.deckId}',
-              );
-            },
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          SessionHeader(
-            currentIndex: displayIndex,
-            totalCards: cards.length,
-            correctCount: correctCount,
-            incorrectCount: incorrectCount,
-            statBoxBuilder: (icon, value, color) =>
-                _statBox(icon, value, color),
-          ),
-          Expanded(
-            child: Center(
-              child: flash_card_widget.FlashCardWidget(
-                card: card,
-                showBack: showBack,
-                dragOffset: dragOffset,
-                isAnimating: _controller.isAnimating,
-                animation: _animation,
-                controller: _controller,
-                onTap: () => setState(() => showBack = !showBack),
-                onDragUpdate: (details) {
-                  if (!isAnimating) {
-                    setState(() {
-                      dragOffset += details.delta.dx;
-                    });
-                  }
-                },
-                onDragEnd: (details) {
-                  _handleSwipe(details.primaryVelocity ?? 0);
+        if (snapshot.hasError) {
+          return Scaffold(
+            body: Center(
+              child: Text('Error: ${snapshot.error}'),
+            ),
+          );
+        }
+
+        cards = snapshot.data!;
+        if (cards.isEmpty) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Flashcard Session')),
+            body: const Center(
+              child: Text('No cards in this deck'),
+            ),
+          );
+        }
+
+        final displayIndex = currentIndex >= cards.length
+            ? cards.length - 1
+            : currentIndex;
+        final card = cards[displayIndex];
+
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Flashcard Session'),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () {
+                  context.go(
+                    '/library/folder/${widget.folderId}/deck/${widget.deckId}',
+                  );
                 },
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+          body: Column(
+            children: [
+              SessionHeader(
+                currentIndex: displayIndex,
+                totalCards: cards.length,
+                correctCount: correctCount,
+                incorrectCount: incorrectCount,
+                statBoxBuilder: (icon, value, color) =>
+                    _statBox(icon, value, color),
+              ),
+              Expanded(
+                child: Center(
+                  child: flash_card_widget.FlashCardWidget(
+                    card: card,
+                    showBack: showBack,
+                    dragOffset: dragOffset,
+                    isAnimating: _controller.isAnimating,
+                    animation: _animation,
+                    controller: _controller,
+                    onTap: () => setState(() => showBack = !showBack),
+                    onDragUpdate: (details) {
+                      if (!isAnimating) {
+                        setState(() {
+                          dragOffset += details.delta.dx;
+                        });
+                      }
+                    },
+                    onDragEnd: (details) {
+                      _handleSwipe(details.primaryVelocity ?? 0);
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

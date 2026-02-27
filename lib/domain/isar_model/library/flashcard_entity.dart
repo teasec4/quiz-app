@@ -15,5 +15,7 @@ class FlashCardEntity {
   @Index()
   late int deckId;
   
+  bool isLearned = false;
+  
   final deck = IsarLink<DeckEntity>();
 }
