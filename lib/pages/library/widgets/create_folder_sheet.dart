@@ -56,6 +56,7 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
           left: 16,
           right: 16,
           top: 24,
+          // тут вопрос нужно ли это еще ??
           bottom: MediaQuery.of(context).viewInsets.bottom + 24,
         ),
         child: Column(

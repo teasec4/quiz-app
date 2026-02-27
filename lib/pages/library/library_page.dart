@@ -1,3 +1,5 @@
+import 'package:bookexample/core/service_locator.dart';
+import 'package:bookexample/domain/repositories/library_repository.dart';
 import 'package:bookexample/pages/library/widgets/create_folder_sheet.dart';
 import 'package:bookexample/pages/library/widgets/folder_tile.dart';
 import 'package:bookexample/provider/mock_data_provider.dart';
@@ -5,16 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-class LibraryPage extends StatefulWidget {
-  const LibraryPage({super.key});
+class LibraryPage extends StatelessWidget {
+  final LibraryRepository repository;
+  const LibraryPage({super.key, required this.repository});
 
-  @override
-  State<LibraryPage> createState() => _LibraryPageState();
-}
-
-class _LibraryPageState extends State<LibraryPage> {
   // creating folder bottom sheet
-  Future<void> _showCreateFolder() async {
+  Future<void> _showCreateFolder(BuildContext context) async {
     final newFolderName = await showModalBottomSheet<String?>(
       context: context,
       builder: (context) => const CreateFolderSheet(),
@@ -23,7 +21,7 @@ class _LibraryPageState extends State<LibraryPage> {
     );
 
     // avoid async gap
-    if (!mounted) return;
+    if (!context.mounted) return;
 
     if (newFolderName != null) {
       // here is creating logic
@@ -38,7 +36,11 @@ class _LibraryPageState extends State<LibraryPage> {
   }
 
   // rename folder bottom sheet
-  Future<void> _showRenameFolder(String folderId, String oldName) async {
+  Future<void> _showRenameFolder(
+    BuildContext context,
+    int folderId,
+    String oldName,
+  ) async {
     final newFolderName = await showModalBottomSheet<String?>(
       context: context,
       builder: (context) => CreateFolderSheet(oldName: oldName),
@@ -47,11 +49,11 @@ class _LibraryPageState extends State<LibraryPage> {
     );
 
     // avoid async gap
-    if (!mounted) return;
+    if (!context.mounted) return;
 
     if (newFolderName != null) {
       // here is creating logic
-      context.read<AppState>().renameFolder(folderId, newFolderName);
+      repository.renameFolder(folderId, newFolderName);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           duration: Duration(seconds: 1),
@@ -61,7 +63,11 @@ class _LibraryPageState extends State<LibraryPage> {
     }
   }
 
-  void _showDeleteConfirmation(String folderId, String folderName) {
+  void _showDeleteConfirmation(
+    BuildContext context,
+    int folderId,
+    String folderName,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -76,7 +82,7 @@ class _LibraryPageState extends State<LibraryPage> {
           ),
           TextButton(
             onPressed: () {
-              context.read<AppState>().deleteFolder(folderId);
+              repository.deleteFolder(folderId);
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text('Folder "$folderName" deleted')),
@@ -91,43 +97,49 @@ class _LibraryPageState extends State<LibraryPage> {
 
   @override
   Widget build(BuildContext context) {
-    final folders = context.watch<AppState>().folders;
-
     return Scaffold(
       appBar: AppBar(title: const Text("Library")),
       floatingActionButton: FloatingActionButton(
-        onPressed: _showCreateFolder,
+        onPressed: () {
+          _showCreateFolder(context);
+        },
         mini: true,
         child: const Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: AnimatedSwitcher(
-        duration: const Duration(seconds: 1),
-        child: folders.isEmpty
-            ? _buildEmptyState()
-            : ListView.builder(
-                itemCount: folders.length,
-                itemBuilder: (context, index) {
-                  final folder = folders[index];
-                  final decks = context.watch<AppState>().decks;
-                  final deckCount = decks
-                      .where((d) => d.folderId == folder.id)
-                      .length;
-                  return FolderTile(
-                    folderName: folder.name,
-                    deckCount: deckCount,
-                    onTap: () {
-                      context.go('/library/folder/${folder.id}');
-                    },
-                    onDelete: () {
-                      _showDeleteConfirmation(folder.id, folder.name);
-                    },
-                    onEdit: () {
-                      _showRenameFolder(folder.id, folder.name);
-                    },
-                  );
-                },
-              ),
+      body: StreamBuilder(
+        stream: getIt<LibraryRepository>().watchFolders(),
+        builder: (context, asyncSnapshot) {
+          final folders = asyncSnapshot.data ?? [];
+          return folders.isEmpty
+              ? _buildEmptyState()
+              : ListView.builder(
+                  itemCount: folders.length,
+                  itemBuilder: (context, index) {
+                    final folder = folders[index];
+                    // final decks = await isar.deckEntitys.where().findAll();
+                    // .filter().projectIdEqualTo(id)
+                    // and .lenght() - deckCount
+                    return FolderTile(
+                      folderName: folder.name,
+                      deckCount: 1,
+                      onTap: () {
+                        context.go('/library/folder/${folder.id}');
+                      },
+                      onDelete: () {
+                        _showDeleteConfirmation(
+                          context,
+                          folder.id,
+                          folder.name,
+                        );
+                      },
+                      onEdit: () {
+                        _showRenameFolder(context, folder.id, folder.name);
+                      },
+                    );
+                  },
+                );
+        },
       ),
     );
   }

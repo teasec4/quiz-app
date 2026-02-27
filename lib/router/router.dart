@@ -1,5 +1,7 @@
+import 'package:bookexample/core/service_locator.dart';
 import 'package:bookexample/core/theme/theme_preview_page.dart';
 import 'package:bookexample/core/widgets/bottom_navigation_bar.dart';
+import 'package:bookexample/domain/repositories/library_repository.dart';
 import 'package:bookexample/pages/library/folder/create_deck/create_deck.dart';
 
 import 'package:bookexample/pages/library/folder/deck/deck_page.dart';
@@ -49,7 +51,7 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: '/library',
-                builder: (context, state) => const LibraryPage(),
+                builder: (context, state) =>  LibraryPage(repository: getIt<LibraryRepository>(),),
                 routes: [
                   GoRoute(
                     path: 'folder/:folderId',

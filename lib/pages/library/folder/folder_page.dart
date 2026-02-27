@@ -1,3 +1,7 @@
+import 'package:bookexample/core/service_locator.dart';
+import 'package:bookexample/domain/isar_model/library/deck_entity.dart';
+import 'package:bookexample/domain/isar_model/library/folder_entity.dart';
+import 'package:bookexample/domain/repositories/library_repository.dart';
 import 'package:bookexample/pages/library/folder/widgets/deck_tile.dart';
 import 'package:bookexample/provider/mock_data_provider.dart';
 import 'package:flutter/material.dart';
@@ -5,7 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class FolderPage extends StatefulWidget {
-  final String folderId;
+  final int folderId;
   const FolderPage({super.key, required this.folderId});
 
   @override
@@ -13,13 +17,25 @@ class FolderPage extends StatefulWidget {
 }
 
 class _FolderPageState extends State<FolderPage> {
+  late Future<FolderEntity> _folderFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _folderFuture = getIt<LibraryRepository>().getFolderById(widget.folderId);
+  }
+
   // edit deck
-  void _editDeck(String deckId) {
+  void _editDeck(BuildContext context, String deckId) {
     context.go('/library/folder/${widget.folderId}/editdeck/$deckId');
   }
 
   // delete deck
-  void _showDeleteConfirmation(String deckId, String deckTitle) {
+  void _showDeleteConfirmation(
+    BuildContext context,
+    String deckId,
+    String deckTitle,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -38,7 +54,10 @@ class _FolderPageState extends State<FolderPage> {
                 SnackBar(content: Text('Deck "$deckTitle" deleted')),
               );
             },
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            child: Text(
+              'Delete',
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
           ),
         ],
       ),
@@ -47,62 +66,69 @@ class _FolderPageState extends State<FolderPage> {
 
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<AppState>();
-
-    final folder = appState.folders.firstWhere((f) => f.id == widget.folderId);
-
-    final decks = appState.getDecks(folder.id);
-    final allCards = appState.allCards;
-
-    return Scaffold(
-      appBar: AppBar(title: Text(folder.name)),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          context.go('/library/folder/${widget.folderId}/createdeck');
-        },
-        mini: true,
-        child: const Icon(Icons.add),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: AnimatedSwitcher(
-        duration: const Duration(seconds: 1),
-        child: decks.isEmpty
-            ? _buildEmptyState()
-            : Padding(
-                padding: const EdgeInsets.all(12),
-                child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 12,
-                    crossAxisSpacing: 12,
-                    childAspectRatio: 1,
-                  ),
-                  itemCount: decks.length,
-                  itemBuilder: (context, index) {
-                    final deck = decks[index];
-                    final deckCards = allCards.where((c) => c.deckId == deck.id).toList();
-                    final cardCount = deckCards.length;
-                    final learnedCount = deckCards.where((c) => c.isLearned).length;
-                    return DeckTile(
-                      deckName: deck.title,
-                      cardCount: cardCount,
-                      learnedCount: learnedCount,
-                      onTap: () {
-                        context.go(
-                          '/library/folder/${widget.folderId}/deck/${deck.id}',
-                        );
-                      },
-                      onEdit: () {
-                        _editDeck(deck.id);
-                      },
-                      onDelete: () {
-                        _showDeleteConfirmation(deck.id, deck.title);
-                      },
+    return FutureBuilder<FolderEntity>(
+      future: _folderFuture,
+      builder: (context, asyncSnapshot) {
+        final folder = asyncSnapshot.data;
+        return Scaffold(
+          appBar: AppBar(title: Text(folder?.name ?? 'loading')),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              context.go('/library/folder/${widget.folderId}/createdeck');
+            },
+            mini: true,
+            child: const Icon(Icons.add),
+          ),
+          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+          body: StreamBuilder<List<DeckEntity>>(
+            stream: getIt<LibraryRepository>().watchDecksByFolder(
+              widget.folderId,
+            ),
+            builder: (context, asyncSnapshot) {
+              final decks = asyncSnapshot.data ?? [];
+              return decks.isEmpty
+                  ? _buildEmptyState()
+                  : Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 12,
+                              crossAxisSpacing: 12,
+                              childAspectRatio: 1,
+                            ),
+                        itemCount: decks.length,
+                        itemBuilder: (context, index) {
+                          final deck = decks[index];
+                          final deckCards = [];
+                          final cardCount = deckCards.length;
+                          final learnedCount = deckCards
+                              .where((c) => c.isLearned)
+                              .length;
+                          return DeckTile(
+                            deckName: deck.title,
+                            cardCount: cardCount,
+                            learnedCount: learnedCount,
+                            onTap: () {
+                              context.go(
+                                '/library/folder/${widget.folderId}/deck/${deck.id}',
+                              );
+                            },
+                            onEdit: () {
+                              _editDeck(context,deck.id);
+                            },
+                            onDelete: () {
+                              _showDeleteConfirmation(context,deck.id, deck.title);
+                            },
+                          );
+                        },
+                      ),
                     );
-                  },
-                ),
-              ),
-      ),
+            },
+          ),
+        );
+      },
     );
   }
 
