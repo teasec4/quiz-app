@@ -162,8 +162,8 @@ class LibraryPage extends StatelessWidget {
                     ),
                     Expanded(
                       child: ListView.builder(
-                  itemCount: folders.length,
-                  itemBuilder: (context, index) {
+                      itemCount: folders.length,
+                      itemBuilder: (context, index) {
                     final folder = folders[index];
                     
                     return FolderTile(

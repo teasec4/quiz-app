@@ -69,7 +69,7 @@ class FlashCardWidget extends StatelessWidget {
                         child: Container(
                           width: cardWidth,
                           height: cardHeight,
-                          padding: const EdgeInsets.all(24),
+                          padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
                             gradient: LinearGradient(

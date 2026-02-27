@@ -1,6 +1,5 @@
 import 'package:bookexample/core/service_locator.dart';
 import 'package:bookexample/domain/isar_model/library/deck_entity.dart';
-import 'package:bookexample/domain/isar_model/library/folder_entity.dart';
 import 'package:bookexample/domain/repositories/library_repository.dart';
 import 'package:bookexample/pages/library/folder/widgets/deck_tile.dart';
 import 'package:flutter/material.dart';
@@ -16,12 +15,18 @@ class FolderPage extends StatefulWidget {
 }
 
 class _FolderPageState extends State<FolderPage> {
-  late Future<FolderEntity> _folderFuture;
+  String _folderTitle = 'Loading...';
 
   @override
   void initState() {
     super.initState();
-    _folderFuture = widget.repository.getFolderById(widget.folderId);
+    widget.repository.getFolderById(widget.folderId).then((folder) {
+      if (mounted) {
+        setState(() {
+          _folderTitle = folder.name;
+        });
+      }
+    });
   }
 
   // edit deck
@@ -79,21 +84,17 @@ class _FolderPageState extends State<FolderPage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<FolderEntity>(
-      future: _folderFuture,
-      builder: (context, asyncSnapshot) {
-        final folder = asyncSnapshot.data;
-        return Scaffold(
-          appBar: AppBar(title: Text(folder?.name ?? 'loading')),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              context.go('/library/folder/${widget.folderId}/createdeck');
-            },
-            mini: true,
-            child: const Icon(Icons.add),
-          ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-          body: StreamBuilder<List<DeckEntity>>(
+    return Scaffold(
+      appBar: AppBar(title: Text(_folderTitle)),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          context.go('/library/folder/${widget.folderId}/createdeck');
+        },
+        mini: true,
+        child: const Icon(Icons.add),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      body: StreamBuilder<List<DeckEntity>>(
             stream: getIt<LibraryRepository>().watchDecksByFolder(
               widget.folderId,
             ),
@@ -156,13 +157,11 @@ class _FolderPageState extends State<FolderPage> {
                           ),
                         ),
                       ],
-                    );
-            },
-          ),
-        );
-      },
-    );
-  }
+                      );
+                      },
+                      ),
+                      );
+                      }
 
   Widget _buildEmptyState() {
     return Center(

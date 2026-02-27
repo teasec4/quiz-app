@@ -237,13 +237,7 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
           ),
           body: Column(
             children: [
-              StatsHeader(
-                totalCards: cards.length,
-                accuracyRate: cards.isEmpty
-                    ? 0
-                    : (correctCount / (correctCount + incorrectCount)) * 100,
-                streakDays: 0,
-              ),
+              
               SessionHeader(
                 currentIndex: displayIndex,
                 totalCards: cards.length,

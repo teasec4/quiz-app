@@ -291,7 +291,7 @@ class _CreateDeckState extends State<CreateDeck> {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       elevation: 3,
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -309,8 +309,8 @@ class _CreateDeckState extends State<CreateDeck> {
                   message: 'Delete card',
                   child: IconButton(
                     icon: Icon(
-                      Icons.delete,
-                      color: Theme.of(context).colorScheme.error,
+                      Icons.close,
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
                     onPressed: () => _removeCard(index),
                     tooltip: 'Remove this card',
@@ -524,20 +524,12 @@ class _CreateDeckState extends State<CreateDeck> {
           mainAxisSize: MainAxisSize.min,
           children: [
             FilledButton.tonal(
-              onPressed: _addCard,
-              // tooltip: 'Add a new flashcard',
-              // heroTag: 'add_card',
-              // child: const Icon(Icons.add),
+              onPressed: _addCard,              
               child: const Text("Add Card"),
             ),
             const SizedBox(width: 12),
             FilledButton(
               onPressed: _showSaveConfirmation,
-
-              // backgroundColor: Theme.of(context).colorScheme.tertiary,
-              // tooltip: 'Save this deck',
-              // heroTag: 'save_deck',
-              // child: const Icon(Icons.save),
               child: const Text("Save"),
             ),
           ],

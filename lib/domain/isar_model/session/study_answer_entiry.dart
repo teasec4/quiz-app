@@ -6,7 +6,9 @@ class StudyAnswerEntity {
   Id id = Isar.autoIncrement;
 
   late int cardId;
+  
   late bool isCorrect;
+  
   late DateTime answeredAt;
 
   final session = IsarLink<StudySessionEntity>();

@@ -5,9 +5,15 @@ import 'package:isar_community/isar.dart';
 class StudySessionEntity {
   Id id = Isar.autoIncrement;
 
-  late int deckId;
   late DateTime startedAt;
-  DateTime? finishedAt;
+  DateTime? endedAt;
 
+  late int totalCards;
+  late int correctAnswers;
+
+  @Index()
+  late bool isCompleted;
+  
+  @Backlink(to: 'session')
   final answers = IsarLinks<StudyAnswerEntity>();
 }
