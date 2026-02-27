@@ -3,6 +3,9 @@ import 'package:bookexample/core/theme/app_theme.dart';
 import 'package:bookexample/domain/isar_model/library/deck_entity.dart';
 import 'package:bookexample/domain/isar_model/library/flashcard_entity.dart';
 import 'package:bookexample/domain/isar_model/library/folder_entity.dart';
+import 'package:bookexample/domain/isar_model/session/study_answer_entity.dart';
+import 'package:bookexample/domain/isar_model/session/study_session_entity.dart';
+import 'package:bookexample/domain/isar_model/user_stats/user_stats_entity.dart';
 import 'package:bookexample/router/router.dart';
 import 'package:flutter/material.dart';
 import 'package:isar_community/isar.dart';
@@ -14,7 +17,12 @@ void main() async {
   await Isar.initializeIsarCore(download: true);
   final dir = await getApplicationDocumentsDirectory();
   final isar = await Isar.open(
-    [FolderEntitySchema, DeckEntitySchema, FlashCardEntitySchema],
+    [FolderEntitySchema, 
+      DeckEntitySchema, 
+      FlashCardEntitySchema, 
+      StudySessionEntitySchema, 
+      StudyAnswerEntitySchema, 
+      UserStatsEntitySchema],
     directory: dir.path,
   );
 

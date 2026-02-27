@@ -1,3 +1,6 @@
+import 'package:bookexample/core/service_locator.dart';
+import 'package:bookexample/domain/isar_model/user_stats/user_stats_entity.dart';
+import 'package:bookexample/domain/repositories/stats_repository.dart';
 import 'package:bookexample/pages/study/widgets/mode_tile.dart';
 import 'package:bookexample/pages/study/widgets/stats_header.dart';
 import 'package:flutter/material.dart';
@@ -13,42 +16,43 @@ class _StudyPageState extends State<StudyPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Study'),
-        
-      ),
+      appBar: AppBar(title: const Text('Study')),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           Text(
             'Stats',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
-          StatsHeader(
-            totalCards: 1254,
-            accuracyRate: 87,
-            streakDays: 5,
+          FutureBuilder<UserStatsEntity>(
+            future: getIt<StatsRepository>().getStats(),
+            builder: (context, asyncSnapshot) {
+              final stats = asyncSnapshot.data;
+              return StatsHeader(
+                totalLearnedCards: stats?.totalCards ?? 0,
+                accuracyRate: stats?.accuracyRate ?? 0.0,
+                streakDays: 0,
+              );
+            },
           ),
           const SizedBox(height: 32),
           Text(
             'Study Modes',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
-          
+
           // Start New Session
           ModeCard(
             icon: Icons.book,
             title: 'Start New Session',
             subtitle: 'Begin a fresh study session',
-            onTap: () {
-              
-            },
+            onTap: () {},
           ),
           const SizedBox(height: 12),
           // Continue Last Session
@@ -56,9 +60,7 @@ class _StudyPageState extends State<StudyPage> {
             icon: Icons.play_arrow,
             title: 'Continue Last Session',
             subtitle: 'Resume where you left off',
-            onTap: () {
-              
-            },
+            onTap: () {},
             disabled: true,
           ),
           const SizedBox(height: 12),
@@ -67,17 +69,11 @@ class _StudyPageState extends State<StudyPage> {
             icon: Icons.shuffle,
             title: 'Start Random 10 Cards',
             subtitle: 'Quick random study session',
-            onTap: () {
-              
-            },
+            onTap: () {},
             disabled: true,
           ),
-          
-          
         ],
       ),
     );
   }
-
 }
-

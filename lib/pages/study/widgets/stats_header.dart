@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 class StatsHeader extends StatelessWidget {
-  final int totalCards;
+  final int totalLearnedCards;
   final double accuracyRate;
   final int streakDays;
 
   const StatsHeader({
     super.key,
-    required this.totalCards,
+    required this.totalLearnedCards,
     required this.accuracyRate,
     required this.streakDays,
   });
@@ -21,8 +21,8 @@ class StatsHeader extends StatelessWidget {
             children: [
               Expanded(
                 child: _StatItem(
-                  label: 'Total Cards',
-                  value: totalCards.toString(),
+                  label: 'Learned Cards',
+                  value: totalLearnedCards.toString(),
                 ),
               ),
               const SizedBox(width: 12),
