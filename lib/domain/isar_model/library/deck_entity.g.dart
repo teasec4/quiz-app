@@ -57,7 +57,7 @@ const DeckEntitySchema = CollectionSchema(
       id: -9083826548028605116,
       name: r'cards',
       target: r'FlashCardEntity',
-      single: true,
+      single: false,
       linkName: r'deck',
     ),
   },
@@ -684,9 +684,55 @@ extension DeckEntityQueryLinks
     });
   }
 
-  QueryBuilder<DeckEntity, DeckEntity, QAfterFilterCondition> cardsIsNull() {
+  QueryBuilder<DeckEntity, DeckEntity, QAfterFilterCondition>
+  cardsLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'cards', length, true, length, true);
+    });
+  }
+
+  QueryBuilder<DeckEntity, DeckEntity, QAfterFilterCondition> cardsIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.linkLength(r'cards', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<DeckEntity, DeckEntity, QAfterFilterCondition>
+  cardsIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'cards', 0, false, 999999, true);
+    });
+  }
+
+  QueryBuilder<DeckEntity, DeckEntity, QAfterFilterCondition>
+  cardsLengthLessThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'cards', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<DeckEntity, DeckEntity, QAfterFilterCondition>
+  cardsLengthGreaterThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'cards', length, include, 999999, true);
+    });
+  }
+
+  QueryBuilder<DeckEntity, DeckEntity, QAfterFilterCondition>
+  cardsLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(
+        r'cards',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
     });
   }
 }

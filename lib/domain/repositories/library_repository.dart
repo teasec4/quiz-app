@@ -20,17 +20,9 @@ abstract class LibraryRepository {
   // Stream All Deck for UI updates
   Stream<List<DeckEntity>> watchDecksByFolder(int folderId);
   Future<List<DeckEntity>> getDecksByFolder(int folderId);
-  Future<void> deleteDeck(String deckId);
-  Future<void> addDeckWithCards(
-    String folderId,
-    String title,
-    List<FlashCardEntity> cards,
-  );
-  Future<void> updateDeckWithCards(
-    String deckId,
-    String title,
-    List<FlashCardEntity> newCards,
-  );
+  Future<void> createDeckWithCard(int folderId, String title, List<FlashCardEntity> flashCards);
+  Future<void> updateDeckWithCard();
+  Future<void> deleteDeck(int deckId);
 
   // Cards
   // Stream all Card for UI updates

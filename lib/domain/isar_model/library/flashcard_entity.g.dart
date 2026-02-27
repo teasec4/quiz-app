@@ -18,7 +18,13 @@ const FlashCardEntitySchema = CollectionSchema(
   id: -8683071797499406053,
   properties: {
     r'back': PropertySchema(id: 0, name: r'back', type: IsarType.string),
-    r'front': PropertySchema(id: 1, name: r'front', type: IsarType.string),
+    r'createdAt': PropertySchema(
+      id: 1,
+      name: r'createdAt',
+      type: IsarType.dateTime,
+    ),
+    r'deckId': PropertySchema(id: 2, name: r'deckId', type: IsarType.long),
+    r'front': PropertySchema(id: 3, name: r'front', type: IsarType.string),
   },
 
   estimateSize: _flashCardEntityEstimateSize,
@@ -26,7 +32,21 @@ const FlashCardEntitySchema = CollectionSchema(
   deserialize: _flashCardEntityDeserialize,
   deserializeProp: _flashCardEntityDeserializeProp,
   idName: r'id',
-  indexes: {},
+  indexes: {
+    r'deckId': IndexSchema(
+      id: -1182505463565197889,
+      name: r'deckId',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'deckId',
+          type: IndexType.value,
+          caseSensitive: false,
+        ),
+      ],
+    ),
+  },
   links: {
     r'deck': LinkSchema(
       id: -3063862919761449329,
@@ -61,7 +81,9 @@ void _flashCardEntitySerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.back);
-  writer.writeString(offsets[1], object.front);
+  writer.writeDateTime(offsets[1], object.createdAt);
+  writer.writeLong(offsets[2], object.deckId);
+  writer.writeString(offsets[3], object.front);
 }
 
 FlashCardEntity _flashCardEntityDeserialize(
@@ -72,7 +94,9 @@ FlashCardEntity _flashCardEntityDeserialize(
 ) {
   final object = FlashCardEntity();
   object.back = reader.readString(offsets[0]);
-  object.front = reader.readString(offsets[1]);
+  object.createdAt = reader.readDateTime(offsets[1]);
+  object.deckId = reader.readLong(offsets[2]);
+  object.front = reader.readString(offsets[3]);
   object.id = id;
   return object;
 }
@@ -87,6 +111,10 @@ P _flashCardEntityDeserializeProp<P>(
     case 0:
       return (reader.readString(offset)) as P;
     case 1:
+      return (reader.readDateTime(offset)) as P;
+    case 2:
+      return (reader.readLong(offset)) as P;
+    case 3:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -115,6 +143,14 @@ extension FlashCardEntityQueryWhereSort
   QueryBuilder<FlashCardEntity, FlashCardEntity, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+
+  QueryBuilder<FlashCardEntity, FlashCardEntity, QAfterWhere> anyDeckId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'deckId'),
+      );
     });
   }
 }
@@ -184,6 +220,106 @@ extension FlashCardEntityQueryWhere
           lower: lowerId,
           includeLower: includeLower,
           upper: upperId,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FlashCardEntity, FlashCardEntity, QAfterWhereClause>
+  deckIdEqualTo(int deckId) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'deckId', value: [deckId]),
+      );
+    });
+  }
+
+  QueryBuilder<FlashCardEntity, FlashCardEntity, QAfterWhereClause>
+  deckIdNotEqualTo(int deckId) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'deckId',
+                lower: [],
+                upper: [deckId],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'deckId',
+                lower: [deckId],
+                includeLower: false,
+                upper: [],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'deckId',
+                lower: [deckId],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'deckId',
+                lower: [],
+                upper: [deckId],
+                includeUpper: false,
+              ),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<FlashCardEntity, FlashCardEntity, QAfterWhereClause>
+  deckIdGreaterThan(int deckId, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'deckId',
+          lower: [deckId],
+          includeLower: include,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FlashCardEntity, FlashCardEntity, QAfterWhereClause>
+  deckIdLessThan(int deckId, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'deckId',
+          lower: [],
+          upper: [deckId],
+          includeUpper: include,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FlashCardEntity, FlashCardEntity, QAfterWhereClause>
+  deckIdBetween(
+    int lowerDeckId,
+    int upperDeckId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'deckId',
+          lower: [lowerDeckId],
+          includeLower: includeLower,
+          upper: [upperDeckId],
           includeUpper: includeUpper,
         ),
       );
@@ -330,6 +466,116 @@ extension FlashCardEntityQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         FilterCondition.greaterThan(property: r'back', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<FlashCardEntity, FlashCardEntity, QAfterFilterCondition>
+  createdAtEqualTo(DateTime value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'createdAt', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<FlashCardEntity, FlashCardEntity, QAfterFilterCondition>
+  createdAtGreaterThan(DateTime value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'createdAt',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FlashCardEntity, FlashCardEntity, QAfterFilterCondition>
+  createdAtLessThan(DateTime value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'createdAt',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FlashCardEntity, FlashCardEntity, QAfterFilterCondition>
+  createdAtBetween(
+    DateTime lower,
+    DateTime upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'createdAt',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FlashCardEntity, FlashCardEntity, QAfterFilterCondition>
+  deckIdEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'deckId', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<FlashCardEntity, FlashCardEntity, QAfterFilterCondition>
+  deckIdGreaterThan(int value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'deckId',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FlashCardEntity, FlashCardEntity, QAfterFilterCondition>
+  deckIdLessThan(int value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'deckId',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<FlashCardEntity, FlashCardEntity, QAfterFilterCondition>
+  deckIdBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'deckId',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
       );
     });
   }
@@ -567,6 +813,33 @@ extension FlashCardEntityQuerySortBy
     });
   }
 
+  QueryBuilder<FlashCardEntity, FlashCardEntity, QAfterSortBy>
+  sortByCreatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'createdAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<FlashCardEntity, FlashCardEntity, QAfterSortBy>
+  sortByCreatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'createdAt', Sort.desc);
+    });
+  }
+
+  QueryBuilder<FlashCardEntity, FlashCardEntity, QAfterSortBy> sortByDeckId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'deckId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<FlashCardEntity, FlashCardEntity, QAfterSortBy>
+  sortByDeckIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'deckId', Sort.desc);
+    });
+  }
+
   QueryBuilder<FlashCardEntity, FlashCardEntity, QAfterSortBy> sortByFront() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'front', Sort.asc);
@@ -593,6 +866,33 @@ extension FlashCardEntityQuerySortThenBy
   thenByBackDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'back', Sort.desc);
+    });
+  }
+
+  QueryBuilder<FlashCardEntity, FlashCardEntity, QAfterSortBy>
+  thenByCreatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'createdAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<FlashCardEntity, FlashCardEntity, QAfterSortBy>
+  thenByCreatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'createdAt', Sort.desc);
+    });
+  }
+
+  QueryBuilder<FlashCardEntity, FlashCardEntity, QAfterSortBy> thenByDeckId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'deckId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<FlashCardEntity, FlashCardEntity, QAfterSortBy>
+  thenByDeckIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'deckId', Sort.desc);
     });
   }
 
@@ -632,6 +932,19 @@ extension FlashCardEntityQueryWhereDistinct
     });
   }
 
+  QueryBuilder<FlashCardEntity, FlashCardEntity, QDistinct>
+  distinctByCreatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'createdAt');
+    });
+  }
+
+  QueryBuilder<FlashCardEntity, FlashCardEntity, QDistinct> distinctByDeckId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'deckId');
+    });
+  }
+
   QueryBuilder<FlashCardEntity, FlashCardEntity, QDistinct> distinctByFront({
     bool caseSensitive = true,
   }) {
@@ -652,6 +965,19 @@ extension FlashCardEntityQueryProperty
   QueryBuilder<FlashCardEntity, String, QQueryOperations> backProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'back');
+    });
+  }
+
+  QueryBuilder<FlashCardEntity, DateTime, QQueryOperations>
+  createdAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'createdAt');
+    });
+  }
+
+  QueryBuilder<FlashCardEntity, int, QQueryOperations> deckIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'deckId');
     });
   }
 

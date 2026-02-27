@@ -1,4 +1,5 @@
 import 'package:bookexample/domain/isar_model/library/deck_entity.dart';
+import 'package:bookexample/domain/isar_model/library/flashcard_entity.dart';
 import 'package:bookexample/domain/isar_model/library/folder_entity.dart';
 import 'package:bookexample/domain/repositories/library_repository.dart';
 import 'package:isar_community/isar.dart';
@@ -64,18 +65,51 @@ class IsarLibraryRepositoryImpl implements LibraryRepository {
   //     );
   //   },
   // );
-  
+
   Stream<List<DeckEntity>> watchDecksByFolder(int folderId) {
     return isar.deckEntitys
         .filter()
         .folderIdEqualTo(folderId)
         .watch(fireImmediately: true);
   }
-  
+
   @override
   Future<List<DeckEntity>> getDecksByFolder(int folderId) {
     // TODO: implement getDecksByFolder
     throw UnimplementedError();
   }
-  
+
+  @override
+  Future<void> createDeckWithCard(
+    int folderId,
+    String title,
+    List<FlashCardEntity> flashCards,
+  ) async {
+    final folder = await isar.folderEntitys.get(folderId);
+
+    final deck = DeckEntity()
+      ..title = title
+      ..createdAt = DateTime.now()
+      ..folderId = folderId
+      ..folder.value = folder;
+
+    await isar.writeTxn(() async {
+      await isar.deckEntitys.put(deck);
+
+      for (var card in flashCards) {
+        final cardEntity = FlashCardEntity()
+          ..front = card.front
+          ..back = card.back
+          ..createdAt = DateTime.now()
+          ..deckId = deck.id
+          ..deck.value = deck;
+
+        await isar.flashCardEntitys.put(cardEntity);
+        deck.cards.add(cardEntity);
+      }
+
+      await deck.cards.save();
+      isar.deckEntitys.put(deck);
+    });
+  }
 }

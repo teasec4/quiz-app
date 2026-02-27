@@ -1,4 +1,3 @@
-
 import 'package:bookexample/domain/isar_model/library/deck_entity.dart';
 import 'package:isar_community/isar.dart';
 
@@ -11,5 +10,10 @@ class FlashCardEntity {
   late String front;
   late String back;
 
+  late DateTime createdAt;
+
+  @Index()
+  late int deckId;
+  
   final deck = IsarLink<DeckEntity>();
 }

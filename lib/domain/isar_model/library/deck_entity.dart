@@ -19,5 +19,5 @@ class DeckEntity {
   
 
   @Backlink(to: 'deck')
-  final cards = IsarLink<FlashCardEntity>();
+  final cards = IsarLinks<FlashCardEntity>();
 }
