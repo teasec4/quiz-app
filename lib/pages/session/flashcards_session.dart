@@ -82,17 +82,10 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
 
     _controller.forward(from: 0).then((_) async {
       try {
-        if (isCorrect) {
-          await getIt<LibraryRepository>().setCardLearned(
-            currentCard.id,
-            true,
-          );
-        } else {
-          await getIt<LibraryRepository>().setCardLearned(
-            currentCard.id,
-            false,
-          );
-        }
+        await getIt<LibraryRepository>().setCardsLearned(
+          [currentCard.id],
+          isCorrect,
+        );
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(

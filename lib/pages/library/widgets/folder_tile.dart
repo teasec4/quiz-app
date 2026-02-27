@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class FolderTile extends StatelessWidget {
   final String folderName;
-  final int deckCount;
+  // final int deckCount;
   final VoidCallback? onTap;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
@@ -10,7 +10,7 @@ class FolderTile extends StatelessWidget {
   const FolderTile({
     super.key,
     required this.folderName,
-    this.deckCount = 0,
+    // required this.deckCount,
     this.onTap,
     this.onEdit,
     this.onDelete,
@@ -30,10 +30,10 @@ class FolderTile extends StatelessWidget {
           folderName,
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
-        subtitle: Text(
-          "${deckCount} decks",
-          style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-        ),
+        // subtitle: Text(
+        //   "${deckCount} decks",
+        //   style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+        // ),
         trailing: PopupMenuButton(
           itemBuilder: (context) => [
             PopupMenuItem(

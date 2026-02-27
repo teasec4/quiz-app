@@ -144,7 +144,7 @@ class DeckTile extends StatelessWidget {
                     child: LinearProgressIndicator(
                       value: progress,
                       minHeight: 6,
-                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
                       valueColor:  AlwaysStoppedAnimation(
                         Theme.of(context).colorScheme.primary,
                       ),

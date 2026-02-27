@@ -20,7 +20,6 @@ class _CreateDeckState extends State<CreateDeck> {
   List<CardFormTextFormField> cards = [CardFormTextFormField()];
   final _deckTitle = TextEditingController();
   late FocusNode _deckTitleFocus;
-  late ScrollController _scrollController;
   bool _hasChanges = false;
   bool _deckTitleError = false;
   bool _isLoading = false;
@@ -29,7 +28,6 @@ class _CreateDeckState extends State<CreateDeck> {
   void initState() {
     super.initState();
     _deckTitleFocus = FocusNode();
-    _scrollController = ScrollController();
     
     // Load existing deck if editing
     if (widget.deckId != null) {
@@ -87,7 +85,6 @@ class _CreateDeckState extends State<CreateDeck> {
     }
     _deckTitle.dispose();
     _deckTitleFocus.dispose();
-    _scrollController.dispose();
     super.dispose();
   }
 
@@ -228,18 +225,9 @@ class _CreateDeckState extends State<CreateDeck> {
       _hasChanges = true;
     });
     
-    // Request focus on the new card's front field and scroll to it
+    // Request focus on the new card's front field
     WidgetsBinding.instance.addPostFrameCallback((_) {
       cards.last.frontFocus.requestFocus();
-      
-      // Scroll to the new card
-      final newCardIndex = cards.length - 1;
-      final scrollPosition = newCardIndex * 350.0; // Approx height of one card
-      _scrollController.animateTo(
-        scrollPosition,
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeInOut,
-      );
     });
   }
 
@@ -523,7 +511,6 @@ class _CreateDeckState extends State<CreateDeck> {
               child: Form(
                 key: _formKey,
                 child: ListView.builder(
-                  controller: _scrollController,
                   padding: const EdgeInsets.only(bottom: 100),
                   itemCount: cards.length,
                   itemBuilder: (context, index) => _buildCardForm(index),

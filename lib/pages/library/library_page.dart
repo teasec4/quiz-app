@@ -129,6 +129,7 @@ class LibraryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(title: const Text("Library")),
       floatingActionButton: FloatingActionButton(
@@ -149,27 +150,22 @@ class LibraryPage extends StatelessWidget {
                   itemCount: folders.length,
                   itemBuilder: (context, index) {
                     final folder = folders[index];
-                    return FutureBuilder<int>(
-                      future: repository.getDeckCountByFolder(folder.id),
-                      builder: (context, deckCountSnapshot) {
-                        final deckCount = deckCountSnapshot.data ?? 0;
-                        return FolderTile(
-                          folderName: folder.name,
-                          deckCount: deckCount,
-                          onTap: () {
-                            context.go('/library/folder/${folder.id}');
-                          },
-                          onDelete: () {
-                            _showDeleteConfirmation(
-                              context,
-                              folder.id,
-                              folder.name,
-                            );
-                          },
-                          onEdit: () {
-                            _showRenameFolder(context, folder.id, folder.name);
-                          },
+                    
+                    return FolderTile(
+                      folderName: folder.name,
+                      // deckCount: folder.decks.length,
+                      onTap: () {
+                        context.go('/library/folder/${folder.id}');
+                      },
+                      onDelete: () {
+                        _showDeleteConfirmation(
+                          context,
+                          folder.id,
+                          folder.name,
                         );
+                      },
+                      onEdit: () {
+                        _showRenameFolder(context, folder.id, folder.name);
                       },
                     );
                   },
