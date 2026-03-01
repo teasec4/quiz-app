@@ -2,8 +2,8 @@ import 'package:bookexample/domain/isar_model/library/deck_entity.dart';
 import 'package:bookexample/domain/isar_model/library/flashcard_entity.dart';
 import 'package:bookexample/domain/isar_model/library/folder_entity.dart';
 import 'package:bookexample/domain/repositories/library_repository.dart';
+import 'package:bookexample/pages/session/models/study_session_draft.dart';
 import 'package:flutter/foundation.dart';
-
 
 class LibraryViewModel extends ChangeNotifier {
   final LibraryRepository repository;
@@ -33,7 +33,7 @@ class LibraryViewModel extends ChangeNotifier {
       errorMessage = null;
     } catch (e) {
       errorMessage = e.toString();
-      
+
       notifyListeners();
     }
   }
@@ -58,7 +58,11 @@ class LibraryViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> addDeck(int folderId, String title, List<FlashCardEntity> cards) async {
+  Future<void> addDeck(
+    int folderId,
+    String title,
+    List<FlashCardEntity> cards,
+  ) async {
     try {
       await repository.createDeckWithCard(folderId, title, cards);
       errorMessage = null;
@@ -78,7 +82,11 @@ class LibraryViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> updateDeckWithCards(int deckId, String title, List<FlashCardEntity> cards) async {
+  Future<void> updateDeckWithCards(
+    int deckId,
+    String title,
+    List<FlashCardEntity> cards,
+  ) async {
     try {
       await repository.updateDeckWithCards(deckId, title, cards);
       errorMessage = null;
@@ -86,5 +94,13 @@ class LibraryViewModel extends ChangeNotifier {
       errorMessage = e.toString();
       notifyListeners();
     }
+  }
+
+  Future<List<FlashCardEntity>> getCardsByDeck(int deckId) async {
+    return await repository.getCardsByDeck(deckId);
+  }
+
+  Future<void> setCardsLearned(List<AnswerDraft> answeredCards) async {
+    await repository.setCardsLearned(answeredCards);
   }
 }

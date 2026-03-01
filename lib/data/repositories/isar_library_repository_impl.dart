@@ -2,6 +2,7 @@ import 'package:bookexample/domain/isar_model/library/deck_entity.dart';
 import 'package:bookexample/domain/isar_model/library/flashcard_entity.dart';
 import 'package:bookexample/domain/isar_model/library/folder_entity.dart';
 import 'package:bookexample/domain/repositories/library_repository.dart';
+import 'package:bookexample/pages/session/models/study_session_draft.dart';
 import 'package:isar_community/isar.dart';
 
 class IsarLibraryRepositoryImpl implements LibraryRepository {
@@ -218,13 +219,13 @@ class IsarLibraryRepositoryImpl implements LibraryRepository {
   }
 
   @override
-  Future<void> setCardsLearned(List<int> cardIds, bool isLearned) async {
+  Future<void> setCardsLearned(List<AnswerDraft> answeredCards) async {
     await isar.writeTxn(() async {
-      for (var cardId in cardIds) {
-        final card = await isar.flashCardEntitys.get(cardId);
-        if (card != null) {
-          card.isLearned = isLearned;
-          await isar.flashCardEntitys.put(card);
+      for (var card in answeredCards) {
+        final cardEntityFromDB = await isar.flashCardEntitys.get(card.cardId);
+        if (cardEntityFromDB != null) {
+          cardEntityFromDB.isLearned = card.isCorrect;
+          await isar.flashCardEntitys.put(cardEntityFromDB);
         }
       }
     });

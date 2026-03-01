@@ -1,11 +1,12 @@
-
 import 'package:bookexample/core/service_locator.dart';
 import 'package:bookexample/domain/isar_model/library/flashcard_entity.dart';
 import 'package:bookexample/domain/repositories/library_repository.dart';
-
+import 'package:bookexample/pages/session/models/study_session_draft.dart';
+import 'package:bookexample/view_models/library_view_model.dart';
+import 'package:bookexample/view_models/study_session_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:bookexample/pages/study/widgets/stats_header.dart';
+import 'package:provider/provider.dart';
 import 'widgets/session_header.dart';
 import 'widgets/flash_card.dart' as flash_card_widget;
 
@@ -36,8 +37,8 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
   bool showBack = false;
   bool isAnimating = false;
 
-  late Future<List<FlashCardEntity>> _cardsFuture;
-  List<FlashCardEntity> cards = [];
+  late final List<FlashCardEntity> cards;
+  StudySessionDraft draft = StudySessionDraft();
 
   @override
   void initState() {
@@ -47,9 +48,7 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
       duration: const Duration(milliseconds: 250),
     );
     _animation = Tween<double>(begin: 0, end: 0).animate(_controller);
-
-    // Get cards from repository
-    _cardsFuture = getIt<LibraryRepository>().getCardsByDeck(widget.deckId);
+    
   }
 
   @override
@@ -58,6 +57,8 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
     super.dispose();
   }
 
+  // RIGHT side - TRUE
+  // LEFT side - FALSE
   void _handleSwipe(double velocity) {
     const threshold = 300;
 
@@ -83,10 +84,8 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
 
     _controller.forward(from: 0).then((_) async {
       try {
-        await getIt<LibraryRepository>().setCardsLearned(
-          [currentCard.id],
-          isCorrect,
-        );
+        // CREATING A DRAFT LIST HERE
+        draft.addAnswer(currentCard.id, isCorrect);
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -97,7 +96,7 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
           );
         }
       }
-      
+
       if (mounted) {
         setState(() {
           if (isCorrect) {
@@ -113,6 +112,8 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
         });
 
         if (currentIndex >= cards.length) {
+          context.read<LibraryViewModel>().setCardsLearned(draft.answers);
+          context.read<StudySessionViewModel>().saveSession(draft);
           _showSessionComplete();
         }
       }
@@ -190,7 +191,7 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<FlashCardEntity>>(
-      future: _cardsFuture,
+      future: context.watch<LibraryViewModel>().getCardsByDeck(widget.deckId),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Scaffold(
@@ -200,9 +201,7 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
 
         if (snapshot.hasError) {
           return Scaffold(
-            body: Center(
-              child: Text('Error: ${snapshot.error}'),
-            ),
+            body: Center(child: Text('Error: ${snapshot.error}')),
           );
         }
 
@@ -210,9 +209,7 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
         if (cards.isEmpty) {
           return Scaffold(
             appBar: AppBar(title: const Text('Flashcard Session')),
-            body: const Center(
-              child: Text('No cards in this deck'),
-            ),
+            body: const Center(child: Text('No cards in this deck')),
           );
         }
 
@@ -237,7 +234,6 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
           ),
           body: Column(
             children: [
-              
               SessionHeader(
                 currentIndex: displayIndex,
                 totalCards: cards.length,

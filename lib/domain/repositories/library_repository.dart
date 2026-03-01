@@ -1,6 +1,7 @@
 import 'package:bookexample/domain/isar_model/library/deck_entity.dart';
 import 'package:bookexample/domain/isar_model/library/flashcard_entity.dart';
 import 'package:bookexample/domain/isar_model/library/folder_entity.dart';
+import 'package:bookexample/pages/session/models/study_session_draft.dart';
 
 abstract class LibraryRepository {
   // Folders
@@ -33,5 +34,5 @@ abstract class LibraryRepository {
   // Cards
   // Stream all Card for UI updates
   Future<List<FlashCardEntity>> getCardsByDeck(int deckId);
-  Future<void> setCardsLearned(List<int> cardIds, bool isLearned);
+  Future<void> setCardsLearned(List<AnswerDraft> answeredCards);
 }
