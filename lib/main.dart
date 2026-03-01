@@ -1,46 +1,32 @@
 import 'package:bookexample/core/service_locator.dart';
 import 'package:bookexample/core/theme/app_theme.dart';
-import 'package:bookexample/domain/isar_model/library/deck_entity.dart';
-import 'package:bookexample/domain/isar_model/library/flashcard_entity.dart';
-import 'package:bookexample/domain/isar_model/library/folder_entity.dart';
-import 'package:bookexample/domain/isar_model/session/study_answer_entity.dart';
-import 'package:bookexample/domain/isar_model/session/study_session_entity.dart';
-import 'package:bookexample/domain/isar_model/user_stats/user_stats_entity.dart';
 import 'package:bookexample/router/router.dart';
+import 'package:bookexample/view_models/library_view_model.dart';
 import 'package:flutter/material.dart';
-import 'package:isar_community/isar.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
+
 
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Isar.initializeIsarCore(download: true);
-  final dir = await getApplicationDocumentsDirectory();
-  final isar = await Isar.open(
-    [FolderEntitySchema, 
-      DeckEntitySchema, 
-      FlashCardEntitySchema, 
-      StudySessionEntitySchema, 
-      StudyAnswerEntitySchema, 
-      UserStatsEntitySchema],
-    directory: dir.path,
-  );
-
-  setupServiceLocator(isar);
+  await setupServiceLocator();
 
   runApp(
-    const MyApp(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => getIt<LibraryViewModel>()),
+      ],
+      child: const MyApp(),
+    ),
   );
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'Flutter Demo',
+      title: 'QuizLet',
       debugShowCheckedModeBanner: false,
       // .minimal .tech .modern
       theme: AppThemeFactory.getTheme(AppThemeVariant.minimal),

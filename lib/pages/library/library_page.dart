@@ -1,14 +1,13 @@
-import 'package:bookexample/core/service_locator.dart';
-import 'package:bookexample/domain/repositories/library_repository.dart';
+import 'package:bookexample/view_models/library_view_model.dart';
 import 'package:bookexample/pages/library/widgets/create_folder_sheet.dart';
 import 'package:bookexample/pages/library/widgets/folder_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class LibraryPage extends StatelessWidget {
-  final LibraryRepository repository;
-  const LibraryPage({super.key, required this.repository});
-
+  const LibraryPage({super.key});
+  
   // creating folder bottom sheet
   Future<void> _showCreateFolder(BuildContext context) async {
     final newFolderName = await showModalBottomSheet<String?>(
@@ -22,21 +21,23 @@ class LibraryPage extends StatelessWidget {
     if (!context.mounted) return;
 
     if (newFolderName != null) {
-      try {
-        await repository.addFolder(newFolderName);
-        if (!context.mounted) return;
+      final vm = context.read<LibraryViewModel>();
+      await vm.createFolder(newFolderName);
+      
+      if (!context.mounted) return;
+      
+      if (vm.errorMessage != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error creating folder: ${vm.errorMessage}'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             duration: const Duration(seconds: 1),
             content: Text('Folder "$newFolderName" created!'),
-          ),
-        );
-      } catch (e) {
-        if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error creating folder: $e'),
-            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -60,21 +61,23 @@ class LibraryPage extends StatelessWidget {
     if (!context.mounted) return;
 
     if (newFolderName != null) {
-      try {
-        await repository.renameFolder(folderId, newFolderName);
-        if (!context.mounted) return;
+      final vm = context.read<LibraryViewModel>();
+      await vm.renameFolder(folderId, newFolderName);
+      
+      if (!context.mounted) return;
+      
+      if (vm.errorMessage != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error renaming folder: ${vm.errorMessage}'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             duration: const Duration(seconds: 1),
             content: Text('Folder "$oldName" renamed to "$newFolderName"'),
-          ),
-        );
-      } catch (e) {
-        if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error renaming folder: $e'),
-            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -100,22 +103,22 @@ class LibraryPage extends StatelessWidget {
           ),
           TextButton(
             onPressed: () async {
-              try {
-                await repository.deleteFolder(folderId);
-                if (context.mounted) {
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Folder "$folderName" deleted')),
-                  );
-                }
-              } catch (e) {
-                if (context.mounted) {
-                  Navigator.pop(context);
+              final vm = context.read<LibraryViewModel>();
+              await vm.deleteFolder(folderId);
+              
+              if (context.mounted) {
+                Navigator.pop(context);
+                
+                if (vm.errorMessage != null) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Error deleting folder: $e'),
+                      content: Text('Error deleting folder: ${vm.errorMessage}'),
                       backgroundColor: Theme.of(context).colorScheme.error,
                     ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Folder "$folderName" deleted')),
                   );
                 }
               }
@@ -129,6 +132,7 @@ class LibraryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final vm = context.watch<LibraryViewModel>();
 
     return Scaffold(
       appBar: AppBar(title: const Text("Library")),
@@ -141,7 +145,7 @@ class LibraryPage extends StatelessWidget {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: StreamBuilder(
-        stream: getIt<LibraryRepository>().watchFolders(),
+        stream: vm.watchFolders(),
         builder: (context, asyncSnapshot) {
           final folders = asyncSnapshot.data ?? [];
           return folders.isEmpty

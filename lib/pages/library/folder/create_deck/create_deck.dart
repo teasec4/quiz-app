@@ -1,10 +1,10 @@
-import 'package:bookexample/core/service_locator.dart';
 import 'package:bookexample/domain/isar_model/library/flashcard_entity.dart';
-import 'package:bookexample/domain/repositories/library_repository.dart';
 import 'package:bookexample/models/card_form_text_form_field.dart';
+import 'package:bookexample/view_models/library_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class CreateDeck extends StatefulWidget {
   final int folderId;
@@ -29,11 +29,6 @@ class _CreateDeckState extends State<CreateDeck> {
     super.initState();
     _deckTitleFocus = FocusNode();
     
-    // Load existing deck if editing
-    if (widget.deckId != null) {
-      _loadDeck();
-    }
-    
     // Request focus for DeckTitle after build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _deckTitleFocus.requestFocus();
@@ -45,37 +40,6 @@ class _CreateDeckState extends State<CreateDeck> {
         });
       }
     });
-  }
-
-  Future<void> _loadDeck() async {
-    final repository = getIt<LibraryRepository>();
-    try {
-      final deck = await repository.getDeckById(widget.deckId!);
-      if (mounted) {
-        setState(() {
-          _deckTitle.text = deck.title;
-          cards.clear();
-          for (var card in deck.cards) {
-            final cardForm = CardFormTextFormField();
-            cardForm.frontController.text = card.front;
-            cardForm.backController.text = card.back;
-            cards.add(cardForm);
-          }
-          if (cards.isEmpty) {
-            cards.add(CardFormTextFormField());
-          }
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error loading deck: $e'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
-      }
-    }
   }
 
   @override
@@ -157,7 +121,7 @@ class _CreateDeckState extends State<CreateDeck> {
     });
 
     try {
-      final repository = getIt<LibraryRepository>();
+      final vm = context.read<LibraryViewModel>();
       
       final List<FlashCardEntity> newCards = cards.map((card) {
         return FlashCardEntity()
@@ -167,37 +131,47 @@ class _CreateDeckState extends State<CreateDeck> {
 
       if (widget.deckId == null) {
         // Creating new deck
-        await repository.createDeckWithCard(
-          widget.folderId,
-          _deckTitle.text,
-          newCards,
-        );
+        await vm.addDeck(widget.folderId, _deckTitle.text, newCards);
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text('Deck saved successfully!'),
-              backgroundColor: Theme.of(context).colorScheme.tertiary,
-              duration: const Duration(seconds: 1),
-            ),
-          );
-          context.pop();
+          if (vm.errorMessage != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Error saving deck: ${vm.errorMessage}'),
+                backgroundColor: Theme.of(context).colorScheme.error,
+              ),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text('Deck saved successfully!'),
+                backgroundColor: Theme.of(context).colorScheme.tertiary,
+                duration: const Duration(seconds: 1),
+              ),
+            );
+            context.pop();
+          }
         }
       } else {
         // Editing existing deck
-        await repository.updateDeckWithCards(
-          widget.deckId!,
-          _deckTitle.text,
-          newCards,
-        );
+        await vm.updateDeckWithCards(widget.deckId!, _deckTitle.text, newCards);
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text('Deck updated successfully!'),
-              backgroundColor: Theme.of(context).colorScheme.tertiary,
-              duration: const Duration(seconds: 1),
-            ),
-          );
-          context.pop();
+          if (vm.errorMessage != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Error updating deck: ${vm.errorMessage}'),
+                backgroundColor: Theme.of(context).colorScheme.error,
+              ),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text('Deck updated successfully!'),
+                backgroundColor: Theme.of(context).colorScheme.tertiary,
+                duration: const Duration(seconds: 1),
+              ),
+            );
+            context.pop();
+          }
         }
       }
       _hasChanges = false;
@@ -407,7 +381,47 @@ class _CreateDeckState extends State<CreateDeck> {
           context.pop();
         }
       },
-      child: Scaffold(
+      child: widget.deckId == null
+          ? _buildForm()
+          : FutureBuilder(
+              future: context.read<LibraryViewModel>().getDeckById(widget.deckId!),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Scaffold(
+                    body: Center(child: CircularProgressIndicator()),
+                  );
+                }
+                if (snapshot.hasError) {
+                  return Scaffold(
+                    body: Center(child: Text('Error: ${snapshot.error}')),
+                  );
+                }
+                if (snapshot.hasData) {
+                  final deck = snapshot.data!;
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (_deckTitle.text.isEmpty) {
+                      _deckTitle.text = deck.title;
+                      cards.clear();
+                      for (var card in deck.cards) {
+                        final cardForm = CardFormTextFormField();
+                        cardForm.frontController.text = card.front;
+                        cardForm.backController.text = card.back;
+                        cards.add(cardForm);
+                      }
+                      if (cards.isEmpty) {
+                        cards.add(CardFormTextFormField());
+                      }
+                    }
+                  });
+                }
+                return _buildForm();
+              },
+            ),
+      );
+      }
+
+      Widget _buildForm() {
+      return Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
           title: Text(widget.deckId == null ? "Create Deck" : "Edit Deck"),
@@ -534,7 +548,6 @@ class _CreateDeckState extends State<CreateDeck> {
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 }

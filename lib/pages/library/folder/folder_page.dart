@@ -1,14 +1,13 @@
-import 'package:bookexample/core/service_locator.dart';
+import 'package:bookexample/view_models/library_view_model.dart';
 import 'package:bookexample/domain/isar_model/library/deck_entity.dart';
-import 'package:bookexample/domain/repositories/library_repository.dart';
 import 'package:bookexample/pages/library/folder/widgets/deck_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class FolderPage extends StatefulWidget {
   final int folderId;
-  final LibraryRepository repository;
-  const FolderPage({super.key, required this.folderId, required this.repository});
+  const FolderPage({super.key, required this.folderId});
 
   @override
   State<FolderPage> createState() => _FolderPageState();
@@ -16,18 +15,6 @@ class FolderPage extends StatefulWidget {
 
 class _FolderPageState extends State<FolderPage> {
   String _folderTitle = 'Loading...';
-
-  @override
-  void initState() {
-    super.initState();
-    widget.repository.getFolderById(widget.folderId).then((folder) {
-      if (mounted) {
-        setState(() {
-          _folderTitle = folder.name;
-        });
-      }
-    });
-  }
 
   // edit deck
   void _editDeck(BuildContext context, int deckId) {
@@ -52,22 +39,22 @@ class _FolderPageState extends State<FolderPage> {
           ),
           TextButton(
             onPressed: () async {
-              try {
-                await widget.repository.deleteDeck(deckId);
-                if (context.mounted) {
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Deck "$deckTitle" deleted')),
-                  );
-                }
-              } catch (e) {
-                if (context.mounted) {
-                  Navigator.pop(context);
+              final vm = context.read<LibraryViewModel>();
+              await vm.deleteDeck(deckId);
+
+              if (context.mounted) {
+                Navigator.pop(context);
+
+                if (vm.errorMessage != null) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Error deleting deck: $e'),
+                      content: Text('Error deleting deck: ${vm.errorMessage}'),
                       backgroundColor: Theme.of(context).colorScheme.error,
                     ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Deck "$deckTitle" deleted')),
                   );
                 }
               }
@@ -84,84 +71,94 @@ class _FolderPageState extends State<FolderPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(_folderTitle)),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          context.go('/library/folder/${widget.folderId}/createdeck');
-        },
-        mini: true,
-        child: const Icon(Icons.add),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: StreamBuilder<List<DeckEntity>>(
-            stream: getIt<LibraryRepository>().watchDecksByFolder(
-              widget.folderId,
-            ),
-            builder: (context, asyncSnapshot) {
-              final decks = asyncSnapshot.data ?? [];
-              return decks.isEmpty
-                  ? _buildEmptyState()
-                  : Column(
-                      children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Text(
-                              'Decks',
-                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+    final vm = context.watch<LibraryViewModel>();
+    return FutureBuilder(
+      future: vm.getFolderById(widget.folderId),
+      builder: (context, asyncSnapshot) {
+        final folder = asyncSnapshot.data;
+        final _folderTitle = folder?.name;
+        return Scaffold(
+          appBar: AppBar(title: Text(_folderTitle ?? "Loading")),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              context.go('/library/folder/${widget.folderId}/createdeck');
+            },
+            mini: true,
+            child: const Icon(Icons.add),
+          ),
+          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+          body: Builder(
+            builder: (context) {
+              final vm = context.watch<LibraryViewModel>();
+              return StreamBuilder<List<DeckEntity>>(
+                stream: vm.watchDecksByFolder(widget.folderId),
+                builder: (context, asyncSnapshot) {
+                  final decks = asyncSnapshot.data ?? [];
+                  return decks.isEmpty
+                      ? _buildEmptyState()
+                      : Column(
+                          children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Text(
+                                  'Decks',
+                                  style: Theme.of(context).textTheme.titleLarge
+                                      ?.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(12),
-                            child: GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              mainAxisSpacing: 12,
-                              crossAxisSpacing: 12,
-                              childAspectRatio: 1,
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: GridView.builder(
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2,
+                                        mainAxisSpacing: 12,
+                                        crossAxisSpacing: 12,
+                                        childAspectRatio: 1,
+                                      ),
+                                  itemCount: decks.length,
+                                  itemBuilder: (context, index) {
+                                    final deck = decks[index];
+                                    return DeckTile(
+                                      deckName: deck.title,
+                                      cardCount: deck.cards.length,
+                                      learnedCount: deck.cards
+                                          .where((c) => c.isLearned)
+                                          .length,
+                                      onTap: () {
+                                        context.go(
+                                          '/library/folder/${widget.folderId}/deck/${deck.id}',
+                                        );
+                                      },
+                                      onEdit: () {
+                                        _editDeck(context, deck.id);
+                                      },
+                                      onDelete: () {
+                                        _showDeleteConfirmation(
+                                          context,
+                                          deck.id,
+                                          deck.title,
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
                             ),
-                        itemCount: decks.length,
-                        itemBuilder: (context, index) {
-                          final deck = decks[index];
-                          return DeckTile(
-                            deckName: deck.title,
-                            cardCount: deck.cards.length,
-                            learnedCount: deck.cards
-                                .where((c) => c.isLearned)
-                                .length,
-                            onTap: () {
-                              context.go(
-                                '/library/folder/${widget.folderId}/deck/${deck.id}',
-                              );
-                            },
-                            onEdit: () {
-                              _editDeck(context, deck.id);
-                            },
-                            onDelete: () {
-                              _showDeleteConfirmation(
-                                context,
-                                deck.id,
-                                deck.title,
-                              );
-                            },
-                          );
-                        },
-                      ),
-                          ),
-                        ),
-                      ],
-                      );
-                      },
-                      ),
-                      );
-                      }
+                          ],
+                        );
+                },
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
 
   Widget _buildEmptyState() {
     return Center(
