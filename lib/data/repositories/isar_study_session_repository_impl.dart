@@ -9,6 +9,7 @@ class IsarStudySessionRepositoryImpl implements StudySessionRepository {
   final Isar isar;
 
   IsarStudySessionRepositoryImpl({required this.isar});
+  
   @override
   Future<void> saveSession(StudySessionDraft draft) async {
     await isar.writeTxn(() async {
