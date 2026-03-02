@@ -20,7 +20,9 @@ class LibraryViewModel extends ChangeNotifier {
   }
 
   Future<List<FolderEntity>> getAllFolder() async {
-    return await repository.getAllFolders();
+    final folders = await repository.getAllFolders();
+    
+    return folders;
   }
 
   Future<FolderEntity> getFolderById(int id) {
@@ -28,7 +30,9 @@ class LibraryViewModel extends ChangeNotifier {
   }
 
   Future<List<DeckEntity>> getAllDecksById(int folderId) async {
-    return await repository.getAllDecksById(folderId);
+    final decks = await repository.getAllDecksById(folderId);
+    
+    return decks;
   }
 
   Future<DeckEntity> getDeckById(int deckId) {

@@ -1,3 +1,5 @@
+import 'package:bookexample/domain/isar_model/library/deck_entity.dart';
+import 'package:bookexample/domain/isar_model/library/folder_entity.dart';
 import 'package:bookexample/view_models/library_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +16,15 @@ class DeckSelector extends StatefulWidget {
 class _DeckSelectorState extends State<DeckSelector> {
   int? selectedFolderId;
   int? selectedDeckId;
+
+
+
+  @override
+  void initState() {
+    super.initState();
+   
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -91,8 +102,8 @@ class _DeckSelectorState extends State<DeckSelector> {
   }
 
   Widget _buildFolderList() {
-    return FutureBuilder(
-      future: context.read<LibraryViewModel>().getAllFolder(),
+    return StreamBuilder(
+      stream: context.read<LibraryViewModel>().watchFolders(),
       builder: (context, asyncSnapshot) {
         final folders = asyncSnapshot.data;
         if (folders == null) {
@@ -134,8 +145,8 @@ class _DeckSelectorState extends State<DeckSelector> {
   }
 
   Widget _buildDeckList(int folderId) {
-    return FutureBuilder(
-      future: context.read<LibraryViewModel>().getAllDecksById(folderId),
+    return StreamBuilder(
+      stream: context.read<LibraryViewModel>().watchDecksByFolder(folderId),
       builder: (context, snapshot) {
         final decks = snapshot.data;
         if (decks == null) {
