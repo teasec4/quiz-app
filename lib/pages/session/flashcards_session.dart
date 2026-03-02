@@ -136,9 +136,7 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
               
               if (mounted) {
                 Navigator.pop(context);
-                context.go(
-                  '/library/folder/${widget.folderId}/deck/${widget.deckId}',
-                );
+                context.go('/study');
               }
             },
             child: const Text('Done'),
@@ -188,9 +186,7 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
               IconButton(
                 icon: const Icon(Icons.close),
                 onPressed: () {
-                  context.go(
-                    '/library/folder/${widget.folderId}/deck/${widget.deckId}',
-                  );
+                  context.go('/study');
                 },
               ),
             ],

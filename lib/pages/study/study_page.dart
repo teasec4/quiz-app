@@ -2,9 +2,10 @@ import 'package:bookexample/core/service_locator.dart';
 import 'package:bookexample/domain/isar_model/user_stats/user_stats_entity.dart';
 import 'package:bookexample/pages/study/widgets/mode_tile.dart';
 import 'package:bookexample/pages/study/widgets/stats_header.dart';
+import 'package:bookexample/pages/study/widgets/deck_selector.dart';
 import 'package:bookexample/view_models/stats_view_model.dart';
-
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 
 class StudyPage extends StatefulWidget {
@@ -60,7 +61,21 @@ class _StudyPageState extends State<StudyPage> {
             icon: Icons.book,
             title: 'Start New Session',
             subtitle: 'Begin a fresh study session',
-            onTap: () {},
+            onTap: () {
+              showModalBottomSheet(
+                context: context,
+                builder: (context) => SafeArea(
+                    child: DeckSelector(
+                      onDeckSelected: (deckId, folderId) {
+                        Navigator.pop(context);
+                        context.go('/study/session/$folderId/$deckId');
+                      },
+                    ),
+                  ),
+                isScrollControlled: true,
+                useRootNavigator: true,
+              );
+            },
           ),
           const SizedBox(height: 12),
           // Random Cards

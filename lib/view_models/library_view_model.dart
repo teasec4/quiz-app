@@ -19,8 +19,16 @@ class LibraryViewModel extends ChangeNotifier {
     return repository.watchDecksByFolder(folderId);
   }
 
+  Future<List<FolderEntity>> getAllFolder() async {
+    return await repository.getAllFolders();
+  }
+
   Future<FolderEntity> getFolderById(int id) {
     return repository.getFolderById(id);
+  }
+
+  Future<List<DeckEntity>> getAllDecksById(int folderId) async {
+    return await repository.getAllDecksById(folderId);
   }
 
   Future<DeckEntity> getDeckById(int deckId) {
