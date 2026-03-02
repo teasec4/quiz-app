@@ -17,12 +17,11 @@ class IsarLibraryRepositoryImpl implements LibraryRepository {
 
   @override
   Future<List<DeckEntity>> getAllDecksById(int folderId) async {
-    final folder = await isar.folderEntitys.get(folderId);
-    if (folder == null) {
-      throw Exception('Folder not found');
-    }
-    final decks = folder.decks;
-    return await isar.deckEntitys.where().findAll();
+    return await isar.deckEntitys
+          .where()
+          .folderIdEqualTo(folderId)
+          .findAll();
+
   }
 
   @override

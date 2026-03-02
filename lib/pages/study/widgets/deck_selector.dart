@@ -96,7 +96,7 @@ class _DeckSelectorState extends State<DeckSelector> {
       builder: (context, asyncSnapshot) {
         final folders = asyncSnapshot.data;
         if (folders == null) {
-          return Center(child: CircularProgressIndicator());
+          return _buildEmptyStateFolder();
         }
         return ListView.builder(
           itemCount: folders.length,
@@ -136,7 +136,7 @@ class _DeckSelectorState extends State<DeckSelector> {
       builder: (context, snapshot) {
         final decks = snapshot.data;
         if (decks == null) {
-          return Center(child: Text("Loading"));
+          return _buildEmptyStateDeck();
         }
         return ListView.builder(
           itemCount: decks.length,
@@ -184,6 +184,40 @@ class _DeckSelectorState extends State<DeckSelector> {
           },
         );
       },
+    );
+  }
+  
+  Widget _buildEmptyStateFolder() {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: const [
+          Icon(Icons.folder_open, size: 64, color: Colors.grey),
+          SizedBox(height: 16),
+          Text(
+            'No folders yet',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+          ),
+          
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildEmptyStateDeck() {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: const [
+          Icon(Icons.card_giftcard, size: 64, color: Colors.grey),
+          SizedBox(height: 16),
+          Text(
+            'No Decks yet',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+          ),
+          
+        ],
+      ),
     );
   }
 }
