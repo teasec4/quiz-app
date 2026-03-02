@@ -29,7 +29,7 @@ class StatsHeader extends StatelessWidget {
               Expanded(
                 child: _StatItem(
                   label: 'Accuracy Rate',
-                  value: '${accuracyRate.toStringAsFixed(0)}%',
+                  value: '${(accuracyRate * 100).toStringAsFixed(0)}%',
                 ),
               ),
             ],

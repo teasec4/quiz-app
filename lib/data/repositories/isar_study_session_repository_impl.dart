@@ -16,13 +16,15 @@ class IsarStudySessionRepositoryImpl implements StudySessionRepository {
       final session = StudySessionEntity()
         ..endedAt = DateTime.now()
         ..totalCards = draft.answers.length
-        ..correctAnswers = draft.answers.where((a) => a.isCorrect).length;
+        ..correctAnswers = draft.answers.where((a) => a.isCorrect).length
+        ..isCompleted = true;
 
       await isar.studySessionEntitys.put(session);
 
       for (final a in draft.answers) {
         final answer = StudyAnswerEntity()
           ..cardId = a.cardId
+          ..isCorrect = a.isCorrect
           ..session.value = session;
 
         await isar.studyAnswerEntitys.put(answer);

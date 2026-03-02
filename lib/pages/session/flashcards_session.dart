@@ -1,8 +1,3 @@
-import 'package:bookexample/core/service_locator.dart';
-import 'package:bookexample/domain/isar_model/library/flashcard_entity.dart';
-import 'package:bookexample/domain/repositories/library_repository.dart';
-import 'package:bookexample/pages/session/models/study_session_draft.dart';
-import 'package:bookexample/view_models/library_view_model.dart';
 import 'package:bookexample/view_models/study_session_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -26,19 +21,13 @@ class FlashcardsSession extends StatefulWidget {
 
 class _FlashcardsSessionState extends State<FlashcardsSession>
     with SingleTickerProviderStateMixin {
+  late StudySessionViewModel _studyVM;
   late AnimationController _controller;
   late Animation<double> _animation;
-
-  int currentIndex = 0;
-  int correctCount = 0;
-  int incorrectCount = 0;
 
   double dragOffset = 0;
   bool showBack = false;
   bool isAnimating = false;
-
-  late final List<FlashCardEntity> cards;
-  StudySessionDraft draft = StudySessionDraft();
 
   @override
   void initState() {
@@ -48,7 +37,8 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
       duration: const Duration(milliseconds: 250),
     );
     _animation = Tween<double>(begin: 0, end: 0).animate(_controller);
-    
+    _studyVM = context.read<StudySessionViewModel>();
+    _studyVM.startSession(widget.deckId);
   }
 
   @override
@@ -75,47 +65,24 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
     if (isAnimating) return;
     isAnimating = true;
 
-    final currentCard = cards[currentIndex];
-
     _animation = Tween<double>(
       begin: dragOffset,
       end: target,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
 
-    _controller.forward(from: 0).then((_) async {
-      try {
-        // CREATING A DRAFT LIST HERE
-        draft.addAnswer(currentCard.id, isCorrect);
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error saving card status: $e'),
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-          );
-        }
-      }
+    _controller.forward(from: 0).then((_) {
+      // Ответить на текущую карту через ViewModel
+      _studyVM.answerCurrentCard(isCorrect);
 
-      if (mounted) {
-        setState(() {
-          if (isCorrect) {
-            correctCount++;
-          } else {
-            incorrectCount++;
-          }
+      setState(() {
+        dragOffset = 0;
+        showBack = false;
+        isAnimating = false;
+      });
 
-          currentIndex++;
-          dragOffset = 0;
-          showBack = false;
-          isAnimating = false;
-        });
-
-        if (currentIndex >= cards.length) {
-          context.read<LibraryViewModel>().setCardsLearned(draft.answers);
-          context.read<StudySessionViewModel>().saveSession(draft);
-          _showSessionComplete();
-        }
+      // Если закончилась сессия
+      if (_studyVM.session?.isFinished ?? false) {
+        _showSessionComplete();
       }
     });
   }
@@ -135,6 +102,9 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
   }
 
   void _showSessionComplete() {
+    final session = _studyVM.session;
+    if (session == null) return;
+    
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -143,12 +113,12 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Correct: $correctCount/${cards.length}'),
+            Text('Correct: ${session.correctCount}/${session.cards.length}'),
             const SizedBox(height: 8),
-            Text('Incorrect: $incorrectCount/${cards.length}'),
+            Text('Incorrect: ${session.incorrectCount}/${session.cards.length}'),
             const SizedBox(height: 16),
             LinearProgressIndicator(
-              value: correctCount / cards.length,
+              value: session.correctCount / session.cards.length,
               minHeight: 8,
               backgroundColor: Theme.of(
                 context,
@@ -161,11 +131,17 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
         ),
         actions: [
           TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              context.go(
-                '/library/folder/${widget.folderId}/deck/${widget.deckId}',
-              );
+            onPressed: () async {
+              // Сохранить сессию и stats
+              await _studyVM.saveSession(session);
+              await _studyVM.finishSession();
+              
+              if (mounted) {
+                Navigator.pop(context);
+                context.go(
+                  '/library/folder/${widget.folderId}/deck/${widget.deckId}',
+                );
+              }
             },
             child: const Text('Done'),
           ),
@@ -190,33 +166,22 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<FlashCardEntity>>(
-      future: context.watch<LibraryViewModel>().getCardsByDeck(widget.deckId),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
+    return Consumer<StudySessionViewModel>(
+      builder: (context, studyVM, _) {
+        final session = studyVM.session;
+
+        if (session == null) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
 
-        if (snapshot.hasError) {
-          return Scaffold(
-            body: Center(child: Text('Error: ${snapshot.error}')),
+        final card = session.currentCard;
+        if (card == null) {
+          return const Scaffold(
+            body: Center(child: Text('Session finished')),
           );
         }
-
-        cards = snapshot.data!;
-        if (cards.isEmpty) {
-          return Scaffold(
-            appBar: AppBar(title: const Text('Flashcard Session')),
-            body: const Center(child: Text('No cards in this deck')),
-          );
-        }
-
-        final displayIndex = currentIndex >= cards.length
-            ? cards.length - 1
-            : currentIndex;
-        final card = cards[displayIndex];
 
         return Scaffold(
           appBar: AppBar(
@@ -235,10 +200,10 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
           body: Column(
             children: [
               SessionHeader(
-                currentIndex: displayIndex,
-                totalCards: cards.length,
-                correctCount: correctCount,
-                incorrectCount: incorrectCount,
+                currentIndex: session.currentIndex,
+                totalCards: session.cards.length,
+                correctCount: session.correctCount,
+                incorrectCount: session.incorrectCount,
                 statBoxBuilder: (icon, value, color) =>
                     _statBox(icon, value, color),
               ),

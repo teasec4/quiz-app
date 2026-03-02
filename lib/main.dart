@@ -2,6 +2,8 @@ import 'package:bookexample/core/service_locator.dart';
 import 'package:bookexample/core/theme/app_theme.dart';
 import 'package:bookexample/router/router.dart';
 import 'package:bookexample/view_models/library_view_model.dart';
+import 'package:bookexample/view_models/stats_view_model.dart';
+import 'package:bookexample/view_models/study_session_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,6 +16,8 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => getIt<LibraryViewModel>()),
+        ChangeNotifierProvider(create: (_) => getIt<StatsViewModel>()),
+        ChangeNotifierProvider(create: (_) => getIt<StudySessionViewModel>()),
       ],
       child: const MyApp(),
     ),
