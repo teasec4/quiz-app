@@ -1,3 +1,4 @@
+import 'package:bookexample/domain/isar_model/session/study_session_entity.dart';
 import 'package:bookexample/domain/isar_model/user_stats/user_stats_entity.dart';
 import 'package:bookexample/domain/repositories/stats_repository.dart';
 import 'package:isar_community/isar.dart';
@@ -40,5 +41,44 @@ class StatsRepositoryImpl implements StatsRepository {
 
       await isar.userStatsEntitys.put(stats);
     });
+  }
+
+  @override
+  Future<int> calculateStreak() async {
+    final allSessions = await isar.studySessionEntitys.where().findAll();
+
+    if (allSessions.isEmpty) return 0;
+
+    // Отсортировать по дате убывающе (последние первыми)
+    final sorted = allSessions..sort((a, b) => b.endedAt.compareTo(a.endedAt));
+
+    int streak = 0;
+    DateTime? lastDate;
+
+    for (final session in sorted) {
+      final sessionDate = DateTime(session.endedAt.year, session.endedAt.month, session.endedAt.day);
+
+      if (lastDate == null) {
+        lastDate = sessionDate;
+        final today = DateTime.now();
+        final todayDate = DateTime(today.year, today.month, today.day);
+
+        // Если сессия не сегодня и не вчера, streak = 0
+        if (sessionDate != todayDate && sessionDate != todayDate.subtract(const Duration(days: 1))) {
+          break;
+        }
+        streak = 1;
+      } else {
+        final expectedDate = lastDate.subtract(const Duration(days: 1));
+        if (sessionDate == expectedDate) {
+          streak++;
+          lastDate = sessionDate;
+        } else {
+          break;
+        }
+      }
+    }
+
+    return streak;
   }
 }

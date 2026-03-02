@@ -52,12 +52,19 @@ class StatsHeader extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ..._buildStarRow(context, streakDays),
-                    ],
-                  ),
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ..._buildStarRow(context, streakDays),
+                              const SizedBox(width: 16),
+                              Text(
+                                '$streakDays ${streakDays == 1 ? 'day' : 'days'}',
+                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
                 ],
               ),
             ),

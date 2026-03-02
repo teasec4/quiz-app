@@ -30,19 +30,22 @@ class _StudyPageState extends State<StudyPage> {
             ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
-          ChangeNotifierProvider(
-            create:(context) => getIt<StatsViewModel>(),
-            child: FutureBuilder<UserStatsEntity>(
-              future: getIt<StatsViewModel>().getStats(),
-              builder: (context, asyncSnapshot) {
-                final stats = asyncSnapshot.data;
-                return StatsHeader(
-                  totalLearnedCards: stats?.totalCards ?? 0,
-                  accuracyRate: stats?.accuracyRate ?? 0.0,
-                  streakDays: 0,
-                );
-              },
-            ),
+          FutureBuilder<UserStatsEntity>(
+           future: getIt<StatsViewModel>().getStats(),
+           builder: (context, statsSnapshot) {
+             final stats = statsSnapshot.data;
+             return FutureBuilder<int>(
+               future: getIt<StatsViewModel>().getStreak(),
+               builder: (context, streakSnapshot) {
+                 final streakDays = streakSnapshot.data ?? 0;
+                 return StatsHeader(
+                   totalLearnedCards: stats?.totalCards ?? 0,
+                   accuracyRate: stats?.accuracyRate ?? 0.0,
+                   streakDays: streakDays,
+                 );
+               },
+             );
+           },
           ),
           const SizedBox(height: 32),
           Text(

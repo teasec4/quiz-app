@@ -24,4 +24,8 @@ class StatsViewModel extends ChangeNotifier {
     );
     notifyListeners();
   }
+
+  Future<int> getStreak() async {
+    return repository.calculateStreak();
+  }
 }
