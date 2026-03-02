@@ -34,28 +34,31 @@ class StudySessionViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> finishSession() async {
+  Future<void> completeSession() async {
     if (_session == null) return;
 
     try {
-      // Сохранить карточки как выученные
-      final answers = _session!.answers;
+      // Сохранить сессию в БД
+      await studyRepo.saveSession(_session!);
 
-      if (answers.isNotEmpty) {
-        await libraryRepo.setCardsLearned(answers);
-      }
-
-      // Сохранить stats
+      // Обновить stats
       await statsVM.updateStats(
         _session!.cards.length,
         _session!.correctCount,
         DateTime.now(),
       );
 
+      // Сохранить карточки как выученные
+      final answers = _session!.answers;
+      if (answers.isNotEmpty) {
+        await libraryRepo.setCardsLearned(answers);
+      }
+
+      // Очистить сессию
       _session = null;
       notifyListeners();
     } catch (e) {
-      print('Error finishing session: $e');
+      print('Error completing session: $e');
       rethrow;
     }
   }

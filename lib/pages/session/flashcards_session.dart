@@ -132,9 +132,7 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
         actions: [
           TextButton(
             onPressed: () async {
-              // Сохранить сессию и stats
-              await _studyVM.saveSession(session);
-              await _studyVM.finishSession();
+              await _studyVM.completeSession();
               
               if (mounted) {
                 Navigator.pop(context);

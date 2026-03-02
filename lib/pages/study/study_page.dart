@@ -1,12 +1,11 @@
 import 'package:bookexample/core/service_locator.dart';
 import 'package:bookexample/domain/isar_model/user_stats/user_stats_entity.dart';
-import 'package:bookexample/domain/repositories/stats_repository.dart';
 import 'package:bookexample/pages/study/widgets/mode_tile.dart';
 import 'package:bookexample/pages/study/widgets/stats_header.dart';
 import 'package:bookexample/view_models/stats_view_model.dart';
-import 'package:bookexample/view_models/study_session_view_model.dart';
+
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+
 
 class StudyPage extends StatefulWidget {
   const StudyPage({super.key});
@@ -62,15 +61,6 @@ class _StudyPageState extends State<StudyPage> {
             title: 'Start New Session',
             subtitle: 'Begin a fresh study session',
             onTap: () {},
-          ),
-          const SizedBox(height: 12),
-          // Continue Last Session
-          ModeCard(
-            icon: Icons.play_arrow,
-            title: 'Continue Last Session',
-            subtitle: 'Resume where you left off',
-            onTap: () {},
-            disabled: true,
           ),
           const SizedBox(height: 12),
           // Random Cards
