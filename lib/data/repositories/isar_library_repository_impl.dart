@@ -124,7 +124,7 @@ class IsarLibraryRepositoryImpl implements LibraryRepository {
     if (deck == null) {
       throw Exception('Deck not found');
     }
-    // Загружаем все карточки для деки
+    // Загружаем карточки через IsarLink
     await deck.cards.load();
     return deck;
   }

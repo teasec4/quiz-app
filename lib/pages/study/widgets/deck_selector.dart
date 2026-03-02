@@ -36,15 +36,15 @@ class _DeckSelectorState extends State<DeckSelector> {
                       height: 48,
                       child: selectedFolderId != null
                           ? IconButton(
-                            icon: const Icon(Icons.arrow_back),
-                            padding: EdgeInsets.zero,
-                            onPressed: () {
-                              setState(() {
-                                selectedFolderId = null;
-                                selectedDeckId = null;
-                              });
-                            },
-                          )
+                              icon: const Icon(Icons.arrow_back),
+                              padding: EdgeInsets.zero,
+                              onPressed: () {
+                                setState(() {
+                                  selectedFolderId = null;
+                                  selectedDeckId = null;
+                                });
+                              },
+                            )
                           : null,
                     ),
                     Expanded(
@@ -74,12 +74,12 @@ class _DeckSelectorState extends State<DeckSelector> {
                   onPressed: selectedDeckId == null
                       ? null
                       : () {
-                        widget.onDeckSelected(
-                          selectedDeckId!,
-                          selectedFolderId!,
-                        );
-                      },
-                  
+                          widget.onDeckSelected(
+                            selectedDeckId!,
+                            selectedFolderId!,
+                          );
+                        },
+
                   child: const Text("Start Session"),
                 ),
               ),
@@ -96,6 +96,9 @@ class _DeckSelectorState extends State<DeckSelector> {
       builder: (context, asyncSnapshot) {
         final folders = asyncSnapshot.data;
         if (folders == null) {
+          return Center(child: CircularProgressIndicator());
+        }
+        if (folders.isEmpty) {
           return _buildEmptyStateFolder();
         }
         return ListView.builder(
@@ -136,6 +139,9 @@ class _DeckSelectorState extends State<DeckSelector> {
       builder: (context, snapshot) {
         final decks = snapshot.data;
         if (decks == null) {
+          return Center(child: CircularProgressIndicator());
+        }
+        if (decks.isEmpty) {
           return _buildEmptyStateDeck();
         }
         return ListView.builder(
@@ -154,7 +160,9 @@ class _DeckSelectorState extends State<DeckSelector> {
                   width: isSelected ? 2 : 1,
                 ),
                 color: isSelected
-                    ? Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3)
+                    ? Theme.of(
+                        context,
+                      ).colorScheme.primaryContainer.withValues(alpha: 0.3)
                     : Colors.transparent,
               ),
               child: ListTile(
@@ -170,9 +178,9 @@ class _DeckSelectorState extends State<DeckSelector> {
                 ),
                 trailing: isSelected
                     ? Icon(
-                      Icons.check_circle,
-                      color: Theme.of(context).colorScheme.primary,
-                    )
+                        Icons.check_circle,
+                        color: Theme.of(context).colorScheme.primary,
+                      )
                     : const Icon(Icons.radio_button_unchecked),
                 onTap: () {
                   setState(() {
@@ -186,7 +194,7 @@ class _DeckSelectorState extends State<DeckSelector> {
       },
     );
   }
-  
+
   Widget _buildEmptyStateFolder() {
     return Center(
       child: Column(
@@ -198,12 +206,11 @@ class _DeckSelectorState extends State<DeckSelector> {
             'No folders yet',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
           ),
-          
         ],
       ),
     );
   }
-  
+
   Widget _buildEmptyStateDeck() {
     return Center(
       child: Column(
@@ -215,7 +222,6 @@ class _DeckSelectorState extends State<DeckSelector> {
             'No Decks yet',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
           ),
-          
         ],
       ),
     );
