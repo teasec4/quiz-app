@@ -1,8 +1,10 @@
 import 'package:bookexample/domain/isar_model/user_stats/user_stats_entity.dart';
+import 'package:bookexample/view_models/stats_view_model.dart';
+import 'package:bookexample/pages/study/widgets/deck_selector.dart';
 import 'package:bookexample/pages/study/widgets/mode_tile.dart';
 import 'package:bookexample/pages/study/widgets/stats_header.dart';
-import 'package:bookexample/pages/study/widgets/deck_selector.dart';
-import 'package:bookexample/view_models/stats_view_model.dart';
+import 'package:bookexample/core/widgets/loading_overlay_widget.dart';
+import 'package:bookexample/core/widgets/error_banner_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -102,46 +104,19 @@ class _StudyPageState extends State<StudyPage> {
               ),
             ],
           ),
-          if (vm.isLoading)
-            Container(
-              color: Theme.of(context).colorScheme.scrim.withOpacity(0.3),
-              child: const Center(child: CircularProgressIndicator()),
-            ),
+          if (vm.isLoading) LoadingOverlayWidget.scrim(opacity: 0.3),
           if (vm.hasError && vm.error != null)
             Positioned(
               top: 0,
               left: 0,
               right: 0,
-              child: Material(
-                color: Theme.of(context).colorScheme.errorContainer,
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.error_outline,
-                        color: Theme.of(context).colorScheme.error,
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          vm.error!.userFriendlyMessage,
-                          style: TextStyle(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onErrorContainer,
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () {
-                          vm.clearError();
-                        },
-                      ),
-                    ],
-                  ),
-                ),
+              child: ErrorBannerWidget.fromError(
+                error: vm.error!,
+                onClose: vm.clearError,
+                onTap: () {
+                  // Retry loading stats
+                  setState(() {});
+                },
               ),
             ),
         ],

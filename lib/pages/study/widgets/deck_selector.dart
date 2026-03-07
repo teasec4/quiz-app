@@ -1,7 +1,9 @@
 import 'package:bookexample/domain/isar_model/library/deck_entity.dart';
 import 'package:bookexample/domain/isar_model/library/folder_entity.dart';
 import 'package:bookexample/view_models/library_view_model.dart';
+import 'package:bookexample/core/widgets/empty_state_widget.dart';
 import 'package:flutter/material.dart';
+
 import 'package:provider/provider.dart';
 
 class DeckSelector extends StatefulWidget {
@@ -93,7 +95,7 @@ class _DeckSelectorState extends State<DeckSelector> {
   }
 
   Widget _buildFolderList() {
-    return StreamBuilder(
+    return StreamBuilder<List<FolderEntity>>(
       stream: context.read<LibraryViewModel>().watchFolders(),
       builder: (context, asyncSnapshot) {
         final folders = asyncSnapshot.data;
@@ -136,10 +138,10 @@ class _DeckSelectorState extends State<DeckSelector> {
   }
 
   Widget _buildDeckList(int folderId) {
-    return StreamBuilder(
+    return StreamBuilder<List<DeckEntity>>(
       stream: context.read<LibraryViewModel>().watchDecksByFolder(folderId),
-      builder: (context, snapshot) {
-        final decks = snapshot.data;
+      builder: (context, asyncSnapshot) {
+        final decks = asyncSnapshot.data;
         if (decks == null) {
           return Center(child: CircularProgressIndicator());
         }
@@ -198,50 +200,10 @@ class _DeckSelectorState extends State<DeckSelector> {
   }
 
   Widget _buildEmptyStateFolder() {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.folder_open,
-            size: 64,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'No folders yet',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-          ),
-        ],
-      ),
-    );
+    return EmptyStateWidget.folders(subtitle: null);
   }
 
   Widget _buildEmptyStateDeck() {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.card_giftcard,
-            size: 64,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'No Decks yet',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-          ),
-        ],
-      ),
-    );
+    return EmptyStateWidget.decks(subtitle: null);
   }
 }

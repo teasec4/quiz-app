@@ -19,7 +19,9 @@ class ModeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: disabled ? 0 : 2,
-      color: disabled ? Theme.of(context).colorScheme.surfaceVariant : null,
+      color: disabled
+          ? Theme.of(context).colorScheme.surfaceContainerHighest
+          : null,
       child: ListTile(
         iconColor: disabled
             ? Theme.of(context).colorScheme.onSurfaceVariant
@@ -32,7 +34,7 @@ class ModeCard extends StatelessWidget {
             color: disabled
                 ? Theme.of(
                     context,
-                  ).colorScheme.onSurfaceVariant.withOpacity(0.7)
+                  ).colorScheme.onSurfaceVariant.withValues(alpha: 0.7)
                 : null,
           ),
         ),

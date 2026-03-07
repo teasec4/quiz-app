@@ -2,6 +2,8 @@ import 'package:bookexample/domain/isar_model/library/flashcard_entity.dart';
 import 'package:bookexample/models/card_form_text_form_field.dart';
 import 'package:bookexample/view_models/library_view_model.dart';
 import 'package:bookexample/core/validation/validators.dart';
+import 'package:bookexample/core/extensions/snackbar_extensions.dart';
+import 'package:bookexample/core/widgets/loading_overlay_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -81,14 +83,9 @@ class _CreateDeckState extends State<CreateDeck> {
         });
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            titleError ?? cardsError ?? 'Please fix validation errors',
-          ),
-          backgroundColor: Theme.of(context).colorScheme.error,
-          duration: const Duration(seconds: 2),
-        ),
+      context.showErrorSnackBar(
+        titleError ?? cardsError ?? 'Please fix validation errors',
+        duration: const Duration(seconds: 2),
       );
       return;
     }
@@ -102,14 +99,9 @@ class _CreateDeckState extends State<CreateDeck> {
       );
 
       if (!cardValidation.isValid) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Card ${i + 1}: ${cardValidation.errors.values.first}',
-            ),
-            backgroundColor: Theme.of(context).colorScheme.error,
-            duration: const Duration(seconds: 2),
-          ),
+        context.showErrorSnackBar(
+          'Card ${i + 1}: ${cardValidation.errors.values.first}',
+          duration: const Duration(seconds: 2),
         );
         return;
       }
@@ -117,12 +109,9 @@ class _CreateDeckState extends State<CreateDeck> {
 
     // Form validation for additional checks
     if (!_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Please fill all required fields'),
-          backgroundColor: Theme.of(context).colorScheme.error,
-          duration: const Duration(seconds: 2),
-        ),
+      context.showErrorSnackBar(
+        'Please fill all required fields',
+        duration: const Duration(seconds: 2),
       );
       return;
     }
@@ -177,22 +166,13 @@ class _CreateDeckState extends State<CreateDeck> {
         await vm.addDeck(widget.folderId, _deckTitle.text, newCards);
         if (mounted) {
           if (vm.hasError && vm.error != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  'Error saving deck: ${vm.error!.userFriendlyMessage}',
-                ),
-                backgroundColor: Theme.of(context).colorScheme.error,
-              ),
+            context.showOperationErrorSnackBar(
+              operation: 'saving deck',
+              error: vm.error!,
+              onRetry: () => _showSaveConfirmation(),
             );
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: const Text('Deck saved successfully!'),
-                backgroundColor: Theme.of(context).colorScheme.tertiary,
-                duration: const Duration(seconds: 1),
-              ),
-            );
+            context.showOperationSuccessSnackBar(operation: 'Deck saved');
             context.pop();
           }
         }
@@ -201,22 +181,13 @@ class _CreateDeckState extends State<CreateDeck> {
         await vm.updateDeckWithCards(widget.deckId!, _deckTitle.text, newCards);
         if (mounted) {
           if (vm.hasError && vm.error != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  'Error updating deck: ${vm.error!.userFriendlyMessage}',
-                ),
-                backgroundColor: Theme.of(context).colorScheme.error,
-              ),
+            context.showOperationErrorSnackBar(
+              operation: 'updating deck',
+              error: vm.error!,
+              onRetry: () => _showSaveConfirmation(),
             );
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: const Text('Deck updated successfully!'),
-                backgroundColor: Theme.of(context).colorScheme.tertiary,
-                duration: const Duration(seconds: 1),
-              ),
-            );
+            context.showOperationSuccessSnackBar(operation: 'Deck updated');
             context.pop();
           }
         }
@@ -224,12 +195,7 @@ class _CreateDeckState extends State<CreateDeck> {
       _hasChanges = false;
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error saving deck: $e'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
+        context.showOperationErrorSnackBar(operation: 'saving deck', error: e);
       }
     }
   }
@@ -271,12 +237,7 @@ class _CreateDeckState extends State<CreateDeck> {
         cards.removeAt(index);
         _hasChanges = true;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Card deleted'),
-          duration: Duration(seconds: 1),
-        ),
-      );
+      context.showOperationSuccessSnackBar(operation: 'Card deleted');
     }
   }
 
@@ -290,11 +251,9 @@ class _CreateDeckState extends State<CreateDeck> {
         });
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Could not paste from clipboard'),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        ),
+      context.showOperationErrorSnackBar(
+        operation: 'pasting from clipboard',
+        error: e,
       );
     }
   }
@@ -581,11 +540,7 @@ class _CreateDeckState extends State<CreateDeck> {
               ),
             ],
           ),
-          if (vm.isLoading)
-            Container(
-              color: Theme.of(context).colorScheme.scrim.withOpacity(0.3),
-              child: const Center(child: CircularProgressIndicator()),
-            ),
+          if (vm.isLoading) LoadingOverlayWidget.scrim(opacity: 0.3),
         ],
       ),
       floatingActionButton: Row(

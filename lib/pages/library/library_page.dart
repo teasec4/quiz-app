@@ -1,6 +1,9 @@
 import 'package:bookexample/view_models/library_view_model.dart';
 import 'package:bookexample/pages/library/widgets/create_folder_sheet.dart';
 import 'package:bookexample/pages/library/widgets/folder_tile.dart';
+import 'package:bookexample/core/widgets/empty_state_widget.dart';
+import 'package:bookexample/core/widgets/loading_overlay_widget.dart';
+import 'package:bookexample/core/extensions/snackbar_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -27,20 +30,14 @@ class LibraryPage extends StatelessWidget {
       if (!context.mounted) return;
 
       if (vm.hasError && vm.error != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Error creating folder: ${vm.error!.userFriendlyMessage}',
-            ),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
+        context.showOperationErrorSnackBar(
+          operation: 'creating folder',
+          error: vm.error!,
+          onRetry: () => _showCreateFolder(context),
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            duration: const Duration(seconds: 1),
-            content: Text('Folder "$newFolderName" created!'),
-          ),
+        context.showOperationSuccessSnackBar(
+          operation: 'Folder "$newFolderName" created',
         );
       }
     }
@@ -69,20 +66,14 @@ class LibraryPage extends StatelessWidget {
       if (!context.mounted) return;
 
       if (vm.hasError && vm.error != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Error renaming folder: ${vm.error!.userFriendlyMessage}',
-            ),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
+        context.showOperationErrorSnackBar(
+          operation: 'renaming folder',
+          error: vm.error!,
+          onRetry: () => _showRenameFolder(context, folderId, oldName),
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            duration: const Duration(seconds: 1),
-            content: Text('Folder "$oldName" renamed to "$newFolderName"'),
-          ),
+        context.showOperationSuccessSnackBar(
+          operation: 'Folder "$oldName" renamed to "$newFolderName"',
         );
       }
     }
@@ -114,17 +105,15 @@ class LibraryPage extends StatelessWidget {
                 Navigator.pop(context);
 
                 if (vm.hasError && vm.error != null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'Error deleting folder: ${vm.error!.userFriendlyMessage}',
-                      ),
-                      backgroundColor: Theme.of(context).colorScheme.error,
-                    ),
+                  context.showOperationErrorSnackBar(
+                    operation: 'deleting folder',
+                    error: vm.error!,
+                    onRetry: () =>
+                        _showDeleteConfirmation(context, folderId, folderName),
                   );
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Folder "$folderName" deleted')),
+                  context.showOperationSuccessSnackBar(
+                    operation: 'Folder "$folderName" deleted',
                   );
                 }
               }
@@ -210,44 +199,13 @@ class LibraryPage extends StatelessWidget {
                     );
             },
           ),
-          if (vm.isLoading)
-            Container(
-              color: Theme.of(context).colorScheme.scrim.withOpacity(0.3),
-              child: const Center(child: CircularProgressIndicator()),
-            ),
+          if (vm.isLoading) LoadingOverlayWidget.scrim(opacity: 0.3),
         ],
       ),
     );
   }
 
   Widget _buildEmptyState(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.folder_open,
-            size: 64,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'No folders yet',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Tap + to create your first folder',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-          ),
-        ],
-      ),
-    );
+    return EmptyStateWidget.folders();
   }
 }

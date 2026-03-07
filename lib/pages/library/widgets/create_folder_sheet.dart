@@ -140,7 +140,7 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(
                         context,
-                      ).colorScheme.surfaceVariant,
+                      ).colorScheme.surfaceContainerHighest,
                     ),
                     child: Text(
                       'Cancel',

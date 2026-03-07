@@ -28,7 +28,7 @@ class ModeTile extends StatelessWidget {
     return Card(
       elevation: mode.disabled ? 0 : 2,
       color: mode.disabled
-          ? colorScheme.surfaceVariant
+          ? colorScheme.surfaceContainerHighest
           : colorScheme.surfaceContainerLow,
       child: ListTile(
         leading: Icon(
@@ -42,7 +42,7 @@ class ModeTile extends StatelessWidget {
           mode.title,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             color: mode.disabled
-                ? colorScheme.onSurfaceVariant.withOpacity(0.7)
+                ? colorScheme.onSurfaceVariant.withValues(alpha: 0.7)
                 : null,
           ),
         ),
