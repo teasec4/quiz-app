@@ -1,4 +1,3 @@
-import 'package:bookexample/core/theme/theme_preview_page.dart';
 import 'package:bookexample/core/widgets/bottom_navigation_bar.dart';
 import 'package:bookexample/pages/library/folder/create_deck/create_deck.dart';
 import 'package:bookexample/pages/library/folder/deck/deck_page.dart';
@@ -46,9 +45,9 @@ class AppRouter {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                 path: '/library',
-                 builder: (context, state) => const LibraryPage(),
-                 routes: [
+                path: '/library',
+                builder: (context, state) => const LibraryPage(),
+                routes: [
                   GoRoute(
                     path: 'folder/:folderId',
                     builder: (context, state) {
@@ -124,15 +123,6 @@ class AppRouter {
               ),
             ],
           ),
-
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: '/colors',
-                builder: (context, state) => const ThemePreviewPage(),
-              ),
-            ],
-          ),
         ],
       ),
 
@@ -146,15 +136,10 @@ class AppRouter {
           final deckId = int.tryParse(deckIdParam ?? '');
           if (folderId == null || deckId == null) {
             return const Scaffold(
-              body: Center(
-                child: Text('Invalid folder or deck id'),
-              ),
+              body: Center(child: Text('Invalid folder or deck id')),
             );
           }
-          return FlashcardsSession(
-            deckId: deckId,
-            folderId: folderId,
-          );
+          return FlashcardsSession(deckId: deckId, folderId: folderId);
         },
       ),
     ],

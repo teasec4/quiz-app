@@ -5,8 +5,10 @@ import 'package:bookexample/domain/repositories/library_repository.dart';
 import 'package:bookexample/domain/repositories/stats_repository.dart';
 import 'package:bookexample/domain/repositories/study_session_repository.dart';
 import 'package:bookexample/view_models/library_view_model.dart';
+import 'package:bookexample/view_models/locale_view_model.dart';
 import 'package:bookexample/view_models/stats_view_model.dart';
 import 'package:bookexample/view_models/study_session_view_model.dart';
+import 'package:bookexample/view_models/theme_view_model.dart';
 import 'package:get_it/get_it.dart';
 import 'package:isar_community/isar.dart';
 import 'package:path_provider/path_provider.dart';
@@ -42,6 +44,8 @@ Future<void> setupServiceLocator() async {
       statsVM: getIt<StatsViewModel>(),
     ),
   );
+  getIt.registerSingleton<ThemeViewModel>(ThemeViewModel());
+  getIt.registerSingleton<LocaleViewModel>(LocaleViewModel());
 }
 
 // func for init db

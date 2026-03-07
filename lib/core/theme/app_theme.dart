@@ -24,11 +24,6 @@ class AppTheme {
         centerTitle: true,
       ),
 
-      cardTheme: CardThemeData(
-        elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      ),
-
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: scheme.primary,
         foregroundColor: scheme.onPrimary,
@@ -87,38 +82,141 @@ class AppTheme {
       ),
     );
   }
+
+  static ThemeData darkTheme(ColorScheme scheme) {
+    return ThemeData(
+      useMaterial3: true,
+      colorScheme: scheme,
+      brightness: Brightness.dark,
+
+      scaffoldBackgroundColor: scheme.surface,
+
+      cardColor: scheme.surfaceContainerHighest,
+
+      appBarTheme: AppBarTheme(
+        backgroundColor: scheme.surface,
+        foregroundColor: scheme.onSurface,
+        centerTitle: true,
+        elevation: 0,
+      ),
+
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: scheme.primary,
+        foregroundColor: scheme.onPrimary,
+        elevation: 4,
+        hoverElevation: 8,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
+
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(color: scheme.outline),
+          foregroundColor: scheme.onSurfaceVariant,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+      ),
+
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          backgroundColor: scheme.primaryContainer,
+          foregroundColor: scheme.onPrimaryContainer,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+      ),
+
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: scheme.surface,
+        indicatorColor: scheme.secondaryContainer,
+        overlayColor: WidgetStateProperty.all(Colors.transparent),
+
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 13,
+              letterSpacing: 0.3,
+              color: scheme.onSecondaryContainer,
+            );
+          }
+          return TextStyle(
+            fontWeight: FontWeight.w400,
+            fontSize: 12,
+            color: scheme.onSurfaceVariant,
+          );
+        }),
+
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return IconThemeData(size: 26, color: scheme.onSecondaryContainer);
+          }
+          return IconThemeData(size: 24, color: scheme.onSurfaceVariant);
+        }),
+      ),
+
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: scheme.primary,
+          foregroundColor: scheme.onPrimary,
+        ),
+      ),
+    );
+  }
 }
 
 enum AppThemeVariant { minimal, tech, modern }
 
 class AppThemeFactory {
-  static ThemeData getTheme(AppThemeVariant variant) {
-    final scheme = getColorScheme(variant);
-    return AppTheme.lightTheme(scheme);
+  static ThemeData getTheme(AppThemeVariant variant, {bool darkMode = false}) {
+    final scheme = getColorScheme(variant, darkMode: darkMode);
+    return darkMode ? AppTheme.darkTheme(scheme) : AppTheme.lightTheme(scheme);
   }
 
-  static ColorScheme getColorScheme(AppThemeVariant variant) {
+  static ColorScheme getColorScheme(
+    AppThemeVariant variant, {
+    bool darkMode = false,
+  }) {
+    final brightness = darkMode ? Brightness.dark : Brightness.light;
+
     switch (variant) {
       case AppThemeVariant.minimal:
         return ColorScheme.fromSeed(
           seedColor: const Color(0xFF334155),
-          secondary: const Color(0xFF64748B),
-          brightness: Brightness.light,
-        ).copyWith(error: AppColors.error, tertiary: AppColors.success);
+          secondary: const Color(0xFF94A3B8),
+          brightness: brightness,
+        ).copyWith(
+          error: AppColors.error,
+          tertiary: AppColors.success,
+          surface: darkMode ? const Color(0xFF1E293B) : null,
+          surfaceContainerHighest: darkMode ? const Color(0xFF334155) : null,
+        );
 
       case AppThemeVariant.tech:
         return ColorScheme.fromSeed(
           seedColor: const Color(0xFF4F46E5),
-          secondary: const Color(0xFF9333EA),
-          brightness: Brightness.light,
-        ).copyWith(error: AppColors.error, tertiary: AppColors.success);
+          secondary: const Color(0xFFA855F7),
+          brightness: brightness,
+        ).copyWith(
+          error: AppColors.error,
+          tertiary: AppColors.success,
+          surface: darkMode ? const Color(0xFF1E1B4B) : null,
+          surfaceContainerHighest: darkMode ? const Color(0xFF312E81) : null,
+        );
 
       case AppThemeVariant.modern:
         return ColorScheme.fromSeed(
           seedColor: const Color(0xFF2563EB),
-          secondary: const Color(0xFF14B8A6),
-          brightness: Brightness.light,
-        ).copyWith(error: AppColors.error, tertiary: AppColors.success);
+          secondary: const Color(0xFF0D9488),
+          brightness: brightness,
+        ).copyWith(
+          error: AppColors.error,
+          tertiary: AppColors.success,
+          surface: darkMode ? const Color(0xFF0C4A6E) : null,
+          surfaceContainerHighest: darkMode ? const Color(0xFF075985) : null,
+        );
     }
   }
 }

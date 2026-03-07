@@ -29,6 +29,7 @@ class _CreateDeckState extends State<CreateDeck> {
   final _deckValidator = DeckValidator();
   final _flashCardValidator = FlashCardValidator();
   Future? _deckFuture;
+  bool _isDeckDataLoaded = false;
 
   @override
   void initState() {
@@ -64,7 +65,33 @@ class _CreateDeckState extends State<CreateDeck> {
     }
     _deckTitle.dispose();
     _deckTitleFocus.dispose();
+    _isDeckDataLoaded = false;
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant CreateDeck oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // Reset loading flag if deckId changes
+    if (widget.deckId != oldWidget.deckId) {
+      _isDeckDataLoaded = false;
+
+      // Dispose old controllers before loading new deck
+      for (var card in cards) {
+        card.dispose();
+      }
+      cards.clear();
+
+      // Reload deck data if editing a different deck
+      if (widget.deckId != null) {
+        final vm = context.read<LibraryViewModel>();
+        _deckFuture = vm.getDeckById(widget.deckId!);
+      } else {
+        // If switching from edit to create mode, add a default card
+        cards.add(CardFormFields());
+      }
+    }
   }
 
   Future<void> _showSaveConfirmation() async {
@@ -390,8 +417,13 @@ class _CreateDeckState extends State<CreateDeck> {
                 if (deck == null) {
                   return (Center(child: CircularProgressIndicator()));
                 }
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  // Always reload the deck data to ensure cards are up-to-date
+                if (!_isDeckDataLoaded) {
+                  // Dispose old controllers before clearing
+                  for (var card in cards) {
+                    card.dispose();
+                  }
+
+                  // Load deck data
                   _deckTitle.text = deck.title;
                   cards.clear();
                   for (var card in deck.cards) {
@@ -400,11 +432,13 @@ class _CreateDeckState extends State<CreateDeck> {
                     cardForm.backController.text = card.back;
                     cards.add(cardForm);
                   }
-                  setState(() {});
                   if (cards.isEmpty) {
                     cards.add(CardFormFields());
                   }
-                });
+
+                  _isDeckDataLoaded = true;
+                  // No need to call setState here since we're already in build
+                }
 
                 return _buildForm();
               },

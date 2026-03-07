@@ -1,3 +1,4 @@
+import 'package:bookexample/domain/isar_model/library/folder_entity.dart';
 import 'package:bookexample/view_models/library_view_model.dart';
 import 'package:bookexample/pages/library/widgets/create_folder_sheet.dart';
 import 'package:bookexample/pages/library/widgets/folder_tile.dart';
@@ -8,8 +9,22 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-class LibraryPage extends StatelessWidget {
+class LibraryPage extends StatefulWidget {
   const LibraryPage({super.key});
+
+  @override
+  State<LibraryPage> createState() => _LibraryPageState();
+}
+
+class _LibraryPageState extends State<LibraryPage> {
+  late final Stream<List<FolderEntity>> _foldersStream;
+
+  @override
+  void initState() {
+    super.initState();
+    final vm = context.read<LibraryViewModel>();
+    _foldersStream = vm.watchFolders();
+  }
 
   // creating folder bottom sheet
   Future<void> _showCreateFolder(BuildContext context) async {
@@ -147,7 +162,7 @@ class LibraryPage extends StatelessWidget {
       body: Stack(
         children: [
           StreamBuilder(
-            stream: vm.watchFolders(),
+            stream: _foldersStream,
             builder: (context, asyncSnapshot) {
               final folders = asyncSnapshot.data ?? [];
               return folders.isEmpty

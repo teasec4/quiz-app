@@ -1,0 +1,413 @@
+{
+  "@@locale": "ru",
+  "appTitle": "QuizLet",
+  "@appTitle": {
+    "description": "Название приложения"
+  },
+
+  "study": "Учеба",
+  "@study": {
+    "description": "Вкладка учебы"
+  },
+  "library": "Библиотека",
+  "@library": {
+    "description": "Вкладка библиотеки"
+  },
+  "settings": "Настройки",
+  "@settings": {
+    "description": "Вкладка настроек"
+  },
+  "stats": "Статистика",
+  "@stats": {
+    "description": "Вкладка статистики"
+  },
+  "back": "Назад",
+  "@back": {
+    "description": "Кнопка назад"
+  },
+  "next": "Далее",
+  "@next": {
+    "description": "Кнопка далее"
+  },
+  "save": "Сохранить",
+  "@save": {
+    "description": "Кнопка сохранения"
+  },
+  "cancel": "Отмена",
+  "@cancel": {
+    "description": "Кнопка отмены"
+  },
+  "delete": "Удалить",
+  "@delete": {
+    "description": "Кнопка удаления"
+  },
+  "edit": "Редактировать",
+  "@edit": {
+    "description": "Кнопка редактирования"
+  },
+  "done": "Готово",
+  "@done": {
+    "description": "Кнопка готово"
+  },
+  "confirm": "Подтвердить",
+  "@confirm": {
+    "description": "Кнопка подтверждения"
+  },
+
+  "studyTitle": "Учеба",
+  "@studyTitle": {
+    "description": "Заголовок страницы учебы"
+  },
+  "selectDeck": "Выберите колоду",
+  "@selectDeck": {
+    "description": "Запрос выбора колоды"
+  },
+  "noDecksAvailable": "Нет доступных колод",
+  "@noDecksAvailable": {
+    "description": "Сообщение когда нет доступных колод для учебы"
+  },
+  "startStudySession": "Начать сессию учебы",
+  "@startStudySession": {
+    "description": "Кнопка начала сессии учебы"
+  },
+  "continueStudy": "Продолжить учебу",
+  "@continueStudy": {
+    "description": "Кнопка продолжения учебы"
+  },
+  "cardsRemaining": "Осталось {count} карточек",
+  "@cardsRemaining": {
+    "description": "Количество оставшихся карточек в сессии учебы",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "studyComplete": "Учеба завершена!",
+  "@studyComplete": {
+    "description": "Сообщение о завершении сессии учебы"
+  },
+  "correctAnswer": "Правильно",
+  "@correctAnswer": {
+    "description": "Метка правильного ответа"
+  },
+  "incorrectAnswer": "Неправильно",
+  "@incorrectAnswer": {
+    "description": "Метка неправильного ответа"
+  },
+  "showAnswer": "Показать ответ",
+  "@showAnswer": {
+    "description": "Кнопка показа ответа"
+  },
+  "rateDifficulty": "Оценить сложность",
+  "@rateDifficulty": {
+    "description": "Запрос оценки сложности"
+  },
+  "easy": "Легко",
+  "@easy": {
+    "description": "Оценка сложности: легко"
+  },
+  "medium": "Средне",
+  "@medium": {
+    "description": "Оценка сложности: средне"
+  },
+  "hard": "Сложно",
+  "@hard": {
+    "description": "Оценка сложности: сложно"
+  },
+
+  "libraryTitle": "Библиотека",
+  "@libraryTitle": {
+    "description": "Заголовок страницы библиотеки"
+  },
+  "folders": "Папки",
+  "@folders": {
+    "description": "Заголовок раздела папок"
+  },
+  "decks": "Колоды",
+  "@decks": {
+    "description": "Заголовок раздела колод"
+  },
+  "createFolder": "Создать папку",
+  "@createFolder": {
+    "description": "Кнопка создания папки"
+  },
+  "createDeck": "Создать колоду",
+  "@createDeck": {
+    "description": "Кнопка создания колоды"
+  },
+  "folderName": "Название папки",
+  "@folderName": {
+    "description": "Метка ввода названия папки"
+  },
+  "deckName": "Название колоды",
+  "@deckName": {
+    "description": "Метка ввода названия колоды"
+  },
+  "deckDescription": "Описание",
+  "@deckDescription": {
+    "description": "Метка ввода описания колоды"
+  },
+  "cardsCount": "{count} карточек",
+  "@cardsCount": {
+    "description": "Количество карточек в колоде",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "10"
+      }
+    }
+  },
+  "addCard": "Добавить карточку",
+  "@addCard": {
+    "description": "Кнопка добавления карточки"
+  },
+  "frontSide": "Лицевая сторона",
+  "@frontSide": {
+    "description": "Лицевая сторона карточки"
+  },
+  "backSide": "Обратная сторона",
+  "@backSide": {
+    "description": "Обратная сторона карточки"
+  },
+  "tags": "Теги",
+  "@tags": {
+    "description": "Метка ввода тегов"
+  },
+
+  "settingsTitle": "Настройки",
+  "@settingsTitle": {
+    "description": "Заголовок страницы настроек"
+  },
+  "themeSettings": "Настройки темы",
+  "@themeSettings": {
+    "description": "Заголовок раздела настроек темы"
+  },
+  "customizeAppearance": "Настройте внешний вид приложения",
+  "@customizeAppearance": {
+    "description": "Описание настроек темы"
+  },
+  "darkMode": "Темная тема",
+  "@darkMode": {
+    "description": "Переключатель темной темы"
+  },
+  "toggleDarkTheme": "Переключить темную тему",
+  "@toggleDarkTheme": {
+    "description": "Описание переключателя темной темы"
+  },
+  "themeVariant": "Вариант темы",
+  "@themeVariant": {
+    "description": "Метка выбора варианта темы"
+  },
+  "minimalTheme": "Минимализм",
+  "@minimalTheme": {
+    "description": "Название темы: минимализм"
+  },
+  "techTheme": "Техно",
+  "@techTheme": {
+    "description": "Название темы: техно"
+  },
+  "modernTheme": "Модерн",
+  "@modernTheme": {
+    "description": "Название темы: модерн"
+  },
+  "resetToDefaults": "Сбросить настройки",
+  "@resetToDefaults": {
+    "description": "Кнопка сброса настроек"
+  },
+  "languageSettings": "Настройки языка",
+  "@languageSettings": {
+    "description": "Заголовок раздела настроек языка"
+  },
+  "selectAppLanguage": "Выберите язык приложения",
+  "@selectAppLanguage": {
+    "description": "Описание настроек языка"
+  },
+  "english": "Английский",
+  "@english": {
+    "description": "Название английского языка"
+  },
+  "russian": "Русский",
+  "@russian": {
+    "description": "Название русского языка"
+  },
+  "chinese": "Китайский",
+  "@chinese": {
+    "description": "Название китайского языка"
+  },
+  "resetToEnglish": "Сбросить на английский",
+  "@resetToEnglish": {
+    "description": "Кнопка сброса языка на английский"
+  },
+  "applicationVersion": "Версия приложения",
+  "@applicationVersion": {
+    "description": "Метка версии приложения"
+  },
+
+  "statisticsTitle": "Статистика",
+  "@statisticsTitle": {
+    "description": "Заголовок страницы статистики"
+  },
+  "totalStudyTime": "Общее время учебы",
+  "@totalStudyTime": {
+    "description": "Метка общего времени учебы"
+  },
+  "cardsStudied": "Изучено карточек",
+  "@cardsStudied": {
+    "description": "Метка изученных карточек"
+  },
+  "accuracyRate": "Точность",
+  "@accuracyRate": {
+    "description": "Метка точности"
+  },
+  "streak": "Серия",
+  "@streak": {
+    "description": "Метка серии учебы"
+  },
+  "today": "Сегодня",
+  "@today": {
+    "description": "Период: сегодня"
+  },
+  "thisWeek": "На этой неделе",
+  "@thisWeek": {
+    "description": "Период: на этой неделе"
+  },
+  "thisMonth": "В этом месяце",
+  "@thisMonth": {
+    "description": "Период: в этом месяце"
+  },
+  "allTime": "За все время",
+  "@allTime": {
+    "description": "Период: за все время"
+  },
+
+  "errorTitle": "Ошибка",
+  "@errorTitle": {
+    "description": "Заголовок диалога ошибки"
+  },
+  "unexpectedError": "Произошла непредвиденная ошибка",
+  "@unexpectedError": {
+    "description": "Общее сообщение об ошибке"
+  },
+  "networkError": "Ошибка сети. Проверьте подключение.",
+  "@networkError": {
+    "description": "Сообщение об ошибке сети"
+  },
+  "validationError": "Проверьте введенные данные",
+  "@validationError": {
+    "description": "Сообщение об ошибке валидации"
+  },
+  "emptyFieldError": "Это поле не может быть пустым",
+  "@emptyFieldError": {
+    "description": "Сообщение об ошибке пустого поля"
+  },
+  "deckNotFound": "Колода не найдена",
+  "@deckNotFound": {
+    "description": "Ошибка: колода не найдена"
+  },
+  "folderNotFound": "Папка не найдена",
+  "@folderNotFound": {
+    "description": "Ошибка: папка не найдена"
+  },
+
+  "successTitle": "Успех",
+  "@successTitle": {
+    "description": "Заголовок диалога успеха"
+  },
+  "deckCreated": "Колода успешно создана",
+  "@deckCreated": {
+    "description": "Сообщение об успешном создании колоды"
+  },
+  "folderCreated": "Папка успешно создана",
+  "@folderCreated": {
+    "description": "Сообщение об успешном создании папки"
+  },
+  "cardAdded": "Карточка успешно добавлена",
+  "@cardAdded": {
+    "description": "Сообщение об успешном добавлении карточки"
+  },
+  "changesSaved": "Изменения успешно сохранены",
+  "@changesSaved": {
+    "description": "Сообщение об успешном сохранении изменений"
+  },
+  "studySessionSaved": "Сессия учебы сохранена",
+  "@studySessionSaved": {
+    "description": "Сообщение о сохранении сессии учебы"
+  },
+
+  "confirmDelete": "Подтверждение удаления",
+  "@confirmDelete": {
+    "description": "Заголовок диалога подтверждения удаления"
+  },
+  "deleteDeckConfirm": "Вы уверены, что хотите удалить эту колоду? Это действие нельзя отменить.",
+  "@deleteDeckConfirm": {
+    "description": "Сообщение подтверждения удаления колоды"
+  },
+  "deleteFolderConfirm": "Вы уверены, что хотите удалить эту папку? Все колоды внутри также будут удалены.",
+  "@deleteFolderConfirm": {
+    "description": "Сообщение подтверждения удаления папки"
+  },
+  "deleteCardConfirm": "Вы уверены, что хотите удалить эту карточку?",
+  "@deleteCardConfirm": {
+    "description": "Сообщение подтверждения удаления карточки"
+  },
+
+  "noFolders": "Пока нет папок",
+  "@noFolders": {
+    "description": "Сообщение при пустом состоянии папок"
+  },
+  "noDecks": "Пока нет колод",
+  "@noDecks": {
+    "description": "Сообщение при пустом состоянии колод"
+  },
+  "noCards": "Пока нет карточек",
+  "@noCards": {
+    "description": "Сообщение при пустом состоянии карточек"
+  },
+  "noStudySessions": "Пока нет сессий учебы",
+  "@noStudySessions": {
+    "description": "Сообщение при пустом состоянии сессий учебы"
+  },
+  "createFirstItem": "Создайте свой первый {item}, чтобы начать",
+  "@createFirstItem": {
+    "description": "Запрос создания первого элемента",
+    "placeholders": {
+      "item": {
+        "type": "String",
+        "example": "колоду"
+      }
+    }
+  },
+
+  "minutesAgo": "{count} минут назад",
+  "@minutesAgo": {
+    "description": "Формат времени: минут назад",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "hoursAgo": "{count} часов назад",
+  "@hoursAgo": {
+    "description": "Формат времени: часов назад",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+  "daysAgo": "{count} дней назад",
+  "@daysAgo": {
+    "description": "Формат времени: дней назад",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  }
+}
