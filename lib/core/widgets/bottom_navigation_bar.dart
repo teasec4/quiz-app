@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:bookexample/l10n/app_localizations.dart';
 
 class AppBottomBar extends StatelessWidget {
   final int currentIndex;
@@ -12,29 +13,26 @@ class AppBottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return NavigationBar(
       selectedIndex: currentIndex,
       onDestinationSelected: onTap,
-      destinations: const [
+      destinations: [
         NavigationDestination(
-          icon: Icon(Icons.school_outlined),
-          selectedIcon: Icon(Icons.school),
-          label: "Study",
+          icon: const Icon(Icons.school_outlined),
+          selectedIcon: const Icon(Icons.school),
+          label: l10n?.study ?? 'Study',
         ),
         NavigationDestination(
-          icon: Icon(Icons.library_books_outlined),
-          selectedIcon: Icon(Icons.library_books),
-          label: "Library",
+          icon: const Icon(Icons.library_books_outlined),
+          selectedIcon: const Icon(Icons.library_books),
+          label: l10n?.library ?? 'Library',
         ),
         NavigationDestination(
-          icon: Icon(Icons.settings_outlined),
-          selectedIcon: Icon(Icons.settings),
-          label: "Settings",
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.color_lens_outlined),
-          selectedIcon: Icon(Icons.color_lens),
-          label: "Theme",
+          icon: const Icon(Icons.settings_outlined),
+          selectedIcon: const Icon(Icons.settings),
+          label: l10n?.settings ?? 'Settings',
         ),
       ],
     );
