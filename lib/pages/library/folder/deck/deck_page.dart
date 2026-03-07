@@ -1,10 +1,10 @@
-import 'package:bookexample/core/service_locator.dart';
 import 'package:bookexample/domain/isar_model/library/deck_entity.dart';
 import 'package:bookexample/view_models/library_view_model.dart';
 import 'package:bookexample/pages/library/folder/deck/widgets/flip_card.dart';
 import 'package:bookexample/pages/library/folder/deck/widgets/study_mode_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class DeckPage extends StatefulWidget {
   final int folderId;
@@ -27,7 +27,12 @@ class _DeckPageState extends State<DeckPage>
   void initState() {
     super.initState();
     _scrollController = ScrollController();
-    _deckFuture = getIt<LibraryViewModel>().getDeckById(widget.deckId);
+    _loadDeck();
+  }
+
+  void _loadDeck() {
+    final vm = context.read<LibraryViewModel>();
+    _deckFuture = vm.getDeckById(widget.deckId);
   }
 
   @override
@@ -78,7 +83,9 @@ class _DeckPageState extends State<DeckPage>
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        Theme.of(context).colorScheme.primary.withOpacity(0.6),
+                        Theme.of(
+                          context,
+                        ).colorScheme.primary.withValues(alpha: 0.6),
                         Theme.of(context).colorScheme.primary,
                       ],
                     ),
@@ -114,6 +121,7 @@ class _DeckPageState extends State<DeckPage>
 
   @override
   Widget build(BuildContext context) {
+    final vm = context.watch<LibraryViewModel>();
     final screenHeight = MediaQuery.of(context).size.height;
     final cardHeight = screenHeight * 0.5;
     bool isCollapsed = _scrollOffset > 0; // любой скрол = стопка
@@ -121,9 +129,46 @@ class _DeckPageState extends State<DeckPage>
     return FutureBuilder<DeckEntity>(
       future: _deckFuture,
       builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+        // Show error state with retry option
+        if (snapshot.hasError || (vm.hasError && vm.error != null)) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Error')),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 64,
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    vm.error?.userFriendlyMessage ?? 'Failed to load deck',
+                    style: Theme.of(context).textTheme.titleMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      setState(() {
+                        _loadDeck();
+                      });
+                    },
+                    icon: const Icon(Icons.refresh),
+                    label: const Text('Retry'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        // Show loading state
+        if (!snapshot.hasData || vm.isLoading) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Loading...')),
+            body: const Center(child: CircularProgressIndicator()),
           );
         }
 
@@ -135,9 +180,7 @@ class _DeckPageState extends State<DeckPage>
             subtitle: '${cards.length} cards',
             icon: Icons.style,
             onTap: () {
-              context.go(
-                '/study/session/${widget.folderId}/${widget.deckId}',
-              );
+              context.go('/study/session/${widget.folderId}/${widget.deckId}');
             },
           ),
           StudyMode(
@@ -161,9 +204,7 @@ class _DeckPageState extends State<DeckPage>
         ];
 
         return Scaffold(
-          appBar: AppBar(
-            title: Text(deck.title),
-          ),
+          appBar: AppBar(title: Text(deck.title)),
           body: NotificationListener<ScrollUpdateNotification>(
             onNotification: (notification) {
               // Только вертикальный скрол
@@ -215,8 +256,9 @@ class _DeckPageState extends State<DeckPage>
                                 (index) => Container(
                                   width: 8,
                                   height: 8,
-                                  margin:
-                                      const EdgeInsets.symmetric(horizontal: 4),
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                  ),
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: index == currentCardIndex

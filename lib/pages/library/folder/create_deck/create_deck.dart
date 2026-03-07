@@ -1,7 +1,7 @@
-import 'package:bookexample/domain/isar_model/library/deck_entity.dart';
 import 'package:bookexample/domain/isar_model/library/flashcard_entity.dart';
 import 'package:bookexample/models/card_form_text_form_field.dart';
 import 'package:bookexample/view_models/library_view_model.dart';
+import 'package:bookexample/core/validation/validators.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -23,14 +23,22 @@ class _CreateDeckState extends State<CreateDeck> {
   late FocusNode _deckTitleFocus;
   bool _hasChanges = false;
   bool _deckTitleError = false;
-  bool _isLoading = false;
-  
+  String? _deckTitleErrorMessage;
+  final _deckValidator = DeckValidator();
+  final _flashCardValidator = FlashCardValidator();
+  Future? _deckFuture;
 
   @override
   void initState() {
     super.initState();
     _deckTitleFocus = FocusNode();
-    
+
+    // Load deck data if editing
+    if (widget.deckId != null) {
+      final vm = context.read<LibraryViewModel>();
+      _deckFuture = vm.getDeckById(widget.deckId!);
+    }
+
     // Request focus for DeckTitle after build only for create mode
     if (widget.deckId == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -41,6 +49,7 @@ class _CreateDeckState extends State<CreateDeck> {
       if (_deckTitle.text.trim().isNotEmpty && _deckTitleError) {
         setState(() {
           _deckTitleError = false;
+          _deckTitleErrorMessage = null;
         });
       }
     });
@@ -57,15 +66,26 @@ class _CreateDeckState extends State<CreateDeck> {
   }
 
   Future<void> _showSaveConfirmation() async {
-    // Validate before showing confirmation
-    // Deck title is Empty ERROR
-    if (_deckTitle.text.trim().isEmpty) {
-      setState(() {
-        _deckTitleError = true;
-      });
+    // Client-side validation using validators
+    final deckValidation = _deckValidator.validate(_deckTitle.text, cards);
+
+    if (!deckValidation.isValid) {
+      // Show deck-level validation errors
+      final titleError = deckValidation.getError('title');
+      final cardsError = deckValidation.getError('cards');
+
+      if (titleError != null) {
+        setState(() {
+          _deckTitleError = true;
+          _deckTitleErrorMessage = titleError;
+        });
+      }
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Deck title is required'),
+          content: Text(
+            titleError ?? cardsError ?? 'Please fix validation errors',
+          ),
           backgroundColor: Theme.of(context).colorScheme.error,
           duration: const Duration(seconds: 2),
         ),
@@ -73,7 +93,29 @@ class _CreateDeckState extends State<CreateDeck> {
       return;
     }
 
-    // Some of Cards field are empty ERROR
+    // Validate individual cards
+    for (int i = 0; i < cards.length; i++) {
+      final card = cards[i];
+      final cardValidation = _flashCardValidator.validate(
+        card.frontController.text,
+        card.backController.text,
+      );
+
+      if (!cardValidation.isValid) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Card ${i + 1}: ${cardValidation.errors.values.first}',
+            ),
+            backgroundColor: Theme.of(context).colorScheme.error,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+        return;
+      }
+    }
+
+    // Form validation for additional checks
     if (!_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -118,15 +160,12 @@ class _CreateDeckState extends State<CreateDeck> {
   }
 
   void _saveCard() async {
-    if (_isLoading) return;
+    final vm = context.read<LibraryViewModel>();
 
-    setState(() {
-      _isLoading = true;
-    });
+    // Prevent duplicate saves
+    if (vm.isLoading) return;
 
     try {
-      final vm = context.read<LibraryViewModel>();
-
       final List<FlashCardEntity> newCards = cards.map((card) {
         return FlashCardEntity()
           ..front = card.frontController.text
@@ -137,10 +176,12 @@ class _CreateDeckState extends State<CreateDeck> {
         // Creating new deck
         await vm.addDeck(widget.folderId, _deckTitle.text, newCards);
         if (mounted) {
-          if (vm.errorMessage != null) {
+          if (vm.hasError && vm.error != null) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Error saving deck: ${vm.errorMessage}'),
+                content: Text(
+                  'Error saving deck: ${vm.error!.userFriendlyMessage}',
+                ),
                 backgroundColor: Theme.of(context).colorScheme.error,
               ),
             );
@@ -159,10 +200,12 @@ class _CreateDeckState extends State<CreateDeck> {
         // Editing existing deck
         await vm.updateDeckWithCards(widget.deckId!, _deckTitle.text, newCards);
         if (mounted) {
-          if (vm.errorMessage != null) {
+          if (vm.hasError && vm.error != null) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Error updating deck: ${vm.errorMessage}'),
+                content: Text(
+                  'Error updating deck: ${vm.error!.userFriendlyMessage}',
+                ),
                 backgroundColor: Theme.of(context).colorScheme.error,
               ),
             );
@@ -187,12 +230,6 @@ class _CreateDeckState extends State<CreateDeck> {
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
       }
     }
   }
@@ -388,36 +425,28 @@ class _CreateDeckState extends State<CreateDeck> {
       child: widget.deckId == null
           ? _buildForm()
           : FutureBuilder(
-              future: context.read<LibraryViewModel>().getDeckById(
-                widget.deckId!,
-              ),
+              future: _deckFuture,
               builder: (context, snapshot) {
-                
-                  final deck = snapshot.data;
-                  if (deck == null) {
-                    return (
-                      Center(child: CircularProgressIndicator(),)
-                    );
+                final deck = snapshot.data;
+                if (deck == null) {
+                  return (Center(child: CircularProgressIndicator()));
+                }
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  // Always reload the deck data to ensure cards are up-to-date
+                  _deckTitle.text = deck.title;
+                  cards.clear();
+                  for (var card in deck.cards) {
+                    final cardForm = CardFormTextFormField();
+                    cardForm.frontController.text = card.front;
+                    cardForm.backController.text = card.back;
+                    cards.add(cardForm);
                   }
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    // Always reload the deck data to ensure cards are up-to-date
-                    _deckTitle.text = deck.title;
-                    cards.clear();
-                    print('DEBUG: deck.cards length = ${deck.cards.length}');
-                    for (var card in deck.cards) {
-                      // print('DEBUG: card front = ${card.front}');
-                      final cardForm = CardFormTextFormField();
-                      cardForm.frontController.text = card.front;
-                      cardForm.backController.text = card.back;
-                      cards.add(cardForm);
-                    }
-                    print('DEBUG: cards list length after loop = ${cards.length}');
-                    setState(() {});
-                    if (cards.isEmpty) {
-                      cards.add(CardFormTextFormField());
-                    }
-                  });
-                
+                  setState(() {});
+                  if (cards.isEmpty) {
+                    cards.add(CardFormTextFormField());
+                  }
+                });
+
                 return _buildForm();
               },
             ),
@@ -425,6 +454,8 @@ class _CreateDeckState extends State<CreateDeck> {
   }
 
   Widget _buildForm() {
+    final vm = context.watch<LibraryViewModel>();
+
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
@@ -433,109 +464,128 @@ class _CreateDeckState extends State<CreateDeck> {
         actions: [
           IconButton(
             icon: const Icon(Icons.close),
-            onPressed: () async {
-              if (!_hasChanges) {
-                context.pop();
-                return;
-              }
+            onPressed: vm.isLoading
+                ? null
+                : () async {
+                    if (!_hasChanges) {
+                      context.pop();
+                      return;
+                    }
 
-              final confirm = await showDialog<bool>(
-                context: context,
-                builder: (dialogContext) => AlertDialog(
-                  title: const Text('Unsaved Changes'),
-                  content: const Text(
-                    'You have unsaved changes. Do you want to leave?',
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(dialogContext, false),
-                      child: const Text('Stay'),
-                    ),
-                    TextButton(
-                      onPressed: () => Navigator.pop(dialogContext, true),
-                      child: const Text('Leave'),
-                    ),
-                  ],
-                ),
-              );
+                    final confirm = await showDialog<bool>(
+                      context: context,
+                      builder: (dialogContext) => AlertDialog(
+                        title: const Text('Unsaved Changes'),
+                        content: const Text(
+                          'You have unsaved changes. Do you want to leave?',
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () =>
+                                Navigator.pop(dialogContext, false),
+                            child: const Text('Stay'),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.pop(dialogContext, true),
+                            child: const Text('Leave'),
+                          ),
+                        ],
+                      ),
+                    );
 
-              if (confirm == true && context.mounted) {
-                context.pop();
-              }
-            },
+                    if (confirm == true && context.mounted) {
+                      context.pop();
+                    }
+                  },
             tooltip: 'Cancel',
           ),
         ],
       ),
-      body: Column(
+      body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            child: TextField(
-              focusNode: _deckTitleFocus,
-              controller: _deckTitle,
-              onChanged: (_) {
-                setState(() {
-                  _hasChanges = true;
-                });
-              },
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-              decoration: InputDecoration(
-                labelText: "Deck Title",
-                labelStyle: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-                prefixIcon: Icon(
-                  Icons.menu_book,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 28,
-                ),
-                errorText: _deckTitleError ? 'Deck title is required' : null,
-                filled: true,
-                fillColor: Theme.of(
-                  context,
-                ).colorScheme.primaryContainer.withOpacity(0.3),
-                contentPadding: const EdgeInsets.symmetric(
+          Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 16,
                 ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide(
-                    color: _deckTitleError
-                        ? Theme.of(context).colorScheme.error
-                        : Theme.of(
-                            context,
-                          ).colorScheme.primaryContainer.withOpacity(0.5),
-                    width: 1.5,
+                child: TextField(
+                  focusNode: _deckTitleFocus,
+                  controller: _deckTitle,
+                  onChanged: (_) {
+                    setState(() {
+                      _hasChanges = true;
+                    });
+                  },
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
                   ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide(
-                    color: _deckTitleError
-                        ? Theme.of(context).colorScheme.error
-                        : Theme.of(context).colorScheme.primary,
-                    width: 2.5,
+                  decoration: InputDecoration(
+                    labelText: "Deck Title",
+                    labelStyle: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    prefixIcon: Icon(
+                      Icons.menu_book,
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 28,
+                    ),
+                    errorText: _deckTitleError
+                        ? (_deckTitleErrorMessage ?? 'Deck title is required')
+                        : null,
+                    filled: true,
+                    fillColor: Theme.of(
+                      context,
+                    ).colorScheme.primaryContainer.withValues(alpha: 0.3),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 16,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(
+                        color: _deckTitleError
+                            ? Theme.of(context).colorScheme.error
+                            : Theme.of(context).colorScheme.primaryContainer
+                                  .withValues(alpha: 0.5),
+                        width: 1.5,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(
+                        color: _deckTitleError
+                            ? Theme.of(context).colorScheme.error
+                            : Theme.of(context).colorScheme.primary,
+                        width: 2.5,
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-          Expanded(
-            child: Form(
-              key: _formKey,
-              child: ListView.builder(
-                padding: const EdgeInsets.only(bottom: 100),
-                itemCount: cards.length,
-                itemBuilder: (context, index) => _buildCardForm(index),
+              Expanded(
+                child: Form(
+                  key: _formKey,
+                  child: ListView.builder(
+                    padding: const EdgeInsets.only(bottom: 100),
+                    itemCount: cards.length,
+                    itemBuilder: (context, index) => _buildCardForm(index),
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
+          if (vm.isLoading)
+            Container(
+              color: Colors.black.withValues(alpha: 0.3),
+              child: const Center(child: CircularProgressIndicator()),
+            ),
         ],
       ),
       floatingActionButton: Row(
@@ -543,12 +593,12 @@ class _CreateDeckState extends State<CreateDeck> {
         mainAxisSize: MainAxisSize.min,
         children: [
           FilledButton.tonal(
-            onPressed: _addCard,
+            onPressed: vm.isLoading ? null : _addCard,
             child: const Text("Add Card"),
           ),
           const SizedBox(width: 12),
           FilledButton(
-            onPressed: _showSaveConfirmation,
+            onPressed: vm.isLoading ? null : _showSaveConfirmation,
             child: const Text("Save"),
           ),
         ],

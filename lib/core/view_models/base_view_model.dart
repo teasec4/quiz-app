@@ -46,7 +46,9 @@ abstract class BaseViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  @protected
+  /// Clears the current error state.
+  ///
+  /// This method can be called from the UI to dismiss error messages.
   void clearError() {
     _error = null;
     if (_state == ViewState.error) {
@@ -70,7 +72,7 @@ abstract class BaseViewModel extends ChangeNotifier {
 
       final result = await operation();
 
-      setState(ViewState.success);
+      setState(ViewState.idle);
 
       if (operationName != null) {
         AppLogger.info('Completed operation: $operationName');

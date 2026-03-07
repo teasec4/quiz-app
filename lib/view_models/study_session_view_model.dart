@@ -2,9 +2,9 @@ import 'package:bookexample/domain/repositories/library_repository.dart';
 import 'package:bookexample/domain/repositories/study_session_repository.dart';
 import 'package:bookexample/pages/session/models/study_session_draft.dart';
 import 'package:bookexample/view_models/stats_view_model.dart';
-import 'package:flutter/foundation.dart';
+import 'package:bookexample/core/view_models/base_view_model.dart';
 
-class StudySessionViewModel extends ChangeNotifier {
+class StudySessionViewModel extends BaseViewModel {
   final StudySessionRepository studyRepo;
   final LibraryRepository libraryRepo;
   final StatsViewModel statsVM;
@@ -20,13 +20,17 @@ class StudySessionViewModel extends ChangeNotifier {
   StudySessionDraft? get session => _session;
 
   Future<void> startSession(int deckId) async {
-    final cards = await libraryRepo.getCardsByDeck(deckId);
-    _session = StudySessionDraft.fromCards(cards);
-    notifyListeners();
+    await executeAsync(() async {
+      final cards = await libraryRepo.getCardsByDeck(deckId);
+      _session = StudySessionDraft.fromCards(cards);
+    }, operationName: 'Start session for deck: $deckId');
   }
 
   Future<void> saveSession(StudySessionDraft draft) async {
-    await studyRepo.saveSession(draft);
+    await executeAsync(
+      () => studyRepo.saveSession(draft),
+      operationName: 'Save session',
+    );
   }
 
   void answerCurrentCard(bool isCorrect) {
@@ -37,7 +41,7 @@ class StudySessionViewModel extends ChangeNotifier {
   Future<void> completeSession() async {
     if (_session == null) return;
 
-    try {
+    await executeAsync(() async {
       // Сохранить сессию в БД
       await studyRepo.saveSession(_session!);
 
@@ -56,10 +60,6 @@ class StudySessionViewModel extends ChangeNotifier {
 
       // Очистить сессию
       _session = null;
-      notifyListeners();
-    } catch (e) {
-      print('Error completing session: $e');
-      rethrow;
-    }
+    }, operationName: 'Complete session');
   }
 }

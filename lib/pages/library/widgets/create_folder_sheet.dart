@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 
 class CreateFolderSheet extends StatefulWidget {
   final String? oldName;
-  const CreateFolderSheet({super.key,this.oldName});
+  const CreateFolderSheet({super.key, this.oldName});
 
   @override
   State<CreateFolderSheet> createState() => _CreateFolderSheetState();
@@ -24,7 +24,7 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
         _hasError = false;
       });
     });
-    
+
     // Request focus after build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _folderNameFocus.requestFocus();
@@ -64,8 +64,7 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              widget.oldName != null ? "Rename Folder" : 
-              'Create New Folder',
+              widget.oldName != null ? "Rename Folder" : 'Create New Folder',
               style: Theme.of(
                 context,
               ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
@@ -74,10 +73,7 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
             TextField(
               focusNode: _folderNameFocus,
               controller: _nameController,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               decoration: InputDecoration(
                 hintText: 'Enter folder name',
                 labelText: 'Folder Name',
@@ -92,7 +88,9 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
                 ),
                 errorText: _hasError ? 'Folder name is required' : null,
                 filled: true,
-                fillColor: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.25),
+                fillColor: Theme.of(
+                  context,
+                ).colorScheme.primaryContainer.withValues(alpha: 0.25),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 14,
@@ -105,7 +103,9 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
                   borderSide: BorderSide(
                     color: _hasError
                         ? Theme.of(context).colorScheme.error
-                        : Theme.of(context).colorScheme.primaryContainer.withOpacity(0.5),
+                        : Theme.of(
+                            context,
+                          ).colorScheme.primaryContainer.withValues(alpha: 0.5),
                     width: 1.5,
                   ),
                 ),

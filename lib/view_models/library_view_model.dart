@@ -3,13 +3,11 @@ import 'package:bookexample/domain/isar_model/library/flashcard_entity.dart';
 import 'package:bookexample/domain/isar_model/library/folder_entity.dart';
 import 'package:bookexample/domain/repositories/library_repository.dart';
 import 'package:bookexample/pages/session/models/study_session_draft.dart';
-import 'package:flutter/foundation.dart';
+import 'package:bookexample/core/view_models/base_view_model.dart';
 
-class LibraryViewModel extends ChangeNotifier {
+class LibraryViewModel extends BaseViewModel {
   final LibraryRepository repository;
   LibraryViewModel(this.repository);
-
-  String? errorMessage;
 
   Stream<List<FolderEntity>> watchFolders() {
     return repository.watchFolders();
@@ -20,54 +18,52 @@ class LibraryViewModel extends ChangeNotifier {
   }
 
   Future<List<FolderEntity>> getAllFolder() async {
-    final folders = await repository.getAllFolders();
-    
-    return folders;
+    return executeAsync(
+      () => repository.getAllFolders(),
+      operationName: 'Get all folders',
+    );
   }
 
   Future<FolderEntity> getFolderById(int id) {
-    return repository.getFolderById(id);
+    return executeAsync(
+      () => repository.getFolderById(id),
+      operationName: 'Get folder by id: $id',
+    );
   }
 
   Future<List<DeckEntity>> getAllDecksById(int folderId) async {
-    final decks = await repository.getAllDecksById(folderId);
-    
-    return decks;
+    return executeAsync(
+      () => repository.getAllDecksById(folderId),
+      operationName: 'Get all decks by folder: $folderId',
+    );
   }
 
   Future<DeckEntity> getDeckById(int deckId) {
-    return repository.getDeckById(deckId);
+    return executeAsync(
+      () => repository.getDeckById(deckId),
+      operationName: 'Get deck by id: $deckId',
+    );
   }
 
   Future<void> createFolder(String name) async {
-    try {
-      await repository.addFolder(name);
-      errorMessage = null;
-    } catch (e) {
-      errorMessage = e.toString();
-
-      notifyListeners();
-    }
+    await executeAsync(
+      () => repository.addFolder(name),
+      operationName: 'Create folder: $name',
+    );
   }
 
   Future<void> deleteFolder(int folderId) async {
-    try {
-      await repository.deleteFolder(folderId);
-      errorMessage = null;
-    } catch (e) {
-      errorMessage = e.toString();
-      notifyListeners();
-    }
+    await executeAsync(
+      () => repository.deleteFolder(folderId),
+      operationName: 'Delete folder: $folderId',
+    );
   }
 
   Future<void> renameFolder(int folderId, String newName) async {
-    try {
-      await repository.renameFolder(folderId, newName);
-      errorMessage = null;
-    } catch (e) {
-      errorMessage = e.toString();
-      notifyListeners();
-    }
+    await executeAsync(
+      () => repository.renameFolder(folderId, newName),
+      operationName: 'Rename folder: $folderId to $newName',
+    );
   }
 
   Future<void> addDeck(
@@ -75,23 +71,17 @@ class LibraryViewModel extends ChangeNotifier {
     String title,
     List<FlashCardEntity> cards,
   ) async {
-    try {
-      await repository.createDeckWithCard(folderId, title, cards);
-      errorMessage = null;
-    } catch (e) {
-      errorMessage = e.toString();
-      notifyListeners();
-    }
+    await executeAsync(
+      () => repository.createDeckWithCard(folderId, title, cards),
+      operationName: 'Create deck: $title',
+    );
   }
 
   Future<void> deleteDeck(int deckId) async {
-    try {
-      await repository.deleteDeck(deckId);
-      errorMessage = null;
-    } catch (e) {
-      errorMessage = e.toString();
-      notifyListeners();
-    }
+    await executeAsync(
+      () => repository.deleteDeck(deckId),
+      operationName: 'Delete deck: $deckId',
+    );
   }
 
   Future<void> updateDeckWithCards(
@@ -99,20 +89,23 @@ class LibraryViewModel extends ChangeNotifier {
     String title,
     List<FlashCardEntity> cards,
   ) async {
-    try {
-      await repository.updateDeckWithCards(deckId, title, cards);
-      errorMessage = null;
-    } catch (e) {
-      errorMessage = e.toString();
-      notifyListeners();
-    }
+    await executeAsync(
+      () => repository.updateDeckWithCards(deckId, title, cards),
+      operationName: 'Update deck: $deckId',
+    );
   }
 
   Future<List<FlashCardEntity>> getCardsByDeck(int deckId) async {
-    return await repository.getCardsByDeck(deckId);
+    return executeAsync(
+      () => repository.getCardsByDeck(deckId),
+      operationName: 'Get cards by deck: $deckId',
+    );
   }
 
   Future<void> setCardsLearned(List<AnswerDraft> answeredCards) async {
-    await repository.setCardsLearned(answeredCards);
+    await executeAsync(
+      () => repository.setCardsLearned(answeredCards),
+      operationName: 'Set cards learned',
+    );
   }
 }

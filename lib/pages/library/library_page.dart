@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 
 class LibraryPage extends StatelessWidget {
   const LibraryPage({super.key});
-  
+
   // creating folder bottom sheet
   Future<void> _showCreateFolder(BuildContext context) async {
     final newFolderName = await showModalBottomSheet<String?>(
@@ -23,13 +23,15 @@ class LibraryPage extends StatelessWidget {
     if (newFolderName != null) {
       final vm = context.read<LibraryViewModel>();
       await vm.createFolder(newFolderName);
-      
+
       if (!context.mounted) return;
-      
-      if (vm.errorMessage != null) {
+
+      if (vm.hasError && vm.error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error creating folder: ${vm.errorMessage}'),
+            content: Text(
+              'Error creating folder: ${vm.error!.userFriendlyMessage}',
+            ),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -63,13 +65,15 @@ class LibraryPage extends StatelessWidget {
     if (newFolderName != null) {
       final vm = context.read<LibraryViewModel>();
       await vm.renameFolder(folderId, newFolderName);
-      
+
       if (!context.mounted) return;
-      
-      if (vm.errorMessage != null) {
+
+      if (vm.hasError && vm.error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error renaming folder: ${vm.errorMessage}'),
+            content: Text(
+              'Error renaming folder: ${vm.error!.userFriendlyMessage}',
+            ),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -105,14 +109,16 @@ class LibraryPage extends StatelessWidget {
             onPressed: () async {
               final vm = context.read<LibraryViewModel>();
               await vm.deleteFolder(folderId);
-              
+
               if (context.mounted) {
                 Navigator.pop(context);
-                
-                if (vm.errorMessage != null) {
+
+                if (vm.hasError && vm.error != null) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Error deleting folder: ${vm.errorMessage}'),
+                      content: Text(
+                        'Error deleting folder: ${vm.error!.userFriendlyMessage}',
+                      ),
                       backgroundColor: Theme.of(context).colorScheme.error,
                     ),
                   );
@@ -137,62 +143,76 @@ class LibraryPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text("Library")),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _showCreateFolder(context);
-        },
+        onPressed: vm.isLoading
+            ? null
+            : () {
+                _showCreateFolder(context);
+              },
         mini: true,
         child: const Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: StreamBuilder(
-        stream: vm.watchFolders(),
-        builder: (context, asyncSnapshot) {
-          final folders = asyncSnapshot.data ?? [];
-          return folders.isEmpty
-              ? _buildEmptyState()
-              : Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Text(
-                          'Folders',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+      body: Stack(
+        children: [
+          StreamBuilder(
+            stream: vm.watchFolders(),
+            builder: (context, asyncSnapshot) {
+              final folders = asyncSnapshot.data ?? [];
+              return folders.isEmpty
+                  ? _buildEmptyState()
+                  : Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Text(
+                              'Folders',
+                              style: Theme.of(context).textTheme.titleLarge
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    Expanded(
-                      child: ListView.builder(
-                      itemCount: folders.length,
-                      itemBuilder: (context, index) {
-                    final folder = folders[index];
-                    
-                    return FolderTile(
-                      folderName: folder.name,
-                      // deckCount: folder.decks.length,
-                      onTap: () {
-                        context.go('/library/folder/${folder.id}');
-                      },
-                      onDelete: () {
-                        _showDeleteConfirmation(
-                          context,
-                          folder.id,
-                          folder.name,
-                        );
-                      },
-                      onEdit: () {
-                        _showRenameFolder(context, folder.id, folder.name);
-                      },
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: folders.length,
+                            itemBuilder: (context, index) {
+                              final folder = folders[index];
+
+                              return FolderTile(
+                                folderName: folder.name,
+                                // deckCount: folder.decks.length,
+                                onTap: () {
+                                  context.go('/library/folder/${folder.id}');
+                                },
+                                onDelete: () {
+                                  _showDeleteConfirmation(
+                                    context,
+                                    folder.id,
+                                    folder.name,
+                                  );
+                                },
+                                onEdit: () {
+                                  _showRenameFolder(
+                                    context,
+                                    folder.id,
+                                    folder.name,
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     );
-                  },
-                ),
-                    ),
-                  ],
-                );
-        },
+            },
+          ),
+          if (vm.isLoading)
+            Container(
+              color: Colors.black.withValues(alpha: 0.3),
+              child: const Center(child: CircularProgressIndicator()),
+            ),
+        ],
       ),
     );
   }
