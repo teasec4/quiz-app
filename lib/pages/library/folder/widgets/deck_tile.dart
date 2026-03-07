@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:bookexample/core/widgets/context_menu_widget.dart';
 
 class DeckTile extends StatelessWidget {
   final String deckName;
@@ -21,93 +22,9 @@ class DeckTile extends StatelessWidget {
   });
 
   Widget _buildMenuButton(BuildContext context) {
-    return GestureDetector(
-      onTapDown: (TapDownDetails details) {
-        _showCustomMenu(context, details.globalPosition);
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(4),
-        child: Icon(
-          Icons.more_horiz,
-          size: 20,
-          color: Theme.of(context).colorScheme.secondary,
-        ),
-      ),
-    );
-  }
-
-  void _showCustomMenu(BuildContext context, Offset position) {
-    showMenu<String>(
-      context: context,
-      position: RelativeRect.fromLTRB(position.dx, position.dy, position.dx, 0),
-      items: [
-        PopupMenuItem<String>(
-          padding: EdgeInsets.zero,
-          height: 40,
-          value: 'edit',
-          child: InkWell(
-            onTap: () {
-              Navigator.pop(context);
-              onEdit?.call();
-            },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.edit_outlined,
-                    size: 18,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    'Edit',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        PopupMenuItem<String>(
-          padding: EdgeInsets.zero,
-          height: 40,
-          value: 'delete',
-          child: InkWell(
-            onTap: () {
-              Navigator.pop(context);
-              onDelete?.call();
-            },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.delete_outline,
-                    size: 18,
-                    color: Theme.of(context).colorScheme.error,
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    'Delete',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Theme.of(context).colorScheme.error,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
-      constraints: const BoxConstraints(maxWidth: 160),
-      elevation: 2,
+    return ContextMenuWidget.deckPopupMenuButton(
+      onEdit: onEdit,
+      onDelete: onDelete,
     );
   }
 
