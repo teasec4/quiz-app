@@ -17,15 +17,6 @@ class _DeckSelectorState extends State<DeckSelector> {
   int? selectedFolderId;
   int? selectedDeckId;
 
-
-
-  @override
-  void initState() {
-    super.initState();
-   
-  }
-
-
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
