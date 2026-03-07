@@ -138,11 +138,15 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
                   child: ElevatedButton(
                     onPressed: () => context.pop(),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey[300],
+                      backgroundColor: Theme.of(
+                        context,
+                      ).colorScheme.surfaceVariant,
                     ),
-                    child: const Text(
+                    child: Text(
                       'Cancel',
-                      style: TextStyle(color: Colors.black87),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ),
                 ),

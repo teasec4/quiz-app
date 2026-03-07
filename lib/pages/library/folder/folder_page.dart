@@ -180,7 +180,7 @@ class _FolderPageState extends State<FolderPage> {
               ),
               if (vm.isLoading)
                 Container(
-                  color: Colors.black.withValues(alpha: 0.3),
+                  color: Theme.of(context).colorScheme.scrim.withOpacity(0.3),
                   child: const Center(child: CircularProgressIndicator()),
                 ),
               if (vm.hasError && vm.error != null)
@@ -238,17 +238,27 @@ class _FolderPageState extends State<FolderPage> {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: const [
-          Icon(Icons.card_giftcard, size: 64, color: Colors.grey),
-          SizedBox(height: 16),
+        children: [
+          Icon(
+            Icons.card_giftcard,
+            size: 64,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+          const SizedBox(height: 16),
           Text(
             'No Decks yet',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             'Tap + to create your first decks',
-            style: TextStyle(color: Colors.grey),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),

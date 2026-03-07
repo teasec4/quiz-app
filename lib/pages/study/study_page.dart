@@ -104,7 +104,7 @@ class _StudyPageState extends State<StudyPage> {
           ),
           if (vm.isLoading)
             Container(
-              color: Colors.black.withValues(alpha: 0.3),
+              color: Theme.of(context).colorScheme.scrim.withOpacity(0.3),
               child: const Center(child: CircularProgressIndicator()),
             ),
           if (vm.hasError && vm.error != null)

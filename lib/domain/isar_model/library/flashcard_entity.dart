@@ -8,14 +8,15 @@ class FlashCardEntity {
   Id id = Isar.autoIncrement;
 
   late String front;
+
   late String back;
 
   late DateTime createdAt;
 
   @Index()
   late int deckId;
-  
+
   bool isLearned = false;
-  
+
   final deck = IsarLink<DeckEntity>();
 }

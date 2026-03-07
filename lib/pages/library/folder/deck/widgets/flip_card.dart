@@ -4,11 +4,8 @@ class FlipCard extends StatefulWidget {
   final String front;
   final String back;
 
-  const FlipCard({
-    required this.front,
-    required this.back,
-    Key? key,
-  }) : super(key: key);
+  const FlipCard({required this.front, required this.back, Key? key})
+    : super(key: key);
 
   @override
   State<FlipCard> createState() => _FlipCardState();
@@ -28,9 +25,10 @@ class _FlipCardState extends State<FlipCard>
       vsync: this,
     );
 
-    _animation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _animation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -75,14 +73,23 @@ class _FlipCardState extends State<FlipCard>
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: isBack
-                        ? [Colors.white, Colors.grey.shade200]
-                        : [Colors.white, Colors.grey.shade200],
+                        ? [
+                            Theme.of(context).colorScheme.surfaceVariant,
+                            Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerLowest,
+                          ]
+                        : [
+                            Theme.of(context).colorScheme.surface,
+                            Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest,
+                          ],
                   ),
                 ),
                 child: Transform(
                   alignment: Alignment.center,
-                  transform: Matrix4.identity()
-                    ..rotateY(isBack ? 3.14159 : 0),
+                  transform: Matrix4.identity()..rotateY(isBack ? 3.14159 : 0),
                   child: Center(
                     child: Padding(
                       padding: const EdgeInsets.all(24),
@@ -90,7 +97,7 @@ class _FlipCardState extends State<FlipCard>
                         isBack ? widget.back : widget.front,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: Colors.black,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontSize: isBack ? 18 : 24,
                           fontWeight: FontWeight.bold,
                         ),

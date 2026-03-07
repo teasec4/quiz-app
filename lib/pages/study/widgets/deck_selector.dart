@@ -201,12 +201,20 @@ class _DeckSelectorState extends State<DeckSelector> {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: const [
-          Icon(Icons.folder_open, size: 64, color: Colors.grey),
-          SizedBox(height: 16),
+        children: [
+          Icon(
+            Icons.folder_open,
+            size: 64,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+          const SizedBox(height: 16),
           Text(
             'No folders yet',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
         ],
       ),
@@ -217,12 +225,20 @@ class _DeckSelectorState extends State<DeckSelector> {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: const [
-          Icon(Icons.card_giftcard, size: 64, color: Colors.grey),
-          SizedBox(height: 16),
+        children: [
+          Icon(
+            Icons.card_giftcard,
+            size: 64,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+          const SizedBox(height: 16),
           Text(
             'No Decks yet',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
         ],
       ),

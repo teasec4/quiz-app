@@ -76,12 +76,26 @@ class FlashCardWidget extends StatelessWidget {
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                               colors: isFlipped
-                                  ? [Colors.white, Colors.grey.shade200]
-                                  : [Colors.white, Colors.grey.shade200],
+                                  ? [
+                                      Theme.of(
+                                        context,
+                                      ).colorScheme.surfaceVariant,
+                                      Theme.of(
+                                        context,
+                                      ).colorScheme.surfaceContainerLowest,
+                                    ]
+                                  : [
+                                      Theme.of(context).colorScheme.surface,
+                                      Theme.of(
+                                        context,
+                                      ).colorScheme.surfaceContainerHighest,
+                                    ],
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.15),
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.shadow.withOpacity(0.15),
                                 blurRadius: 15,
                                 offset: const Offset(0, 8),
                               ),
@@ -97,8 +111,10 @@ class FlashCardWidget extends StatelessWidget {
                               child: Text(
                                 isFlipped ? card.back : card.front,
                                 textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  color: Colors.black,
+                                style: TextStyle(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                   fontSize: 26,
                                   fontWeight: FontWeight.bold,
                                 ),

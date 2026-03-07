@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class AppColors {
   // Success / Green (Emerald-600 palette - matches modern design)
   static const Color success = Color(0xFF059669);
-  
+
   // Error / Red (Red-600 palette - matches modern design)
   static const Color error = Color(0xFFDC2626);
 }
@@ -26,21 +26,17 @@ class AppTheme {
 
       cardTheme: CardThemeData(
         elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
 
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: scheme.primary,
-        foregroundColor: Colors.white,
+        foregroundColor: scheme.onPrimary,
         elevation: 4,
         hoverElevation: 8,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
-      
+
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           side: BorderSide(color: scheme.primary),
@@ -50,7 +46,7 @@ class AppTheme {
           ),
         ),
       ),
-      
+
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
           shape: RoundedRectangleBorder(
@@ -72,23 +68,14 @@ class AppTheme {
               letterSpacing: 0.3,
             );
           }
-          return const TextStyle(
-            fontWeight: FontWeight.w400,
-            fontSize: 12,
-          );
+          return const TextStyle(fontWeight: FontWeight.w400, fontSize: 12);
         }),
 
         iconTheme: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return IconThemeData(
-              size: 26,
-              color: scheme.primary,
-            );
+            return IconThemeData(size: 26, color: scheme.primary);
           }
-          return IconThemeData(
-            size: 24,
-            color: scheme.onSurfaceVariant,
-          );
+          return IconThemeData(size: 24, color: scheme.onSurfaceVariant);
         }),
       ),
 
@@ -102,11 +89,7 @@ class AppTheme {
   }
 }
 
-enum AppThemeVariant{
-  minimal,
-  tech,
-  modern,
-}
+enum AppThemeVariant { minimal, tech, modern }
 
 class AppThemeFactory {
   static ThemeData getTheme(AppThemeVariant variant) {
@@ -121,31 +104,21 @@ class AppThemeFactory {
           seedColor: const Color(0xFF334155),
           secondary: const Color(0xFF64748B),
           brightness: Brightness.light,
-        ).copyWith(
-          error: AppColors.error,
-          tertiary: AppColors.success,
-        );
-        
+        ).copyWith(error: AppColors.error, tertiary: AppColors.success);
 
       case AppThemeVariant.tech:
         return ColorScheme.fromSeed(
           seedColor: const Color(0xFF4F46E5),
           secondary: const Color(0xFF9333EA),
           brightness: Brightness.light,
-        ).copyWith(
-          error: AppColors.error,
-          tertiary: AppColors.success,
-        );
+        ).copyWith(error: AppColors.error, tertiary: AppColors.success);
 
       case AppThemeVariant.modern:
         return ColorScheme.fromSeed(
           seedColor: const Color(0xFF2563EB),
           secondary: const Color(0xFF14B8A6),
           brightness: Brightness.light,
-        ).copyWith(
-          error: AppColors.error,
-          tertiary: AppColors.success,
-        );
+        ).copyWith(error: AppColors.error, tertiary: AppColors.success);
     }
   }
 }

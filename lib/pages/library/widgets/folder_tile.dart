@@ -32,7 +32,10 @@ class FolderTile extends StatelessWidget {
         ),
         // subtitle: Text(
         //   "${deckCount} decks",
-        //   style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+        //   style: TextStyle(
+        //     fontSize: 14,
+        //     color: Theme.of(context).colorScheme.onSurfaceVariant,
+        //   ),
         // ),
         trailing: PopupMenuButton(
           itemBuilder: (context) => [

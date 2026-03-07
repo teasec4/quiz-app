@@ -27,7 +27,11 @@ class DeckTile extends StatelessWidget {
       },
       child: Padding(
         padding: const EdgeInsets.all(4),
-        child: Icon(Icons.more_horiz, size: 20, color: Theme.of(context).colorScheme.secondary),
+        child: Icon(
+          Icons.more_horiz,
+          size: 20,
+          color: Theme.of(context).colorScheme.secondary,
+        ),
       ),
     );
   }
@@ -51,9 +55,19 @@ class DeckTile extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.edit_outlined, size: 18, color: Colors.grey[700]),
+                  Icon(
+                    Icons.edit_outlined,
+                    size: 18,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                   const SizedBox(width: 10),
-                  const Text('Edit', style: TextStyle(fontSize: 14)),
+                  Text(
+                    'Edit',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -126,8 +140,8 @@ class DeckTile extends StatelessWidget {
               // Deck name
               Text(
                 deckName,
-                style: const TextStyle(
-                  color: Colors.black87,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -144,8 +158,10 @@ class DeckTile extends StatelessWidget {
                     child: LinearProgressIndicator(
                       value: progress,
                       minHeight: 6,
-                      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-                      valueColor:  AlwaysStoppedAnimation(
+                      backgroundColor: Theme.of(
+                        context,
+                      ).colorScheme.secondaryContainer,
+                      valueColor: AlwaysStoppedAnimation(
                         Theme.of(context).colorScheme.primary,
                       ),
                     ),
@@ -153,7 +169,10 @@ class DeckTile extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     '$learnedCount/${cardCount}',
-                    style: const TextStyle(color: Colors.grey, fontSize: 12),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               ),

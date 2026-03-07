@@ -102,8 +102,8 @@ class _DeckPageState extends State<DeckPage>
                         const SizedBox(height: 8),
                         Text(
                           '$cardCount cards',
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary,
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
@@ -263,7 +263,7 @@ class _DeckPageState extends State<DeckPage>
                                     shape: BoxShape.circle,
                                     color: index == currentCardIndex
                                         ? Theme.of(context).colorScheme.primary
-                                        : Colors.grey[500],
+                                        : Theme.of(context).colorScheme.outline,
                                   ),
                                 ),
                               ),

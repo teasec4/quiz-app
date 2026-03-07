@@ -19,33 +19,40 @@ class ModeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: disabled ? 0 : 2,
-      color: disabled ? Colors.grey.shade200 : null,
+      color: disabled ? Theme.of(context).colorScheme.surfaceVariant : null,
       child: ListTile(
         iconColor: disabled
-            ? Colors.grey.shade400
+            ? Theme.of(context).colorScheme.onSurfaceVariant
             : Theme.of(context).colorScheme.secondary,
         leading: Icon(icon, size: 32),
         title: Text(
           title,
           style: TextStyle(
             fontWeight: FontWeight.w600,
-            color: disabled ? Colors.grey.shade500 : null,
+            color: disabled
+                ? Theme.of(
+                    context,
+                  ).colorScheme.onSurfaceVariant.withOpacity(0.7)
+                : null,
           ),
         ),
         subtitle: Text(
           subtitle,
           style: TextStyle(
-            color: disabled ? Colors.grey.shade400 : null,
+            color: disabled
+                ? Theme.of(context).colorScheme.onSurfaceVariant
+                : null,
           ),
         ),
         trailing: Icon(
           Icons.arrow_forward_ios,
           size: 16,
-          color: disabled ? Colors.grey.shade400 : null,
+          color: disabled
+              ? Theme.of(context).colorScheme.onSurfaceVariant
+              : null,
         ),
         onTap: disabled ? null : onTap,
       ),
     );
   }
 }
-

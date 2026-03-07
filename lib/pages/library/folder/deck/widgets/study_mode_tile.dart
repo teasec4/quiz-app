@@ -19,10 +19,7 @@ class StudyMode {
 class ModeTile extends StatelessWidget {
   final StudyMode mode;
 
-  const ModeTile({
-    super.key,
-    required this.mode
-  });
+  const ModeTile({super.key, required this.mode});
 
   @override
   Widget build(BuildContext context) {
@@ -30,29 +27,35 @@ class ModeTile extends StatelessWidget {
 
     return Card(
       elevation: mode.disabled ? 0 : 2,
-      color: mode.disabled ? Colors.grey.shade200 : colorScheme.surfaceContainerLow,
+      color: mode.disabled
+          ? colorScheme.surfaceVariant
+          : colorScheme.surfaceContainerLow,
       child: ListTile(
         leading: Icon(
           mode.icon,
-          color: mode.disabled ? Colors.grey.shade400 : colorScheme.primary,
+          color: mode.disabled
+              ? colorScheme.onSurfaceVariant
+              : colorScheme.primary,
           size: 28,
         ),
         title: Text(
           mode.title,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: mode.disabled ? Colors.grey.shade500 : null,
-              ),
+            color: mode.disabled
+                ? colorScheme.onSurfaceVariant.withOpacity(0.7)
+                : null,
+          ),
         ),
         subtitle: Text(
           mode.subtitle,
           style: TextStyle(
-            color: mode.disabled ? Colors.grey.shade400 : null,
+            color: mode.disabled ? colorScheme.onSurfaceVariant : null,
           ),
         ),
         trailing: Icon(
           Icons.arrow_forward_ios,
           size: 16,
-          color: mode.disabled ? Colors.grey.shade400 : null,
+          color: mode.disabled ? colorScheme.onSurfaceVariant : null,
         ),
         onTap: mode.disabled ? null : mode.onTap,
       ),

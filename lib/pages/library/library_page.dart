@@ -129,7 +129,10 @@ class LibraryPage extends StatelessWidget {
                 }
               }
             },
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            child: Text(
+              'Delete',
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
           ),
         ],
       ),
@@ -159,7 +162,7 @@ class LibraryPage extends StatelessWidget {
             builder: (context, asyncSnapshot) {
               final folders = asyncSnapshot.data ?? [];
               return folders.isEmpty
-                  ? _buildEmptyState()
+                  ? _buildEmptyState(context)
                   : Column(
                       children: [
                         Align(
@@ -209,7 +212,7 @@ class LibraryPage extends StatelessWidget {
           ),
           if (vm.isLoading)
             Container(
-              color: Colors.black.withValues(alpha: 0.3),
+              color: Theme.of(context).colorScheme.scrim.withOpacity(0.3),
               child: const Center(child: CircularProgressIndicator()),
             ),
         ],
@@ -217,21 +220,31 @@ class LibraryPage extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: const [
-          Icon(Icons.folder_open, size: 64, color: Colors.grey),
-          SizedBox(height: 16),
+        children: [
+          Icon(
+            Icons.folder_open,
+            size: 64,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+          const SizedBox(height: 16),
           Text(
             'No folders yet',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             'Tap + to create your first folder',
-            style: TextStyle(color: Colors.grey),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),
