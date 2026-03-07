@@ -1,5 +1,5 @@
 import 'package:bookexample/domain/isar_model/library/flashcard_entity.dart';
-import 'package:bookexample/models/card_form_text_form_field.dart';
+import 'package:bookexample/models/card_form_fields.dart';
 import 'package:bookexample/view_models/library_view_model.dart';
 import 'package:bookexample/core/validation/validators.dart';
 import 'package:bookexample/core/extensions/snackbar_extensions.dart';
@@ -20,7 +20,7 @@ class CreateDeck extends StatefulWidget {
 
 class _CreateDeckState extends State<CreateDeck> {
   final _formKey = GlobalKey<FormState>();
-  List<CardFormTextFormField> cards = [CardFormTextFormField()];
+  List<CardFormFields> cards = [CardFormFields()];
   final _deckTitle = TextEditingController();
   late FocusNode _deckTitleFocus;
   bool _hasChanges = false;
@@ -202,7 +202,7 @@ class _CreateDeckState extends State<CreateDeck> {
 
   void _addCard() {
     setState(() {
-      cards.add(CardFormTextFormField());
+      cards.add(CardFormFields());
       _hasChanges = true;
     });
 
@@ -395,14 +395,14 @@ class _CreateDeckState extends State<CreateDeck> {
                   _deckTitle.text = deck.title;
                   cards.clear();
                   for (var card in deck.cards) {
-                    final cardForm = CardFormTextFormField();
+                    final cardForm = CardFormFields();
                     cardForm.frontController.text = card.front;
                     cardForm.backController.text = card.back;
                     cards.add(cardForm);
                   }
                   setState(() {});
                   if (cards.isEmpty) {
-                    cards.add(CardFormTextFormField());
+                    cards.add(CardFormFields());
                   }
                 });
 

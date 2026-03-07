@@ -13,6 +13,8 @@ class FlipCardWidget extends StatefulWidget {
   static const double halfPi = pi / 2;
   static const double matrixPerspectiveValue = 0.001;
 
+  // Default gradient colors will be generated from theme
+
   /// The text to display on the front of the card
   final String frontText;
 
@@ -75,6 +77,14 @@ class FlipCardWidget extends StatefulWidget {
   /// Whether the card is draggable (for swipe gestures)
   final bool isDraggable;
 
+  /// Gradient colors for the front side of the card
+  /// If null, uses default front gradient based on theme
+  final List<Color>? frontGradientColors;
+
+  /// Gradient colors for the back side of the card
+  /// If null, uses default back gradient based on theme
+  final List<Color>? backGradientColors;
+
   /// Creates a FlipCardWidget
   const FlipCardWidget({
     super.key,
@@ -98,6 +108,8 @@ class FlipCardWidget extends StatefulWidget {
     this.flipDuration = const Duration(milliseconds: 500),
     this.flipCurve = Curves.easeInOut,
     this.isDraggable = false,
+    this.frontGradientColors,
+    this.backGradientColors,
   });
 
   /// Creates a FlipCardWidget for session use (with swipe functionality)
@@ -119,6 +131,8 @@ class FlipCardWidget extends StatefulWidget {
     EdgeInsetsGeometry padding = const EdgeInsets.all(12.0),
     double frontFontSize = 26.0,
     double backFontSize = 26.0,
+    List<Color>? frontGradientColors,
+    List<Color>? backGradientColors,
   }) {
     return FlipCardWidget(
       key: key,
@@ -139,6 +153,8 @@ class FlipCardWidget extends StatefulWidget {
       frontFontSize: frontFontSize,
       backFontSize: backFontSize,
       isDraggable: true,
+      frontGradientColors: frontGradientColors,
+      backGradientColors: backGradientColors,
     );
   }
 
@@ -156,6 +172,8 @@ class FlipCardWidget extends StatefulWidget {
     double backFontSize = 18.0,
     Duration flipDuration = const Duration(milliseconds: 500),
     Curve flipCurve = Curves.easeInOut,
+    List<Color>? frontGradientColors,
+    List<Color>? backGradientColors,
   }) {
     return FlipCardWidget(
       key: key,
@@ -168,6 +186,8 @@ class FlipCardWidget extends StatefulWidget {
       backFontSize: backFontSize,
       flipDuration: flipDuration,
       flipCurve: flipCurve,
+      frontGradientColors: frontGradientColors,
+      backGradientColors: backGradientColors,
     );
   }
 
@@ -336,12 +356,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: isFlipped
-              ? [
-                  colorScheme.surfaceContainerHighest,
-                  colorScheme.surfaceContainerLowest,
-                ]
-              : [colorScheme.surface, colorScheme.surfaceContainerHighest],
+          colors: _getGradientColors(colorScheme, isFlipped),
         ),
         boxShadow: widget.showElevation
             ? [
@@ -383,5 +398,28 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
     }
 
     return cardContent;
+  }
+
+  /// Returns the appropriate gradient colors based on card side and customization
+  List<Color> _getGradientColors(ColorScheme colorScheme, bool isFlipped) {
+    // Use custom gradients if provided
+    if (isFlipped && widget.backGradientColors != null) {
+      return widget.backGradientColors!;
+    }
+    if (!isFlipped && widget.frontGradientColors != null) {
+      return widget.frontGradientColors!;
+    }
+
+    // Default gradients with clear visual differentiation
+    if (isFlipped) {
+      // Back side (answer) - use secondary container colors for distinction
+      return [
+        colorScheme.secondaryContainer,
+        colorScheme.secondaryContainer.withValues(alpha: 0.8),
+      ];
+    } else {
+      // Front side (question) - use primary/surface colors
+      return [colorScheme.surface, colorScheme.surfaceContainerHighest];
+    }
   }
 }

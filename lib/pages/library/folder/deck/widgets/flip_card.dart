@@ -5,8 +5,7 @@ class FlipCard extends StatelessWidget {
   final String front;
   final String back;
 
-  const FlipCard({required this.front, required this.back, Key? key})
-    : super(key: key);
+  const FlipCard({required this.front, required this.back, super.key});
 
   @override
   Widget build(BuildContext context) {

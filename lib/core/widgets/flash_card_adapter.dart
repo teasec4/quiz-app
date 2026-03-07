@@ -22,6 +22,8 @@ class FlashCardAdapter {
     EdgeInsetsGeometry padding = const EdgeInsets.all(12.0),
     double frontFontSize = 26.0,
     double backFontSize = 26.0,
+    List<Color>? frontGradientColors,
+    List<Color>? backGradientColors,
   }) {
     return FlipCardWidget.forSession(
       key: key,
@@ -41,6 +43,8 @@ class FlashCardAdapter {
       padding: padding,
       frontFontSize: frontFontSize,
       backFontSize: backFontSize,
+      frontGradientColors: frontGradientColors,
+      backGradientColors: backGradientColors,
     );
   }
 
@@ -57,6 +61,8 @@ class FlashCardAdapter {
     double backFontSize = 18.0,
     Duration flipDuration = const Duration(milliseconds: 500),
     Curve flipCurve = Curves.easeInOut,
+    List<Color>? frontGradientColors,
+    List<Color>? backGradientColors,
   }) {
     return FlipCardWidget.forPreview(
       key: key,
@@ -71,6 +77,8 @@ class FlashCardAdapter {
       backFontSize: backFontSize,
       flipDuration: flipDuration,
       flipCurve: flipCurve,
+      frontGradientColors: frontGradientColors,
+      backGradientColors: backGradientColors,
     );
   }
 
@@ -96,6 +104,8 @@ class FlashCardAdapter {
     Duration flipDuration = const Duration(milliseconds: 500),
     Curve flipCurve = Curves.easeInOut,
     bool isDraggable = false,
+    List<Color>? frontGradientColors,
+    List<Color>? backGradientColors,
   }) {
     return FlipCardWidget(
       key: key,
@@ -119,6 +129,8 @@ class FlashCardAdapter {
       flipDuration: flipDuration,
       flipCurve: flipCurve,
       isDraggable: isDraggable,
+      frontGradientColors: frontGradientColors,
+      backGradientColors: backGradientColors,
     );
   }
 }
