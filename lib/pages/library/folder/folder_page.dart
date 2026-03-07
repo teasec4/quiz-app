@@ -19,12 +19,25 @@ class FolderPage extends StatefulWidget {
 
 class _FolderPageState extends State<FolderPage> {
   late Future _folderFuture;
+  late final Stream<List<DeckEntity>> _decksStream;
 
   @override
   void initState() {
     super.initState();
     final vm = context.read<LibraryViewModel>();
     _folderFuture = vm.getFolderById(widget.folderId);
+    _decksStream = vm.watchDecksByFolder(widget.folderId);
+  }
+
+  @override
+  void didUpdateWidget(covariant FolderPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.folderId != oldWidget.folderId) {
+      final vm = context.read<LibraryViewModel>();
+      _folderFuture = vm.getFolderById(widget.folderId);
+      _decksStream = vm.watchDecksByFolder(widget.folderId);
+    }
   }
 
   // edit deck
@@ -102,76 +115,67 @@ class _FolderPageState extends State<FolderPage> {
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
           body: Stack(
             children: [
-              Builder(
-                builder: (context) {
-                  final vm = context.watch<LibraryViewModel>();
-                  return StreamBuilder<List<DeckEntity>>(
-                    stream: vm.watchDecksByFolder(widget.folderId),
-                    builder: (context, asyncSnapshot) {
-                      final decks = asyncSnapshot.data ?? [];
-                      return decks.isEmpty
-                          ? _buildEmptyState()
-                          : Column(
-                              children: [
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16),
-                                    child: Text(
-                                      'Decks',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleLarge
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                    ),
-                                  ),
+              StreamBuilder<List<DeckEntity>>(
+                stream: _decksStream,
+                builder: (context, asyncSnapshot) {
+                  final decks = asyncSnapshot.data ?? [];
+                  return decks.isEmpty
+                      ? _buildEmptyState()
+                      : Column(
+                          children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Text(
+                                  'Decks',
+                                  style: Theme.of(context).textTheme.titleLarge
+                                      ?.copyWith(fontWeight: FontWeight.bold),
                                 ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(12),
-                                    child: GridView.builder(
-                                      gridDelegate:
-                                          const SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: 2,
-                                            mainAxisSpacing: 12,
-                                            crossAxisSpacing: 12,
-                                            childAspectRatio: 1,
-                                          ),
-                                      itemCount: decks.length,
-                                      itemBuilder: (context, index) {
-                                        final deck = decks[index];
-                                        return DeckTile(
-                                          deckName: deck.title,
-                                          cardCount: deck.cards.length,
-                                          learnedCount: deck.cards
-                                              .where((c) => c.isLearned)
-                                              .length,
-                                          onTap: () {
-                                            context.go(
-                                              '/library/folder/${widget.folderId}/deck/${deck.id}',
-                                            );
-                                          },
-                                          onEdit: () {
-                                            _editDeck(context, deck.id);
-                                          },
-                                          onDelete: () {
-                                            _showDeleteConfirmation(
-                                              context,
-                                              deck.id,
-                                              deck.title,
-                                            );
-                                          },
+                              ),
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: GridView.builder(
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2,
+                                        mainAxisSpacing: 12,
+                                        crossAxisSpacing: 12,
+                                        childAspectRatio: 1,
+                                      ),
+                                  itemCount: decks.length,
+                                  itemBuilder: (context, index) {
+                                    final deck = decks[index];
+                                    return DeckTile(
+                                      deckName: deck.title,
+                                      cardCount: deck.cards.length,
+                                      learnedCount: deck.cards
+                                          .where((c) => c.isLearned)
+                                          .length,
+                                      onTap: () {
+                                        context.go(
+                                          '/library/folder/${widget.folderId}/deck/${deck.id}',
                                         );
                                       },
-                                    ),
-                                  ),
+                                      onEdit: () {
+                                        _editDeck(context, deck.id);
+                                      },
+                                      onDelete: () {
+                                        _showDeleteConfirmation(
+                                          context,
+                                          deck.id,
+                                          deck.title,
+                                        );
+                                      },
+                                    );
+                                  },
                                 ),
-                              ],
-                            );
-                    },
-                  );
+                              ),
+                            ),
+                          ],
+                        );
                 },
               ),
               if (vm.isLoading) LoadingOverlayWidget.scrim(opacity: 0.3),

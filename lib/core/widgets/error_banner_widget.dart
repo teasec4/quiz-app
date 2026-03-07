@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:bookexample/core/view_models/base_view_model.dart';
 
 /// A reusable widget for displaying error banners at the top of the screen.
 class ErrorBannerWidget extends StatelessWidget {
@@ -88,6 +89,8 @@ class ErrorBannerWidget extends StatelessWidget {
 
     if (error is String) {
       errorMessage = error;
+    } else if (error is ErrorState) {
+      errorMessage = error.userFriendlyMessage;
     } else if (error.toString().contains('userFriendlyMessage')) {
       // Try to extract user-friendly message if available
       errorMessage = error.toString();
