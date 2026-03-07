@@ -190,6 +190,7 @@ class AppThemeFactory {
         ).copyWith(
           error: AppColors.error,
           tertiary: AppColors.success,
+          onTertiary: Colors.white,
           surface: darkMode ? const Color(0xFF1E293B) : null,
           surfaceContainerHighest: darkMode ? const Color(0xFF334155) : null,
         );
@@ -202,6 +203,7 @@ class AppThemeFactory {
         ).copyWith(
           error: AppColors.error,
           tertiary: AppColors.success,
+          onTertiary: Colors.white,
           surface: darkMode ? const Color(0xFF1E1B4B) : null,
           surfaceContainerHighest: darkMode ? const Color(0xFF312E81) : null,
         );
@@ -214,6 +216,7 @@ class AppThemeFactory {
         ).copyWith(
           error: AppColors.error,
           tertiary: AppColors.success,
+          onTertiary: Colors.white,
           surface: darkMode ? const Color(0xFF0C4A6E) : null,
           surfaceContainerHighest: darkMode ? const Color(0xFF075985) : null,
         );
