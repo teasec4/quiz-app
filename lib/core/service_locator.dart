@@ -5,6 +5,7 @@ import 'package:bookexample/domain/repositories/library_repository.dart';
 import 'package:bookexample/domain/repositories/stats_repository.dart';
 import 'package:bookexample/domain/repositories/study_session_repository.dart';
 import 'package:bookexample/view_models/library_view_model.dart';
+import 'package:bookexample/view_models/locale_view_model.dart';
 import 'package:bookexample/view_models/stats_view_model.dart';
 import 'package:bookexample/view_models/study_session_view_model.dart';
 import 'package:bookexample/view_models/theme_view_model.dart';
@@ -44,6 +45,7 @@ Future<void> setupServiceLocator() async {
     ),
   );
   getIt.registerSingleton<ThemeViewModel>(ThemeViewModel());
+  getIt.registerSingleton<LocaleViewModel>(LocaleViewModel());
 }
 
 // func for init db

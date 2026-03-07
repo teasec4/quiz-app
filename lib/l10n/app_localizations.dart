@@ -121,6 +121,528 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Settings'**
   String get settings;
+
+  /// Statistics tab label
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics'**
+  String get stats;
+
+  /// Back button label
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get back;
+
+  /// Next button label
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
+
+  /// Save button label
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// Cancel button label
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// Delete button label
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// Edit button label
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get edit;
+
+  /// Done button label
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get done;
+
+  /// Confirm button label
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirm;
+
+  /// Study page title
+  ///
+  /// In en, this message translates to:
+  /// **'Study'**
+  String get studyTitle;
+
+  /// Select deck prompt
+  ///
+  /// In en, this message translates to:
+  /// **'Select Deck'**
+  String get selectDeck;
+
+  /// Message when no decks are available for study
+  ///
+  /// In en, this message translates to:
+  /// **'No decks available'**
+  String get noDecksAvailable;
+
+  /// Start study session button
+  ///
+  /// In en, this message translates to:
+  /// **'Start Study Session'**
+  String get startStudySession;
+
+  /// Continue study button
+  ///
+  /// In en, this message translates to:
+  /// **'Continue Study'**
+  String get continueStudy;
+
+  /// Number of cards remaining in study session
+  ///
+  /// In en, this message translates to:
+  /// **'{count} cards remaining'**
+  String cardsRemaining(int count);
+
+  /// Study session completion message
+  ///
+  /// In en, this message translates to:
+  /// **'Study Complete!'**
+  String get studyComplete;
+
+  /// Correct answer label
+  ///
+  /// In en, this message translates to:
+  /// **'Correct'**
+  String get correctAnswer;
+
+  /// Incorrect answer label
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect'**
+  String get incorrectAnswer;
+
+  /// Show answer button
+  ///
+  /// In en, this message translates to:
+  /// **'Show Answer'**
+  String get showAnswer;
+
+  /// Rate difficulty prompt
+  ///
+  /// In en, this message translates to:
+  /// **'Rate Difficulty'**
+  String get rateDifficulty;
+
+  /// Easy difficulty rating
+  ///
+  /// In en, this message translates to:
+  /// **'Easy'**
+  String get easy;
+
+  /// Medium difficulty rating
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get medium;
+
+  /// Hard difficulty rating
+  ///
+  /// In en, this message translates to:
+  /// **'Hard'**
+  String get hard;
+
+  /// Library page title
+  ///
+  /// In en, this message translates to:
+  /// **'Library'**
+  String get libraryTitle;
+
+  /// Folders section title
+  ///
+  /// In en, this message translates to:
+  /// **'Folders'**
+  String get folders;
+
+  /// Decks section title
+  ///
+  /// In en, this message translates to:
+  /// **'Decks'**
+  String get decks;
+
+  /// Create folder button
+  ///
+  /// In en, this message translates to:
+  /// **'Create Folder'**
+  String get createFolder;
+
+  /// Create deck button
+  ///
+  /// In en, this message translates to:
+  /// **'Create Deck'**
+  String get createDeck;
+
+  /// Folder name input label
+  ///
+  /// In en, this message translates to:
+  /// **'Folder Name'**
+  String get folderName;
+
+  /// Deck name input label
+  ///
+  /// In en, this message translates to:
+  /// **'Deck Name'**
+  String get deckName;
+
+  /// Deck description input label
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get deckDescription;
+
+  /// Number of cards in deck
+  ///
+  /// In en, this message translates to:
+  /// **'{count} cards'**
+  String cardsCount(int count);
+
+  /// Add card button
+  ///
+  /// In en, this message translates to:
+  /// **'Add Card'**
+  String get addCard;
+
+  /// Front side of flashcard
+  ///
+  /// In en, this message translates to:
+  /// **'Front'**
+  String get frontSide;
+
+  /// Back side of flashcard
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get backSide;
+
+  /// Tags input label
+  ///
+  /// In en, this message translates to:
+  /// **'Tags'**
+  String get tags;
+
+  /// Settings page title
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTitle;
+
+  /// Theme settings section title
+  ///
+  /// In en, this message translates to:
+  /// **'Theme Settings'**
+  String get themeSettings;
+
+  /// Theme settings description
+  ///
+  /// In en, this message translates to:
+  /// **'Customize the appearance of the application'**
+  String get customizeAppearance;
+
+  /// Dark mode toggle label
+  ///
+  /// In en, this message translates to:
+  /// **'Dark Mode'**
+  String get darkMode;
+
+  /// Dark mode toggle description
+  ///
+  /// In en, this message translates to:
+  /// **'Toggle dark theme'**
+  String get toggleDarkTheme;
+
+  /// Theme variant selection label
+  ///
+  /// In en, this message translates to:
+  /// **'Theme Variant'**
+  String get themeVariant;
+
+  /// Minimal theme name
+  ///
+  /// In en, this message translates to:
+  /// **'Minimal'**
+  String get minimalTheme;
+
+  /// Tech theme name
+  ///
+  /// In en, this message translates to:
+  /// **'Tech'**
+  String get techTheme;
+
+  /// Modern theme name
+  ///
+  /// In en, this message translates to:
+  /// **'Modern'**
+  String get modernTheme;
+
+  /// Reset settings button
+  ///
+  /// In en, this message translates to:
+  /// **'Reset to Defaults'**
+  String get resetToDefaults;
+
+  /// Language settings section title
+  ///
+  /// In en, this message translates to:
+  /// **'Language Settings'**
+  String get languageSettings;
+
+  /// Language settings description
+  ///
+  /// In en, this message translates to:
+  /// **'Select application language'**
+  String get selectAppLanguage;
+
+  /// English language name
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get english;
+
+  /// Russian language name
+  ///
+  /// In en, this message translates to:
+  /// **'Russian'**
+  String get russian;
+
+  /// Chinese language name
+  ///
+  /// In en, this message translates to:
+  /// **'Chinese'**
+  String get chinese;
+
+  /// Reset language to English button
+  ///
+  /// In en, this message translates to:
+  /// **'Reset to English'**
+  String get resetToEnglish;
+
+  /// Application version label
+  ///
+  /// In en, this message translates to:
+  /// **'Application Version'**
+  String get applicationVersion;
+
+  /// Statistics page title
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics'**
+  String get statisticsTitle;
+
+  /// Total study time label
+  ///
+  /// In en, this message translates to:
+  /// **'Total Study Time'**
+  String get totalStudyTime;
+
+  /// Cards studied label
+  ///
+  /// In en, this message translates to:
+  /// **'Cards Studied'**
+  String get cardsStudied;
+
+  /// Accuracy rate label
+  ///
+  /// In en, this message translates to:
+  /// **'Accuracy Rate'**
+  String get accuracyRate;
+
+  /// Study streak label
+  ///
+  /// In en, this message translates to:
+  /// **'Streak'**
+  String get streak;
+
+  /// Today time period
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// This week time period
+  ///
+  /// In en, this message translates to:
+  /// **'This Week'**
+  String get thisWeek;
+
+  /// This month time period
+  ///
+  /// In en, this message translates to:
+  /// **'This Month'**
+  String get thisMonth;
+
+  /// All time period
+  ///
+  /// In en, this message translates to:
+  /// **'All Time'**
+  String get allTime;
+
+  /// Error dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get errorTitle;
+
+  /// Generic error message
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred'**
+  String get unexpectedError;
+
+  /// Network error message
+  ///
+  /// In en, this message translates to:
+  /// **'Network error. Please check your connection.'**
+  String get networkError;
+
+  /// Validation error message
+  ///
+  /// In en, this message translates to:
+  /// **'Please check your input'**
+  String get validationError;
+
+  /// Empty field error message
+  ///
+  /// In en, this message translates to:
+  /// **'This field cannot be empty'**
+  String get emptyFieldError;
+
+  /// Deck not found error
+  ///
+  /// In en, this message translates to:
+  /// **'Deck not found'**
+  String get deckNotFound;
+
+  /// Folder not found error
+  ///
+  /// In en, this message translates to:
+  /// **'Folder not found'**
+  String get folderNotFound;
+
+  /// Success dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Success'**
+  String get successTitle;
+
+  /// Deck creation success message
+  ///
+  /// In en, this message translates to:
+  /// **'Deck created successfully'**
+  String get deckCreated;
+
+  /// Folder creation success message
+  ///
+  /// In en, this message translates to:
+  /// **'Folder created successfully'**
+  String get folderCreated;
+
+  /// Card addition success message
+  ///
+  /// In en, this message translates to:
+  /// **'Card added successfully'**
+  String get cardAdded;
+
+  /// Changes saved success message
+  ///
+  /// In en, this message translates to:
+  /// **'Changes saved successfully'**
+  String get changesSaved;
+
+  /// Study session saved message
+  ///
+  /// In en, this message translates to:
+  /// **'Study session saved'**
+  String get studySessionSaved;
+
+  /// Delete confirmation dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Delete'**
+  String get confirmDelete;
+
+  /// Delete deck confirmation message
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this deck? This action cannot be undone.'**
+  String get deleteDeckConfirm;
+
+  /// Delete folder confirmation message
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this folder? All decks inside will also be deleted.'**
+  String get deleteFolderConfirm;
+
+  /// Delete card confirmation message
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this card?'**
+  String get deleteCardConfirm;
+
+  /// Empty folders state message
+  ///
+  /// In en, this message translates to:
+  /// **'No folders yet'**
+  String get noFolders;
+
+  /// Empty decks state message
+  ///
+  /// In en, this message translates to:
+  /// **'No decks yet'**
+  String get noDecks;
+
+  /// Empty cards state message
+  ///
+  /// In en, this message translates to:
+  /// **'No cards yet'**
+  String get noCards;
+
+  /// Empty study sessions state message
+  ///
+  /// In en, this message translates to:
+  /// **'No study sessions yet'**
+  String get noStudySessions;
+
+  /// Create first item prompt
+  ///
+  /// In en, this message translates to:
+  /// **'Create your first {item} to get started'**
+  String createFirstItem(String item);
+
+  /// Time format for minutes ago
+  ///
+  /// In en, this message translates to:
+  /// **'{count} minutes ago'**
+  String minutesAgo(int count);
+
+  /// Time format for hours ago
+  ///
+  /// In en, this message translates to:
+  /// **'{count} hours ago'**
+  String hoursAgo(int count);
+
+  /// Time format for days ago
+  ///
+  /// In en, this message translates to:
+  /// **'{count} days ago'**
+  String daysAgo(int count);
 }
 
 class _AppLocalizationsDelegate

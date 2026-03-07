@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:bookexample/view_models/theme_view_model.dart';
+import 'package:bookexample/view_models/locale_view_model.dart';
 import 'package:bookexample/core/theme/app_theme.dart';
+import 'package:bookexample/l10n/app_localizations.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -11,15 +13,14 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  String _selectedLanguage = 'en';
-
   @override
   Widget build(BuildContext context) {
     final themeViewModel = context.watch<ThemeViewModel>();
+    final localeViewModel = context.watch<LocaleViewModel>();
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: Text(AppLocalizations.of(context)?.settingsTitle ?? 'Settings'),
         centerTitle: true,
         elevation: 0,
       ),
@@ -33,28 +34,8 @@ class _SettingsPageState extends State<SettingsPage> {
                 _buildThemeSection(themeViewModel),
                 const SizedBox(height: 16),
 
-                // Language Switch
-                Card(
-                  child: ListTile(
-                    title: const Text('Language'),
-                    subtitle: const Text('Select application language'),
-                    trailing: DropdownButton<String>(
-                      value: _selectedLanguage,
-                      underline: const SizedBox(),
-                      items: const [
-                        DropdownMenuItem(value: 'en', child: Text('English')),
-                        DropdownMenuItem(value: 'zh', child: Text('中文')),
-                      ],
-                      onChanged: (value) {
-                        if (value != null) {
-                          setState(() {
-                            _selectedLanguage = value;
-                          });
-                        }
-                      },
-                    ),
-                  ),
-                ),
+                // Language Section
+                _buildLanguageSection(localeViewModel),
               ],
             ),
           ),
@@ -66,7 +47,8 @@ class _SettingsPageState extends State<SettingsPage> {
               child: Column(
                 children: [
                   Text(
-                    'Application Version',
+                    AppLocalizations.of(context)?.applicationVersion ??
+                        'Application Version',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   const SizedBox(height: 4),
@@ -88,14 +70,15 @@ class _SettingsPageState extends State<SettingsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Theme Settings',
+              AppLocalizations.of(context)?.themeSettings ?? 'Theme Settings',
               style: Theme.of(
                 context,
               ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
-              'Customize the appearance of the application',
+              AppLocalizations.of(context)?.customizeAppearance ??
+                  'Customize the appearance of the application',
               style: Theme.of(context).textTheme.bodySmall,
             ),
             const SizedBox(height: 16),
@@ -103,8 +86,13 @@ class _SettingsPageState extends State<SettingsPage> {
             // Dark Mode Switch
             ListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text('Dark Mode'),
-              subtitle: const Text('Toggle dark theme'),
+              title: Text(
+                AppLocalizations.of(context)?.darkMode ?? 'Dark Mode',
+              ),
+              subtitle: Text(
+                AppLocalizations.of(context)?.toggleDarkTheme ??
+                    'Toggle dark theme',
+              ),
               trailing: Switch(
                 value: themeViewModel.isDarkMode,
                 onChanged: (value) async {
@@ -116,7 +104,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
             // Theme Variants
             Text(
-              'Theme Variant',
+              AppLocalizations.of(context)?.themeVariant ?? 'Theme Variant',
               style: Theme.of(
                 context,
               ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
@@ -134,11 +122,101 @@ class _SettingsPageState extends State<SettingsPage> {
                 onPressed: () async {
                   await themeViewModel.resetToDefaults();
                 },
-                child: const Text('Reset to Defaults'),
+                child: Text(
+                  AppLocalizations.of(context)?.resetToDefaults ??
+                      'Reset to Defaults',
+                ),
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildLanguageSection(LocaleViewModel localeViewModel) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              AppLocalizations.of(context)?.languageSettings ??
+                  'Language Settings',
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              AppLocalizations.of(context)?.selectAppLanguage ??
+                  'Select application language',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            const SizedBox(height: 16),
+
+            // Language Selection
+            ...localeViewModel.supportedLocales.map((locale) {
+              return _buildLocaleTile(locale, localeViewModel);
+            }).toList(),
+            const SizedBox(height: 16),
+
+            // Reset Button
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: () async {
+                  await localeViewModel.resetToDefault();
+                },
+                child: Text(
+                  AppLocalizations.of(context)?.resetToEnglish ??
+                      'Reset to English',
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLocaleTile(Locale locale, LocaleViewModel localeViewModel) {
+    final isSelected = localeViewModel.isLocaleSelected(locale);
+    final localeInfo = localeViewModel.getLocaleInfo(locale, context);
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      color: isSelected
+          ? Theme.of(context).colorScheme.primaryContainer
+          : Theme.of(context).colorScheme.surface,
+      child: ListTile(
+        leading: Text(
+          localeInfo['flag'] as String,
+          style: const TextStyle(fontSize: 24),
+        ),
+        title: Text(
+          localeInfo['displayName'] as String,
+          style: TextStyle(
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            color: isSelected
+                ? Theme.of(context).colorScheme.onPrimaryContainer
+                : null,
+          ),
+        ),
+        subtitle: Text(
+          locale.languageCode.toUpperCase(),
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+        trailing: isSelected
+            ? Icon(
+                Icons.check_circle,
+                color: Theme.of(context).colorScheme.primary,
+              )
+            : null,
+        onTap: () async {
+          await localeViewModel.setLocale(locale);
+        },
       ),
     );
   }

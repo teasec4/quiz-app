@@ -4,6 +4,8 @@
   "@appTitle": {
     "description": "The title of the application"
   },
+
+
   "study": "Study",
   "@study": {
     "description": "Study tab label"
@@ -15,5 +17,407 @@
   "settings": "Settings",
   "@settings": {
     "description": "Settings tab label"
+  },
+  "stats": "Statistics",
+  "@stats": {
+    "description": "Statistics tab label"
+  },
+  "back": "Back",
+  "@back": {
+    "description": "Back button label"
+  },
+  "next": "Next",
+  "@next": {
+    "description": "Next button label"
+  },
+  "save": "Save",
+  "@save": {
+    "description": "Save button label"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button label"
+  },
+  "delete": "Delete",
+  "@delete": {
+    "description": "Delete button label"
+  },
+  "edit": "Edit",
+  "@edit": {
+    "description": "Edit button label"
+  },
+  "done": "Done",
+  "@done": {
+    "description": "Done button label"
+  },
+  "confirm": "Confirm",
+  "@confirm": {
+    "description": "Confirm button label"
+  },
+
+
+  "studyTitle": "Study",
+  "@studyTitle": {
+    "description": "Study page title"
+  },
+  "selectDeck": "Select Deck",
+  "@selectDeck": {
+    "description": "Select deck prompt"
+  },
+  "noDecksAvailable": "No decks available",
+  "@noDecksAvailable": {
+    "description": "Message when no decks are available for study"
+  },
+  "startStudySession": "Start Study Session",
+  "@startStudySession": {
+    "description": "Start study session button"
+  },
+  "continueStudy": "Continue Study",
+  "@continueStudy": {
+    "description": "Continue study button"
+  },
+  "cardsRemaining": "{count} cards remaining",
+  "@cardsRemaining": {
+    "description": "Number of cards remaining in study session",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "studyComplete": "Study Complete!",
+  "@studyComplete": {
+    "description": "Study session completion message"
+  },
+  "correctAnswer": "Correct",
+  "@correctAnswer": {
+    "description": "Correct answer label"
+  },
+  "incorrectAnswer": "Incorrect",
+  "@incorrectAnswer": {
+    "description": "Incorrect answer label"
+  },
+  "showAnswer": "Show Answer",
+  "@showAnswer": {
+    "description": "Show answer button"
+  },
+  "rateDifficulty": "Rate Difficulty",
+  "@rateDifficulty": {
+    "description": "Rate difficulty prompt"
+  },
+  "easy": "Easy",
+  "@easy": {
+    "description": "Easy difficulty rating"
+  },
+  "medium": "Medium",
+  "@medium": {
+    "description": "Medium difficulty rating"
+  },
+  "hard": "Hard",
+  "@hard": {
+    "description": "Hard difficulty rating"
+  },
+
+
+  "libraryTitle": "Library",
+  "@libraryTitle": {
+    "description": "Library page title"
+  },
+  "folders": "Folders",
+  "@folders": {
+    "description": "Folders section title"
+  },
+  "decks": "Decks",
+  "@decks": {
+    "description": "Decks section title"
+  },
+  "createFolder": "Create Folder",
+  "@createFolder": {
+    "description": "Create folder button"
+  },
+  "createDeck": "Create Deck",
+  "@createDeck": {
+    "description": "Create deck button"
+  },
+  "folderName": "Folder Name",
+  "@folderName": {
+    "description": "Folder name input label"
+  },
+  "deckName": "Deck Name",
+  "@deckName": {
+    "description": "Deck name input label"
+  },
+  "deckDescription": "Description",
+  "@deckDescription": {
+    "description": "Deck description input label"
+  },
+  "cardsCount": "{count} cards",
+  "@cardsCount": {
+    "description": "Number of cards in deck",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "10"
+      }
+    }
+  },
+  "addCard": "Add Card",
+  "@addCard": {
+    "description": "Add card button"
+  },
+  "frontSide": "Front",
+  "@frontSide": {
+    "description": "Front side of flashcard"
+  },
+  "backSide": "Back",
+  "@backSide": {
+    "description": "Back side of flashcard"
+  },
+  "tags": "Tags",
+  "@tags": {
+    "description": "Tags input label"
+  },
+
+
+  "settingsTitle": "Settings",
+  "@settingsTitle": {
+    "description": "Settings page title"
+  },
+  "themeSettings": "Theme Settings",
+  "@themeSettings": {
+    "description": "Theme settings section title"
+  },
+  "customizeAppearance": "Customize the appearance of the application",
+  "@customizeAppearance": {
+    "description": "Theme settings description"
+  },
+  "darkMode": "Dark Mode",
+  "@darkMode": {
+    "description": "Dark mode toggle label"
+  },
+  "toggleDarkTheme": "Toggle dark theme",
+  "@toggleDarkTheme": {
+    "description": "Dark mode toggle description"
+  },
+  "themeVariant": "Theme Variant",
+  "@themeVariant": {
+    "description": "Theme variant selection label"
+  },
+  "minimalTheme": "Minimal",
+  "@minimalTheme": {
+    "description": "Minimal theme name"
+  },
+  "techTheme": "Tech",
+  "@techTheme": {
+    "description": "Tech theme name"
+  },
+  "modernTheme": "Modern",
+  "@modernTheme": {
+    "description": "Modern theme name"
+  },
+  "resetToDefaults": "Reset to Defaults",
+  "@resetToDefaults": {
+    "description": "Reset settings button"
+  },
+  "languageSettings": "Language Settings",
+  "@languageSettings": {
+    "description": "Language settings section title"
+  },
+  "selectAppLanguage": "Select application language",
+  "@selectAppLanguage": {
+    "description": "Language settings description"
+  },
+  "english": "English",
+  "@english": {
+    "description": "English language name"
+  },
+  "russian": "Russian",
+  "@russian": {
+    "description": "Russian language name"
+  },
+  "chinese": "Chinese",
+  "@chinese": {
+    "description": "Chinese language name"
+  },
+  "resetToEnglish": "Reset to English",
+  "@resetToEnglish": {
+    "description": "Reset language to English button"
+  },
+  "applicationVersion": "Application Version",
+  "@applicationVersion": {
+    "description": "Application version label"
+  },
+
+
+  "statisticsTitle": "Statistics",
+  "@statisticsTitle": {
+    "description": "Statistics page title"
+  },
+  "totalStudyTime": "Total Study Time",
+  "@totalStudyTime": {
+    "description": "Total study time label"
+  },
+  "cardsStudied": "Cards Studied",
+  "@cardsStudied": {
+    "description": "Cards studied label"
+  },
+  "accuracyRate": "Accuracy Rate",
+  "@accuracyRate": {
+    "description": "Accuracy rate label"
+  },
+  "streak": "Streak",
+  "@streak": {
+    "description": "Study streak label"
+  },
+  "today": "Today",
+  "@today": {
+    "description": "Today time period"
+  },
+  "thisWeek": "This Week",
+  "@thisWeek": {
+    "description": "This week time period"
+  },
+  "thisMonth": "This Month",
+  "@thisMonth": {
+    "description": "This month time period"
+  },
+  "allTime": "All Time",
+  "@allTime": {
+    "description": "All time period"
+  },
+
+
+  "errorTitle": "Error",
+  "@errorTitle": {
+    "description": "Error dialog title"
+  },
+  "unexpectedError": "An unexpected error occurred",
+  "@unexpectedError": {
+    "description": "Generic error message"
+  },
+  "networkError": "Network error. Please check your connection.",
+  "@networkError": {
+    "description": "Network error message"
+  },
+  "validationError": "Please check your input",
+  "@validationError": {
+    "description": "Validation error message"
+  },
+  "emptyFieldError": "This field cannot be empty",
+  "@emptyFieldError": {
+    "description": "Empty field error message"
+  },
+  "deckNotFound": "Deck not found",
+  "@deckNotFound": {
+    "description": "Deck not found error"
+  },
+  "folderNotFound": "Folder not found",
+  "@folderNotFound": {
+    "description": "Folder not found error"
+  },
+
+
+  "successTitle": "Success",
+  "@successTitle": {
+    "description": "Success dialog title"
+  },
+  "deckCreated": "Deck created successfully",
+  "@deckCreated": {
+    "description": "Deck creation success message"
+  },
+  "folderCreated": "Folder created successfully",
+  "@folderCreated": {
+    "description": "Folder creation success message"
+  },
+  "cardAdded": "Card added successfully",
+  "@cardAdded": {
+    "description": "Card addition success message"
+  },
+  "changesSaved": "Changes saved successfully",
+  "@changesSaved": {
+    "description": "Changes saved success message"
+  },
+  "studySessionSaved": "Study session saved",
+  "@studySessionSaved": {
+    "description": "Study session saved message"
+  },
+
+
+  "confirmDelete": "Confirm Delete",
+  "@confirmDelete": {
+    "description": "Delete confirmation dialog title"
+  },
+  "deleteDeckConfirm": "Are you sure you want to delete this deck? This action cannot be undone.",
+  "@deleteDeckConfirm": {
+    "description": "Delete deck confirmation message"
+  },
+  "deleteFolderConfirm": "Are you sure you want to delete this folder? All decks inside will also be deleted.",
+  "@deleteFolderConfirm": {
+    "description": "Delete folder confirmation message"
+  },
+  "deleteCardConfirm": "Are you sure you want to delete this card?",
+  "@deleteCardConfirm": {
+    "description": "Delete card confirmation message"
+  },
+
+
+  "noFolders": "No folders yet",
+  "@noFolders": {
+    "description": "Empty folders state message"
+  },
+  "noDecks": "No decks yet",
+  "@noDecks": {
+    "description": "Empty decks state message"
+  },
+  "noCards": "No cards yet",
+  "@noCards": {
+    "description": "Empty cards state message"
+  },
+  "noStudySessions": "No study sessions yet",
+  "@noStudySessions": {
+    "description": "Empty study sessions state message"
+  },
+  "createFirstItem": "Create your first {item} to get started",
+  "@createFirstItem": {
+    "description": "Create first item prompt",
+    "placeholders": {
+      "item": {
+        "type": "String",
+        "example": "deck"
+      }
+    }
+  },
+
+
+  "minutesAgo": "{count} minutes ago",
+  "@minutesAgo": {
+    "description": "Time format for minutes ago",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "hoursAgo": "{count} hours ago",
+  "@hoursAgo": {
+    "description": "Time format for hours ago",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+  "daysAgo": "{count} days ago",
+  "@daysAgo": {
+    "description": "Time format for days ago",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
   }
 }

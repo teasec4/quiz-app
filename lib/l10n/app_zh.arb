@@ -4,6 +4,8 @@
   "@appTitle": {
     "description": "应用程序的标题"
   },
+
+
   "study": "学习",
   "@study": {
     "description": "学习标签"
@@ -15,5 +17,407 @@
   "settings": "设置",
   "@settings": {
     "description": "设置标签"
+  },
+  "stats": "统计",
+  "@stats": {
+    "description": "统计标签"
+  },
+  "back": "返回",
+  "@back": {
+    "description": "返回按钮标签"
+  },
+  "next": "下一步",
+  "@next": {
+    "description": "下一步按钮标签"
+  },
+  "save": "保存",
+  "@save": {
+    "description": "保存按钮标签"
+  },
+  "cancel": "取消",
+  "@cancel": {
+    "description": "取消按钮标签"
+  },
+  "delete": "删除",
+  "@delete": {
+    "description": "删除按钮标签"
+  },
+  "edit": "编辑",
+  "@edit": {
+    "description": "编辑按钮标签"
+  },
+  "done": "完成",
+  "@done": {
+    "description": "完成按钮标签"
+  },
+  "confirm": "确认",
+  "@confirm": {
+    "description": "确认按钮标签"
+  },
+
+
+  "studyTitle": "学习",
+  "@studyTitle": {
+    "description": "学习页面标题"
+  },
+  "selectDeck": "选择卡片组",
+  "@selectDeck": {
+    "description": "选择卡片组提示"
+  },
+  "noDecksAvailable": "没有可用的卡片组",
+  "@noDecksAvailable": {
+    "description": "没有可学习的卡片组时的消息"
+  },
+  "startStudySession": "开始学习会话",
+  "@startStudySession": {
+    "description": "开始学习会话按钮"
+  },
+  "continueStudy": "继续学习",
+  "@continueStudy": {
+    "description": "继续学习按钮"
+  },
+  "cardsRemaining": "剩余 {count} 张卡片",
+  "@cardsRemaining": {
+    "description": "学习会话中剩余的卡片数量",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "studyComplete": "学习完成！",
+  "@studyComplete": {
+    "description": "学习会话完成消息"
+  },
+  "correctAnswer": "正确",
+  "@correctAnswer": {
+    "description": "正确答案标签"
+  },
+  "incorrectAnswer": "错误",
+  "@incorrectAnswer": {
+    "description": "错误答案标签"
+  },
+  "showAnswer": "显示答案",
+  "@showAnswer": {
+    "description": "显示答案按钮"
+  },
+  "rateDifficulty": "评价难度",
+  "@rateDifficulty": {
+    "description": "评价难度提示"
+  },
+  "easy": "简单",
+  "@easy": {
+    "description": "简单难度评级"
+  },
+  "medium": "中等",
+  "@medium": {
+    "description": "中等难度评级"
+  },
+  "hard": "困难",
+  "@hard": {
+    "description": "困难难度评级"
+  },
+
+
+  "libraryTitle": "图书馆",
+  "@libraryTitle": {
+    "description": "图书馆页面标题"
+  },
+  "folders": "文件夹",
+  "@folders": {
+    "description": "文件夹部分标题"
+  },
+  "decks": "卡片组",
+  "@decks": {
+    "description": "卡片组部分标题"
+  },
+  "createFolder": "创建文件夹",
+  "@createFolder": {
+    "description": "创建文件夹按钮"
+  },
+  "createDeck": "创建卡片组",
+  "@createDeck": {
+    "description": "创建卡片组按钮"
+  },
+  "folderName": "文件夹名称",
+  "@folderName": {
+    "description": "文件夹名称输入标签"
+  },
+  "deckName": "卡片组名称",
+  "@deckName": {
+    "description": "卡片组名称输入标签"
+  },
+  "deckDescription": "描述",
+  "@deckDescription": {
+    "description": "卡片组描述输入标签"
+  },
+  "cardsCount": "{count} 张卡片",
+  "@cardsCount": {
+    "description": "卡片组中的卡片数量",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "10"
+      }
+    }
+  },
+  "addCard": "添加卡片",
+  "@addCard": {
+    "description": "添加卡片按钮"
+  },
+  "frontSide": "正面",
+  "@frontSide": {
+    "description": "闪卡正面"
+  },
+  "backSide": "背面",
+  "@backSide": {
+    "description": "闪卡背面"
+  },
+  "tags": "标签",
+  "@tags": {
+    "description": "标签输入标签"
+  },
+
+
+  "settingsTitle": "设置",
+  "@settingsTitle": {
+    "description": "设置页面标题"
+  },
+  "themeSettings": "主题设置",
+  "@themeSettings": {
+    "description": "主题设置部分标题"
+  },
+  "customizeAppearance": "自定义应用程序外观",
+  "@customizeAppearance": {
+    "description": "主题设置描述"
+  },
+  "darkMode": "深色模式",
+  "@darkMode": {
+    "description": "深色模式切换标签"
+  },
+  "toggleDarkTheme": "切换深色主题",
+  "@toggleDarkTheme": {
+    "description": "深色模式切换描述"
+  },
+  "themeVariant": "主题变体",
+  "@themeVariant": {
+    "description": "主题变体选择标签"
+  },
+  "minimalTheme": "简约",
+  "@minimalTheme": {
+    "description": "简约主题名称"
+  },
+  "techTheme": "科技",
+  "@techTheme": {
+    "description": "科技主题名称"
+  },
+  "modernTheme": "现代",
+  "@modernTheme": {
+    "description": "现代主题名称"
+  },
+  "resetToDefaults": "恢复默认设置",
+  "@resetToDefaults": {
+    "description": "恢复设置按钮"
+  },
+  "languageSettings": "语言设置",
+  "@languageSettings": {
+    "description": "语言设置部分标题"
+  },
+  "selectAppLanguage": "选择应用程序语言",
+  "@selectAppLanguage": {
+    "description": "语言设置描述"
+  },
+  "english": "英语",
+  "@english": {
+    "description": "英语语言名称"
+  },
+  "russian": "俄语",
+  "@russian": {
+    "description": "俄语语言名称"
+  },
+  "chinese": "中文",
+  "@chinese": {
+    "description": "中文语言名称"
+  },
+  "resetToEnglish": "恢复为英语",
+  "@resetToEnglish": {
+    "description": "恢复语言为英语按钮"
+  },
+  "applicationVersion": "应用程序版本",
+  "@applicationVersion": {
+    "description": "应用程序版本标签"
+  },
+
+
+  "statisticsTitle": "统计",
+  "@statisticsTitle": {
+    "description": "统计页面标题"
+  },
+  "totalStudyTime": "总学习时间",
+  "@totalStudyTime": {
+    "description": "总学习时间标签"
+  },
+  "cardsStudied": "已学习卡片",
+  "@cardsStudied": {
+    "description": "已学习卡片标签"
+  },
+  "accuracyRate": "准确率",
+  "@accuracyRate": {
+    "description": "准确率标签"
+  },
+  "streak": "连续学习",
+  "@streak": {
+    "description": "学习连续天数标签"
+  },
+  "today": "今天",
+  "@today": {
+    "description": "今天时间段"
+  },
+  "thisWeek": "本周",
+  "@thisWeek": {
+    "description": "本周时间段"
+  },
+  "thisMonth": "本月",
+  "@thisMonth": {
+    "description": "本月时间段"
+  },
+  "allTime": "全部时间",
+  "@allTime": {
+    "description": "全部时间段"
+  },
+
+
+  "errorTitle": "错误",
+  "@errorTitle": {
+    "description": "错误对话框标题"
+  },
+  "unexpectedError": "发生意外错误",
+  "@unexpectedError": {
+    "description": "通用错误消息"
+  },
+  "networkError": "网络错误。请检查您的连接。",
+  "@networkError": {
+    "description": "网络错误消息"
+  },
+  "validationError": "请检查您的输入",
+  "@validationError": {
+    "description": "验证错误消息"
+  },
+  "emptyFieldError": "此字段不能为空",
+  "@emptyFieldError": {
+    "description": "空字段错误消息"
+  },
+  "deckNotFound": "未找到卡片组",
+  "@deckNotFound": {
+    "description": "卡片组未找到错误"
+  },
+  "folderNotFound": "未找到文件夹",
+  "@folderNotFound": {
+    "description": "文件夹未找到错误"
+  },
+
+
+  "successTitle": "成功",
+  "@successTitle": {
+    "description": "成功对话框标题"
+  },
+  "deckCreated": "卡片组创建成功",
+  "@deckCreated": {
+    "description": "卡片组创建成功消息"
+  },
+  "folderCreated": "文件夹创建成功",
+  "@folderCreated": {
+    "description": "文件夹创建成功消息"
+  },
+  "cardAdded": "卡片添加成功",
+  "@cardAdded": {
+    "description": "卡片添加成功消息"
+  },
+  "changesSaved": "更改保存成功",
+  "@changesSaved": {
+    "description": "更改保存成功消息"
+  },
+  "studySessionSaved": "学习会话已保存",
+  "@studySessionSaved": {
+    "description": "学习会话保存消息"
+  },
+
+
+  "confirmDelete": "确认删除",
+  "@confirmDelete": {
+    "description": "删除确认对话框标题"
+  },
+  "deleteDeckConfirm": "确定要删除此卡片组吗？此操作无法撤销。",
+  "@deleteDeckConfirm": {
+    "description": "删除卡片组确认消息"
+  },
+  "deleteFolderConfirm": "确定要删除此文件夹吗？里面的所有卡片组也将被删除。",
+  "@deleteFolderConfirm": {
+    "description": "删除文件夹确认消息"
+  },
+  "deleteCardConfirm": "确定要删除此卡片吗？",
+  "@deleteCardConfirm": {
+    "description": "删除卡片确认消息"
+  },
+
+
+  "noFolders": "暂无文件夹",
+  "@noFolders": {
+    "description": "空文件夹状态消息"
+  },
+  "noDecks": "暂无卡片组",
+  "@noDecks": {
+    "description": "空卡片组状态消息"
+  },
+  "noCards": "暂无卡片",
+  "@noCards": {
+    "description": "空卡片状态消息"
+  },
+  "noStudySessions": "暂无学习会话",
+  "@noStudySessions": {
+    "description": "空学习会话状态消息"
+  },
+  "createFirstItem": "创建您的第一个{item}以开始",
+  "@createFirstItem": {
+    "description": "创建第一个项目提示",
+    "placeholders": {
+      "item": {
+        "type": "String",
+        "example": "卡片组"
+      }
+    }
+  },
+
+
+  "minutesAgo": "{count} 分钟前",
+  "@minutesAgo": {
+    "description": "几分钟前的时间格式",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "hoursAgo": "{count} 小时前",
+  "@hoursAgo": {
+    "description": "几小时前的时间格式",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+  "daysAgo": "{count} 天前",
+  "@daysAgo": {
+    "description": "几天前的时间格式",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
   }
 }
