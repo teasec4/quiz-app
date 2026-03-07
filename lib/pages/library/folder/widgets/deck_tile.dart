@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:bookexample/core/widgets/context_menu_widget.dart';
 
 class DeckTile extends StatelessWidget {
   final String deckName;
@@ -21,79 +22,9 @@ class DeckTile extends StatelessWidget {
   });
 
   Widget _buildMenuButton(BuildContext context) {
-    return GestureDetector(
-      onTapDown: (TapDownDetails details) {
-        _showCustomMenu(context, details.globalPosition);
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(4),
-        child: Icon(Icons.more_horiz, size: 20, color: Theme.of(context).colorScheme.secondary),
-      ),
-    );
-  }
-
-  void _showCustomMenu(BuildContext context, Offset position) {
-    showMenu<String>(
-      context: context,
-      position: RelativeRect.fromLTRB(position.dx, position.dy, position.dx, 0),
-      items: [
-        PopupMenuItem<String>(
-          padding: EdgeInsets.zero,
-          height: 40,
-          value: 'edit',
-          child: InkWell(
-            onTap: () {
-              Navigator.pop(context);
-              onEdit?.call();
-            },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.edit_outlined, size: 18, color: Colors.grey[700]),
-                  const SizedBox(width: 10),
-                  const Text('Edit', style: TextStyle(fontSize: 14)),
-                ],
-              ),
-            ),
-          ),
-        ),
-        PopupMenuItem<String>(
-          padding: EdgeInsets.zero,
-          height: 40,
-          value: 'delete',
-          child: InkWell(
-            onTap: () {
-              Navigator.pop(context);
-              onDelete?.call();
-            },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.delete_outline,
-                    size: 18,
-                    color: Theme.of(context).colorScheme.error,
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    'Delete',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Theme.of(context).colorScheme.error,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
-      constraints: const BoxConstraints(maxWidth: 160),
-      elevation: 2,
+    return ContextMenuWidget.deckPopupMenuButton(
+      onEdit: onEdit,
+      onDelete: onDelete,
     );
   }
 
@@ -126,8 +57,8 @@ class DeckTile extends StatelessWidget {
               // Deck name
               Text(
                 deckName,
-                style: const TextStyle(
-                  color: Colors.black87,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -144,8 +75,10 @@ class DeckTile extends StatelessWidget {
                     child: LinearProgressIndicator(
                       value: progress,
                       minHeight: 6,
-                      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-                      valueColor:  AlwaysStoppedAnimation(
+                      backgroundColor: Theme.of(
+                        context,
+                      ).colorScheme.secondaryContainer,
+                      valueColor: AlwaysStoppedAnimation(
                         Theme.of(context).colorScheme.primary,
                       ),
                     ),
@@ -153,7 +86,10 @@ class DeckTile extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     '$learnedCount/${cardCount}',
-                    style: const TextStyle(color: Colors.grey, fontSize: 12),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               ),

@@ -1,5 +1,15 @@
 import 'package:logger/logger.dart';
 
+/// Logger configuration constants
+class LoggerConfig {
+  static const int defaultMethodCount = 2;
+  static const int errorMethodCount = 8;
+  static const int lineLength = 120;
+  static const bool useColors = true;
+  static const bool printEmojis = true;
+  static const bool printTime = true;
+}
+
 /// Centralized logging utility for the application.
 ///
 /// Provides static methods for logging at different levels:
@@ -10,12 +20,12 @@ import 'package:logger/logger.dart';
 class AppLogger {
   static final Logger _logger = Logger(
     printer: PrettyPrinter(
-      methodCount: 2, // Number of method calls to be displayed
-      errorMethodCount: 8, // Number of method calls for errors
-      lineLength: 120, // Width of the output
-      colors: true, // Colorful log messages
-      printEmojis: true, // Print emojis for log levels
-      printTime: true, // Print timestamp
+      methodCount: LoggerConfig.defaultMethodCount,
+      errorMethodCount: LoggerConfig.errorMethodCount,
+      lineLength: LoggerConfig.lineLength,
+      colors: LoggerConfig.useColors,
+      printEmojis: LoggerConfig.printEmojis,
+      printTime: LoggerConfig.printTime,
     ),
   );
 

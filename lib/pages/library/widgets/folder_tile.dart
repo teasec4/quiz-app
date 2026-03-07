@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:bookexample/core/widgets/context_menu_widget.dart';
 
 class FolderTile extends StatelessWidget {
   final String folderName;
@@ -32,40 +33,14 @@ class FolderTile extends StatelessWidget {
         ),
         // subtitle: Text(
         //   "${deckCount} decks",
-        //   style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+        //   style: TextStyle(
+        //     fontSize: 14,
+        //     color: Theme.of(context).colorScheme.onSurfaceVariant,
+        //   ),
         // ),
-        trailing: PopupMenuButton(
-          itemBuilder: (context) => [
-            PopupMenuItem(
-              onTap: onEdit,
-              child: const Row(
-                children: [
-                  Icon(Icons.edit_outlined, size: 20),
-                  SizedBox(width: 12),
-                  Text('Edit name'),
-                ],
-              ),
-            ),
-            PopupMenuItem(
-              onTap: onDelete,
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.delete_outline,
-                    size: 20,
-                    color: Theme.of(context).colorScheme.error,
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    'Delete',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.error,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+        trailing: ContextMenuWidget.folderPopupMenuButton(
+          onEdit: onEdit,
+          onDelete: onDelete,
         ),
         onTap: onTap,
       ),

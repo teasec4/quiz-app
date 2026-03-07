@@ -1,6 +1,10 @@
 import 'package:bookexample/view_models/library_view_model.dart';
 import 'package:bookexample/domain/isar_model/library/deck_entity.dart';
 import 'package:bookexample/pages/library/folder/widgets/deck_tile.dart';
+import 'package:bookexample/core/widgets/empty_state_widget.dart';
+import 'package:bookexample/core/widgets/loading_overlay_widget.dart';
+import 'package:bookexample/core/widgets/error_banner_widget.dart';
+import 'package:bookexample/core/extensions/snackbar_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -53,23 +57,15 @@ class _FolderPageState extends State<FolderPage> {
                 Navigator.pop(context);
 
                 if (vm.hasError && vm.error != null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'Error deleting deck: ${vm.error!.userFriendlyMessage}',
-                      ),
-                      backgroundColor: Theme.of(context).colorScheme.error,
-                      action: SnackBarAction(
-                        label: 'Retry',
-                        onPressed: () {
-                          _showDeleteConfirmation(context, deckId, deckTitle);
-                        },
-                      ),
-                    ),
+                  context.showOperationErrorSnackBar(
+                    operation: 'deleting deck',
+                    error: vm.error!,
+                    onRetry: () =>
+                        _showDeleteConfirmation(context, deckId, deckTitle),
                   );
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Deck "$deckTitle" deleted')),
+                  context.showOperationSuccessSnackBar(
+                    operation: 'Deck "$deckTitle" deleted',
                   );
                 }
               }
@@ -178,53 +174,19 @@ class _FolderPageState extends State<FolderPage> {
                   );
                 },
               ),
-              if (vm.isLoading)
-                Container(
-                  color: Colors.black.withValues(alpha: 0.3),
-                  child: const Center(child: CircularProgressIndicator()),
-                ),
+              if (vm.isLoading) LoadingOverlayWidget.scrim(opacity: 0.3),
               if (vm.hasError && vm.error != null)
                 Positioned(
                   top: 0,
                   left: 0,
                   right: 0,
-                  child: Material(
-                    color: Theme.of(context).colorScheme.errorContainer,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.error_outline,
-                            color: Theme.of(context).colorScheme.error,
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              vm.error!.userFriendlyMessage,
-                              style: TextStyle(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onErrorContainer,
-                              ),
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              // Retry loading folder
-                              setState(() {});
-                            },
-                            child: const Text('Retry'),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.close),
-                            onPressed: () {
-                              vm.clearError();
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
+                  child: ErrorBannerWidget.fromError(
+                    error: vm.error!,
+                    onClose: vm.clearError,
+                    onTap: () {
+                      // Retry loading folder
+                      setState(() {});
+                    },
                   ),
                 ),
             ],
@@ -235,23 +197,6 @@ class _FolderPageState extends State<FolderPage> {
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: const [
-          Icon(Icons.card_giftcard, size: 64, color: Colors.grey),
-          SizedBox(height: 16),
-          Text(
-            'No Decks yet',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-          ),
-          SizedBox(height: 8),
-          Text(
-            'Tap + to create your first decks',
-            style: TextStyle(color: Colors.grey),
-          ),
-        ],
-      ),
-    );
+    return EmptyStateWidget.decks();
   }
 }
