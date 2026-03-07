@@ -1,0 +1,19 @@
+{
+  "@@locale": "en",
+  "appTitle": "QuizLet",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "study": "Study",
+  "@study": {
+    "description": "Study tab label"
+  },
+  "library": "Library",
+  "@library": {
+    "description": "Library tab label"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings tab label"
+  }
+}

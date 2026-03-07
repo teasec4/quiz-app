@@ -1,0 +1,19 @@
+{
+  "@@locale": "zh",
+  "appTitle": "QuizLet",
+  "@appTitle": {
+    "description": "应用程序的标题"
+  },
+  "study": "学习",
+  "@study": {
+    "description": "学习标签"
+  },
+  "library": "图书馆",
+  "@library": {
+    "description": "图书馆标签"
+  },
+  "settings": "设置",
+  "@settings": {
+    "description": "设置标签"
+  }
+}
