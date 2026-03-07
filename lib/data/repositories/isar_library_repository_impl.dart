@@ -1,3 +1,5 @@
+import 'package:bookexample/core/exceptions/app_exceptions.dart';
+import 'package:bookexample/core/validation/validators.dart';
 import 'package:bookexample/domain/isar_model/library/deck_entity.dart';
 import 'package:bookexample/domain/isar_model/library/flashcard_entity.dart';
 import 'package:bookexample/domain/isar_model/library/folder_entity.dart';
@@ -7,6 +9,8 @@ import 'package:isar_community/isar.dart';
 
 class IsarLibraryRepositoryImpl implements LibraryRepository {
   final Isar isar;
+  final FolderValidator _folderValidator = FolderValidator();
+  final DeckValidator _deckValidator = DeckValidator();
 
   IsarLibraryRepositoryImpl(this.isar);
 
@@ -17,88 +21,127 @@ class IsarLibraryRepositoryImpl implements LibraryRepository {
 
   @override
   Future<List<DeckEntity>> getAllDecksById(int folderId) async {
-    return await isar.deckEntitys
-          .where()
-          .folderIdEqualTo(folderId)
-          .findAll();
-
+    return await isar.deckEntitys.where().folderIdEqualTo(folderId).findAll();
   }
 
   @override
   Future<FolderEntity> getFolderById(int id) async {
-    final folder = await isar.folderEntitys.get(id);
-    if (folder == null) {
-      throw Exception('Folder not found');
+    try {
+      final folder = await isar.folderEntitys.get(id);
+      if (folder == null) {
+        throw FolderNotFoundException(id);
+      }
+      return folder;
+    } catch (e, stackTrace) {
+      if (e is AppException) rethrow;
+      throw DatabaseException(
+        'Failed to get folder',
+        originalError: e,
+        stackTrace: stackTrace,
+      );
     }
-    return folder;
   }
 
   @override
   Future<void> addFolder(String name) async {
-    final folder = FolderEntity()
-      ..name = name
-      ..createdAt = DateTime.now();
+    // Validate input
+    final validation = _folderValidator.validate(name);
+    if (!validation.isValid) {
+      throw ValidationException('Invalid folder data', validation.errors);
+    }
 
-    await isar.writeTxn(() async {
-      await isar.folderEntitys.put(folder);
-    });
+    try {
+      final folder = FolderEntity()
+        ..name = name.trim()
+        ..createdAt = DateTime.now();
+
+      await isar.writeTxn(() async {
+        await isar.folderEntitys.put(folder);
+      });
+    } catch (e, stackTrace) {
+      if (e is AppException) rethrow;
+      throw DatabaseException(
+        'Failed to create folder',
+        originalError: e,
+        stackTrace: stackTrace,
+      );
+    }
   }
 
   @override
   Future<void> renameFolder(int folderId, String newName) async {
-    // need to test it
-    await isar.writeTxn(() async {
-      final folder = await isar.folderEntitys.get(folderId);
-      if (folder == null) return;
-      folder.name = newName;
-      await isar.folderEntitys.put(folder);
-    });
+    // Validate input
+    final validation = _folderValidator.validate(newName);
+    if (!validation.isValid) {
+      throw ValidationException('Invalid folder name', validation.errors);
+    }
+
+    try {
+      await isar.writeTxn(() async {
+        final folder = await isar.folderEntitys.get(folderId);
+        if (folder == null) {
+          throw FolderNotFoundException(folderId);
+        }
+        folder.name = newName.trim();
+        await isar.folderEntitys.put(folder);
+      });
+    } catch (e, stackTrace) {
+      if (e is AppException) rethrow;
+      throw DatabaseException(
+        'Failed to rename folder',
+        originalError: e,
+        stackTrace: stackTrace,
+      );
+    }
   }
 
   @override
   Future<void> deleteFolder(int folderId) async {
-    await isar.writeTxn(() async {
-      // Удалить все деки в папке
-      final decks = await isar.deckEntitys
-          .filter()
-          .folderIdEqualTo(folderId)
-          .findAll();
-
-      for (var deck in decks) {
-        // Удалить все карточки деки
-        final cards = await isar.flashCardEntitys
-            .filter()
-            .deckIdEqualTo(deck.id)
-            .findAll();
-
-        for (var card in cards) {
-          await isar.flashCardEntitys.delete(card.id);
+    try {
+      await isar.writeTxn(() async {
+        // Verify folder exists
+        final folder = await isar.folderEntitys.get(folderId);
+        if (folder == null) {
+          throw FolderNotFoundException(folderId);
         }
 
-        // Удалить саму деку
-        await isar.deckEntitys.delete(deck.id);
-      }
+        // Batch delete: Get all deck IDs first
+        final deckIds = await isar.deckEntitys
+            .filter()
+            .folderIdEqualTo(folderId)
+            .idProperty()
+            .findAll();
 
-      // Удалить саму папку
-      await isar.folderEntitys.delete(folderId);
-    });
+        // Batch delete: Get all card IDs for these decks
+        final cardIds = await isar.flashCardEntitys
+            .filter()
+            .anyOf(deckIds, (q, deckId) => q.deckIdEqualTo(deckId))
+            .idProperty()
+            .findAll();
+
+        // Batch delete all cards
+        await isar.flashCardEntitys.deleteAll(cardIds);
+
+        // Batch delete all decks
+        await isar.deckEntitys.deleteAll(deckIds);
+
+        // Delete folder
+        await isar.folderEntitys.delete(folderId);
+      });
+    } catch (e, stackTrace) {
+      if (e is AppException) rethrow;
+      throw DatabaseException(
+        'Failed to delete folder',
+        originalError: e,
+        stackTrace: stackTrace,
+      );
+    }
   }
 
   @override
   Stream<List<FolderEntity>> watchFolders() {
     return isar.folderEntitys.where().watch(fireImmediately: true);
   }
-
-  // StreamBuilder<List<FolderEntity>>(
-  //   stream: repository.watchFolders(),
-  //   builder: (context, snapshot) {
-  //     final folders = snapshot.data ?? [];
-  //     return ListView.builder(
-  //       itemCount: folders.length,
-  //       itemBuilder: (_, i) => Text(folders[i].name),
-  //     );
-  //   },
-  // );
 
   @override
   Stream<List<DeckEntity>> watchAllDecks() {
@@ -120,13 +163,22 @@ class IsarLibraryRepositoryImpl implements LibraryRepository {
 
   @override
   Future<DeckEntity> getDeckById(int deckId) async {
-    final deck = await isar.deckEntitys.get(deckId);
-    if (deck == null) {
-      throw Exception('Deck not found');
+    try {
+      final deck = await isar.deckEntitys.get(deckId);
+      if (deck == null) {
+        throw DeckNotFoundException(deckId);
+      }
+      // Загружаем карточки через IsarLink
+      await deck.cards.load();
+      return deck;
+    } catch (e, stackTrace) {
+      if (e is AppException) rethrow;
+      throw DatabaseException(
+        'Failed to get deck',
+        originalError: e,
+        stackTrace: stackTrace,
+      );
     }
-    // Загружаем карточки через IsarLink
-    await deck.cards.load();
-    return deck;
   }
 
   @override
@@ -135,50 +187,83 @@ class IsarLibraryRepositoryImpl implements LibraryRepository {
     String title,
     List<FlashCardEntity> flashCards,
   ) async {
-    final folder = await isar.folderEntitys.get(folderId);
+    // Validate input
+    final validation = _deckValidator.validate(title, flashCards);
+    if (!validation.isValid) {
+      throw ValidationException('Invalid deck data', validation.errors);
+    }
 
-    final deck = DeckEntity()
-      ..title = title
-      ..createdAt = DateTime.now()
-      ..folderId = folderId
-      ..folder.value = folder;
+    try {
+      await isar.writeTxn(() async {
+        // Verify parent folder exists
+        final folder = await isar.folderEntitys.get(folderId);
+        if (folder == null) {
+          throw FolderNotFoundException(folderId);
+        }
 
-    await isar.writeTxn(() async {
-      await isar.deckEntitys.put(deck);
-
-      for (var card in flashCards) {
-        final cardEntity = FlashCardEntity()
-          ..front = card.front
-          ..back = card.back
+        final deck = DeckEntity()
+          ..title = title.trim()
           ..createdAt = DateTime.now()
-          ..deckId = deck.id
-          ..deck.value = deck;
+          ..folderId = folderId
+          ..folder.value = folder;
 
-        await isar.flashCardEntitys.put(cardEntity);
-        deck.cards.add(cardEntity);
-      }
+        await isar.deckEntitys.put(deck);
 
-      await deck.cards.save();
-      isar.deckEntitys.put(deck);
-    });
+        // Batch create cards using putAll
+        final cardEntities = flashCards.map((card) {
+          return FlashCardEntity()
+            ..front = card.front.trim()
+            ..back = card.back.trim()
+            ..createdAt = DateTime.now()
+            ..deckId = deck.id
+            ..deck.value = deck;
+        }).toList();
+
+        await isar.flashCardEntitys.putAll(cardEntities);
+        deck.cards.addAll(cardEntities);
+        await deck.cards.save();
+      });
+    } catch (e, stackTrace) {
+      if (e is AppException) rethrow;
+      throw DatabaseException(
+        'Failed to create deck',
+        originalError: e,
+        stackTrace: stackTrace,
+      );
+    }
   }
 
   @override
   Future<void> deleteDeck(int deckId) async {
-    await isar.writeTxn(() async {
-      // Удалить все карточки деки
-      final cards = await isar.flashCardEntitys
-          .filter()
-          .deckIdEqualTo(deckId)
-          .findAll();
+    try {
+      await isar.writeTxn(() async {
+        // Verify deck exists
+        final deck = await isar.deckEntitys.get(deckId);
+        if (deck == null) {
+          throw DeckNotFoundException(deckId);
+        }
 
-      for (var card in cards) {
-        await isar.flashCardEntitys.delete(card.id);
-      }
+        // Batch delete: Get all card IDs for this deck
+        final cardIds = await isar.flashCardEntitys
+            .filter()
+            .deckIdEqualTo(deckId)
+            .idProperty()
+            .findAll();
 
-      // Удалить саму деку
-      await isar.deckEntitys.delete(deckId);
-    });
+        // Batch delete all cards
+        await isar.flashCardEntitys.deleteAll(cardIds);
+
+        // Delete the deck
+        await isar.deckEntitys.delete(deckId);
+      });
+    } catch (e, stackTrace) {
+      if (e is AppException) rethrow;
+      throw DatabaseException(
+        'Failed to delete deck',
+        originalError: e,
+        stackTrace: stackTrace,
+      );
+    }
   }
 
   @override
@@ -187,39 +272,56 @@ class IsarLibraryRepositoryImpl implements LibraryRepository {
     String title,
     List<FlashCardEntity> newCards,
   ) async {
-    await isar.writeTxn(() async {
-      final deck = await isar.deckEntitys.get(deckId);
-      if (deck == null) return;
+    // Validate input
+    final validation = _deckValidator.validate(title, newCards);
+    if (!validation.isValid) {
+      throw ValidationException('Invalid deck data', validation.errors);
+    }
 
-      // Обновить название деки
-      deck.title = title;
+    try {
+      await isar.writeTxn(() async {
+        final deck = await isar.deckEntitys.get(deckId);
+        if (deck == null) {
+          throw DeckNotFoundException(deckId);
+        }
 
-      // Удалить старые карточки
-      final oldCards = await isar.flashCardEntitys
-          .filter()
-          .deckIdEqualTo(deckId)
-          .findAll();
+        // Update deck title
+        deck.title = title.trim();
 
-      for (var card in oldCards) {
-        await isar.flashCardEntitys.delete(card.id);
-      }
+        // Batch delete old cards
+        final oldCardIds = await isar.flashCardEntitys
+            .filter()
+            .deckIdEqualTo(deckId)
+            .idProperty()
+            .findAll();
 
-      // Добавить новые карточки
-      for (var card in newCards) {
-        final cardEntity = FlashCardEntity()
-          ..front = card.front
-          ..back = card.back
-          ..createdAt = DateTime.now()
-          ..deckId = deckId
-          ..deck.value = deck;
+        await isar.flashCardEntitys.deleteAll(oldCardIds);
 
-        await isar.flashCardEntitys.put(cardEntity);
-        deck.cards.add(cardEntity);
-      }
+        // Batch create new cards
+        final cardEntities = newCards.map((card) {
+          return FlashCardEntity()
+            ..front = card.front.trim()
+            ..back = card.back.trim()
+            ..createdAt = DateTime.now()
+            ..deckId = deckId
+            ..deck.value = deck;
+        }).toList();
 
-      await isar.deckEntitys.put(deck);
-      await deck.cards.save();
-    });
+        await isar.flashCardEntitys.putAll(cardEntities);
+        deck.cards.clear();
+        deck.cards.addAll(cardEntities);
+
+        await isar.deckEntitys.put(deck);
+        await deck.cards.save();
+      });
+    } catch (e, stackTrace) {
+      if (e is AppException) rethrow;
+      throw DatabaseException(
+        'Failed to update deck',
+        originalError: e,
+        stackTrace: stackTrace,
+      );
+    }
   }
 
   @override

@@ -1,3 +1,5 @@
+import 'package:bookexample/core/exceptions/app_exceptions.dart';
+import 'package:bookexample/core/logging/app_logger.dart';
 import 'package:bookexample/domain/isar_model/session/study_answer_entity.dart';
 import 'package:bookexample/domain/isar_model/session/study_session_entity.dart';
 import 'package:bookexample/domain/repositories/study_session_repository.dart';
@@ -9,30 +11,55 @@ class IsarStudySessionRepositoryImpl implements StudySessionRepository {
   final Isar isar;
 
   IsarStudySessionRepositoryImpl({required this.isar});
-  
+
   @override
   Future<void> saveSession(StudySessionDraft draft) async {
-    await isar.writeTxn(() async {
-      final session = StudySessionEntity()
-        ..endedAt = DateTime.now()
-        ..totalCards = draft.answers.length
-        ..correctAnswers = draft.answers.where((a) => a.isCorrect).length
-        ..isCompleted = true;
+    // Validate session data
+    if (draft.answers.isEmpty) {
+      throw ValidationException('Invalid session data', {
+        'answers': 'Session must contain at least one answer',
+      });
+    }
 
-      await isar.studySessionEntitys.put(session);
+    if (draft.answers.length != draft.cards.length) {
+      throw ValidationException('Invalid session data', {
+        'answers': 'Number of answers must match number of cards',
+      });
+    }
 
-      for (final a in draft.answers) {
-        final answer = StudyAnswerEntity()
-          ..cardId = a.cardId
-          ..isCorrect = a.isCorrect
-          ..session.value = session;
+    try {
+      await isar.writeTxn(() async {
+        final session = StudySessionEntity()
+          ..endedAt = DateTime.now()
+          ..totalCards = draft.answers.length
+          ..correctAnswers = draft.answers.where((a) => a.isCorrect).length
+          ..isCompleted = true;
 
-        await isar.studyAnswerEntitys.put(answer);
-        await answer.session.save();
-      }
-    });
-    
-    // update Stats
-    
+        await isar.studySessionEntitys.put(session);
+
+        for (final a in draft.answers) {
+          final answer = StudyAnswerEntity()
+            ..cardId = a.cardId
+            ..isCorrect = a.isCorrect
+            ..session.value = session;
+
+          await isar.studyAnswerEntitys.put(answer);
+          await answer.session.save();
+        }
+      });
+
+      AppLogger.info(
+        'Saved study session: ${draft.answers.length} cards, '
+        '${draft.answers.where((a) => a.isCorrect).length} correct',
+      );
+    } catch (e, stackTrace) {
+      if (e is AppException) rethrow;
+      AppLogger.error('Failed to save study session', e, stackTrace);
+      throw DatabaseException(
+        'Failed to save study session',
+        originalError: e,
+        stackTrace: stackTrace,
+      );
+    }
   }
 }

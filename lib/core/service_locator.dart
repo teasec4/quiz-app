@@ -4,7 +4,6 @@ import 'package:bookexample/data/repositories/stats_repository_impl.dart';
 import 'package:bookexample/domain/repositories/library_repository.dart';
 import 'package:bookexample/domain/repositories/stats_repository.dart';
 import 'package:bookexample/domain/repositories/study_session_repository.dart';
-import 'package:bookexample/pages/session/models/study_session_draft.dart';
 import 'package:bookexample/view_models/library_view_model.dart';
 import 'package:bookexample/view_models/stats_view_model.dart';
 import 'package:bookexample/view_models/study_session_view_model.dart';
@@ -43,7 +42,6 @@ Future<void> setupServiceLocator() async {
       statsVM: getIt<StatsViewModel>(),
     ),
   );
-
 }
 
 // func for init db

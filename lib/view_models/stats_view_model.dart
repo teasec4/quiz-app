@@ -1,15 +1,17 @@
 import 'package:bookexample/domain/isar_model/user_stats/user_stats_entity.dart';
 import 'package:bookexample/domain/repositories/stats_repository.dart';
-import 'package:flutter/foundation.dart';
+import 'package:bookexample/core/view_models/base_view_model.dart';
 
-class StatsViewModel extends ChangeNotifier {
+class StatsViewModel extends BaseViewModel {
   final StatsRepository repository;
 
   StatsViewModel(this.repository);
 
   Future<UserStatsEntity> getStats() async {
-    final stats = await repository.getStats();
-    return stats;
+    return executeAsync(
+      () => repository.getStats(),
+      operationName: 'Get stats',
+    );
   }
 
   Future<void> updateStats(
@@ -17,15 +19,20 @@ class StatsViewModel extends ChangeNotifier {
     int sessionCorrectAnswers,
     DateTime sessionDate,
   ) async {
-    await repository.updateStats(
-      sessionTotalCard,
-      sessionCorrectAnswers,
-      sessionDate,
+    await executeAsync(
+      () => repository.updateStats(
+        sessionTotalCard,
+        sessionCorrectAnswers,
+        sessionDate,
+      ),
+      operationName: 'Update stats',
     );
-    notifyListeners();
   }
 
   Future<int> getStreak() async {
-    return repository.calculateStreak();
+    return executeAsync(
+      () => repository.calculateStreak(),
+      operationName: 'Get streak',
+    );
   }
 }
