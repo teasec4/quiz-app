@@ -21,6 +21,21 @@ class FlashcardsSession extends StatefulWidget {
 
 class _FlashcardsSessionState extends State<FlashcardsSession>
     with SingleTickerProviderStateMixin {
+  // Swipe animation constants
+  static const double swipeThreshold = 300.0;
+  static const double swipeTarget = 800.0;
+
+  // Animation constants
+  static const Duration animationDuration = Duration(milliseconds: 250);
+  static const double animationStartValue = 0.0;
+  static const double animationResetValue = 0.0;
+
+  // UI constants
+  static const double smallSpacing = 8.0;
+  static const double mediumSpacing = 16.0;
+  static const double borderRadius = 12.0;
+  static const double colorOpacity = 0.15;
+
   late StudySessionViewModel _studyVM;
   late AnimationController _controller;
   late Animation<double> _animation;
@@ -32,11 +47,11 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 250),
-    );
-    _animation = Tween<double>(begin: 0, end: 0).animate(_controller);
+    _controller = AnimationController(vsync: this, duration: animationDuration);
+    _animation = Tween<double>(
+      begin: animationStartValue,
+      end: animationResetValue,
+    ).animate(_controller);
     _studyVM = context.read<StudySessionViewModel>();
     _studyVM.startSession(widget.deckId);
   }
@@ -50,12 +65,10 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
   // RIGHT side - TRUE
   // LEFT side - FALSE
   void _handleSwipe(double velocity) {
-    const threshold = 300;
-
-    if (velocity > threshold) {
-      _animateOut(800, true);
-    } else if (velocity < -threshold) {
-      _animateOut(-800, false);
+    if (velocity > swipeThreshold) {
+      _animateOut(swipeTarget, true);
+    } else if (velocity < -swipeThreshold) {
+      _animateOut(-swipeTarget, false);
     } else {
       _resetPosition();
     }
@@ -75,7 +88,7 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
       _studyVM.answerCurrentCard(isCorrect);
 
       setState(() {
-        dragOffset = 0;
+        dragOffset = animationResetValue;
         showBack = false;
         isAnimating = false;
       });
@@ -90,12 +103,12 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
   void _resetPosition() {
     _animation = Tween<double>(
       begin: dragOffset,
-      end: 0,
+      end: animationResetValue,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
     _controller.forward(from: 0).then((_) {
       setState(() {
-        dragOffset = 0;
+        dragOffset = animationResetValue;
         showBack = false;
       });
     });
@@ -104,7 +117,7 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
   void _showSessionComplete() {
     final session = _studyVM.session;
     if (session == null) return;
-    
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -114,9 +127,11 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
           mainAxisSize: MainAxisSize.min,
           children: [
             Text('Correct: ${session.correctCount}/${session.cards.length}'),
-            const SizedBox(height: 8),
-            Text('Incorrect: ${session.incorrectCount}/${session.cards.length}'),
-            const SizedBox(height: 16),
+            const SizedBox(height: smallSpacing),
+            Text(
+              'Incorrect: ${session.incorrectCount}/${session.cards.length}',
+            ),
+            const SizedBox(height: mediumSpacing),
             LinearProgressIndicator(
               value: session.correctCount / session.cards.length,
               minHeight: 8,
@@ -133,7 +148,7 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
           TextButton(
             onPressed: () async {
               await _studyVM.completeSession();
-              
+
               if (mounted) {
                 Navigator.pop(context);
                 context.go('/study');
@@ -148,10 +163,13 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
 
   Widget _statBox(String icon, int value, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(
+        horizontal: mediumSpacing,
+        vertical: smallSpacing / 1.33,
+      ),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(12),
+        color: color.withValues(alpha: colorOpacity),
+        borderRadius: BorderRadius.circular(borderRadius),
       ),
       child: Text(
         '$icon $value',
@@ -174,9 +192,7 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
 
         final card = session.currentCard;
         if (card == null) {
-          return const Scaffold(
-            body: Center(child: Text('Session finished')),
-          );
+          return const Scaffold(body: Center(child: Text('Session finished')));
         }
 
         return Scaffold(

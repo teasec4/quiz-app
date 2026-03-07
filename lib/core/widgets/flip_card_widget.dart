@@ -1,8 +1,18 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 
 /// A universal flip card widget that can be used in different contexts.
 /// Supports both manual flip control and internal state management.
 class FlipCardWidget extends StatefulWidget {
+  // Animation constants
+  static const double rotationDivisor = 1000.0;
+  static const double widthMultiplier = 0.9;
+  static const double heightMultiplier = 0.85;
+  static const double minCardWidth = 200.0;
+  static const double maxCardWidth = 500.0;
+  static const double halfPi = pi / 2;
+  static const double matrixPerspectiveValue = 0.001;
+
   /// The text to display on the front of the card
   final String frontText;
 
@@ -251,7 +261,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
               final offset = widget.isAnimating
                   ? _animation.value
                   : widget.dragOffset;
-              final rotation = offset / 1000;
+              final rotation = offset / FlipCardWidget.rotationDivisor;
 
               return Transform.translate(
                 offset: Offset(offset, 0),
@@ -264,21 +274,31 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
                     ),
                     duration: widget.flipDuration,
                     builder: (context, value, child) {
-                      final angle =
-                          value * 3.14159; // π radians for 180 degrees
-                      final isFlipped = angle > 1.5708; // π/2
+                      final angle = value * pi; // π radians for 180 degrees
+                      final isFlipped = angle > FlipCardWidget.halfPi; // π/2
 
                       // Calculate responsive dimensions
                       final cardWidth =
                           widget.width ??
-                          (constraints.maxWidth * 0.9).clamp(200.0, 500.0);
+                          (constraints.maxWidth *
+                                  FlipCardWidget.widthMultiplier)
+                              .clamp(
+                                FlipCardWidget.minCardWidth,
+                                FlipCardWidget.maxCardWidth,
+                              );
                       final cardHeight =
-                          widget.height ?? constraints.maxHeight * 0.85;
+                          widget.height ??
+                          constraints.maxHeight *
+                              FlipCardWidget.heightMultiplier;
 
                       return Transform(
                         alignment: Alignment.center,
                         transform: Matrix4.identity()
-                          ..setEntry(3, 2, 0.001)
+                          ..setEntry(
+                            3,
+                            2,
+                            FlipCardWidget.matrixPerspectiveValue,
+                          )
                           ..rotateY(angle),
                         child: _buildCardContent(
                           context: context,
@@ -337,7 +357,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
         child: Transform(
           alignment: Alignment.center,
           transform: Matrix4.identity()
-            ..rotateY(isFlipped ? 3.14159 : 0), // Flip text back if needed
+            ..rotateY(isFlipped ? pi : 0), // Flip text back if needed
           child: Text(
             isFlipped ? widget.backText : widget.frontText,
             textAlign: TextAlign.center,
