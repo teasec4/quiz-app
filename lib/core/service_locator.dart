@@ -41,7 +41,7 @@ Future<void> setupServiceLocator() async {
     StudySessionViewModel(
       studyRepo: getIt<StudySessionRepository>(),
       libraryRepo: getIt<LibraryRepository>(),
-      statsVM: getIt<StatsViewModel>(),
+      statsRepo: getIt<StatsRepository>(),
     ),
   );
   getIt.registerSingleton<ThemeViewModel>(ThemeViewModel());

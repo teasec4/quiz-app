@@ -181,6 +181,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get resetToEnglish => '恢复为英语';
 
   @override
+  String get resetSettings => '重置设置';
+
+  @override
+  String get resetSettingsDescription => '将所有设置重置为默认值';
+
+  @override
+  String get allSettingsReset => '所有设置已重置';
+
+  @override
+  String get resetAllSettings => '重置所有设置';
+
+  @override
   String get applicationVersion => '应用程序版本';
 
   @override

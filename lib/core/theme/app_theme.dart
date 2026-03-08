@@ -97,7 +97,6 @@ class AppTheme {
         backgroundColor: scheme.surface,
         foregroundColor: scheme.onSurface,
         centerTitle: true,
-        elevation: 0,
       ),
 
       floatingActionButtonTheme: FloatingActionButtonThemeData(
