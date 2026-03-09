@@ -182,18 +182,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resetToEnglish => 'Reset to English';
 
   @override
-  String get resetSettings => 'Reset Settings';
-
-  @override
-  String get resetSettingsDescription => 'Reset all settings to default values';
-
-  @override
-  String get allSettingsReset => 'All settings reset to defaults';
-
-  @override
-  String get resetAllSettings => 'Reset All Settings';
-
-  @override
   String get applicationVersion => 'Application Version';
 
   @override

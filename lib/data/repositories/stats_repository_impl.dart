@@ -1,14 +1,15 @@
 import 'package:bookexample/core/exceptions/app_exceptions.dart';
 import 'package:bookexample/core/logging/app_logger.dart';
+import 'package:bookexample/domain/base_repository.dart';
 import 'package:bookexample/domain/isar_model/session/study_session_entity.dart';
 import 'package:bookexample/domain/isar_model/user_stats/user_stats_entity.dart';
 import 'package:bookexample/domain/repositories/stats_repository.dart';
 import 'package:isar_community/isar.dart';
 
-class StatsRepositoryImpl implements StatsRepository {
+class StatsRepositoryImpl extends BaseRepository implements StatsRepository {
   final Isar isar;
 
-  StatsRepositoryImpl({required this.isar});
+  StatsRepositoryImpl({required this.isar}) : super(isar);
 
   @override
   Future<UserStatsEntity> getStats() async {

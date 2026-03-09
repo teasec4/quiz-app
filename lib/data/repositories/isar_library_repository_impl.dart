@@ -1,5 +1,6 @@
 import 'package:bookexample/core/exceptions/app_exceptions.dart';
 import 'package:bookexample/core/validation/validators.dart';
+import 'package:bookexample/domain/base_repository.dart';
 import 'package:bookexample/domain/isar_model/library/deck_entity.dart';
 import 'package:bookexample/domain/isar_model/library/flashcard_entity.dart';
 import 'package:bookexample/domain/isar_model/library/folder_entity.dart';
@@ -7,16 +8,22 @@ import 'package:bookexample/domain/repositories/library_repository.dart';
 import 'package:bookexample/pages/session/models/study_session_draft.dart';
 import 'package:isar_community/isar.dart';
 
-class IsarLibraryRepositoryImpl implements LibraryRepository {
+class IsarLibraryRepositoryImpl extends BaseRepository
+    implements LibraryRepository {
   final Isar isar;
   final FolderValidator _folderValidator = FolderValidator();
   final DeckValidator _deckValidator = DeckValidator();
 
-  IsarLibraryRepositoryImpl(this.isar);
+  IsarLibraryRepositoryImpl(this.isar) : super(isar);
 
   @override
   Future<List<FolderEntity>> getAllFolders() async {
-    return await isar.folderEntitys.where().findAll();
+    return await executeDbOperation(
+      () async {
+        return await isar.folderEntitys.where().findAll();
+      },
+      'getAllFolders',
+    );
   }
 
   @override

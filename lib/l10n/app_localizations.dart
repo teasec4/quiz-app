@@ -436,30 +436,6 @@ abstract class AppLocalizations {
   /// **'Reset to English'**
   String get resetToEnglish;
 
-  /// Reset settings section title
-  ///
-  /// In en, this message translates to:
-  /// **'Reset Settings'**
-  String get resetSettings;
-
-  /// Reset settings description
-  ///
-  /// In en, this message translates to:
-  /// **'Reset all settings to default values'**
-  String get resetSettingsDescription;
-
-  /// Success message when all settings are reset
-  ///
-  /// In en, this message translates to:
-  /// **'All settings reset to defaults'**
-  String get allSettingsReset;
-
-  /// Reset all settings button label
-  ///
-  /// In en, this message translates to:
-  /// **'Reset All Settings'**
-  String get resetAllSettings;
-
   /// Application version label
   ///
   /// In en, this message translates to:

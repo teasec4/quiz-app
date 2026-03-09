@@ -33,7 +33,15 @@ class _SettingsPageState extends State<SettingsPage> {
 
             // Language Section
             _buildLanguageSection(context, localeViewModel, l10n),
-            
+            const SizedBox(height: 24),
+
+            // Reset Settings Section
+            _buildResetSettingsSection(
+              context,
+              themeViewModel,
+              localeViewModel,
+              l10n,
+            ),
           ],
         ),
       ),
@@ -414,6 +422,102 @@ class _SettingsPageState extends State<SettingsPage> {
             padding: const EdgeInsets.symmetric(vertical: 4),
             child: Divider(color: theme.colorScheme.outlineVariant, height: 1),
           ),
+      ],
+    );
+  }
+
+  Widget _buildResetSettingsSection(
+    BuildContext context,
+    ThemeViewModel themeViewModel,
+    LocaleViewModel localeViewModel,
+    AppLocalizations? l10n,
+  ) {
+    final theme = Theme.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Section Header
+        Padding(
+          padding: const EdgeInsets.only(left: 8, bottom: 12),
+          child: Row(
+            children: [
+              Icon(Icons.settings, color: theme.colorScheme.primary, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                l10n?.resetSettings ?? 'Reset Settings',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // Reset Settings Card
+        Card(
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                Text(
+                  l10n?.resetSettingsDescription ??
+                      'Reset all settings to default values',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: () async {
+                      // Reset both theme and language
+                      await themeViewModel.resetToDefaults();
+                      await localeViewModel.resetToDefault();
+
+                      _showSnackBar(
+                        context,
+                        l10n?.allSettingsReset ??
+                            'All settings reset to defaults',
+                      );
+                    },
+                    style: FilledButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      backgroundColor: theme.colorScheme.primary,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.restart_alt,
+                          size: 20,
+                          color: theme.colorScheme.onPrimary,
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          l10n?.resetAllSettings ?? 'Reset All Settings',
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: theme.colorScheme.onPrimary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }

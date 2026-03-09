@@ -181,19 +181,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get resetToEnglish => 'Сбросить на английский';
 
   @override
-  String get resetSettings => 'Сбросить настройки';
-
-  @override
-  String get resetSettingsDescription =>
-      'Сбросить все настройки к значениям по умолчанию';
-
-  @override
-  String get allSettingsReset => 'Все настройки сброшены';
-
-  @override
-  String get resetAllSettings => 'Сбросить все настройки';
-
-  @override
   String get applicationVersion => 'Версия приложения';
 
   @override
