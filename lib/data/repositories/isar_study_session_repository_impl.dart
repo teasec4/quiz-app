@@ -1,18 +1,18 @@
 import 'package:bookexample/core/exceptions/app_exceptions.dart';
 import 'package:bookexample/core/logging/app_logger.dart';
+import 'package:bookexample/data/data_source.dart';
+import 'package:bookexample/data/isar_data_source.dart';
 import 'package:bookexample/domain/base_repository.dart';
 import 'package:bookexample/domain/isar_model/session/study_answer_entity.dart';
 import 'package:bookexample/domain/isar_model/session/study_session_entity.dart';
 import 'package:bookexample/domain/repositories/study_session_repository.dart';
-import 'package:isar_community/isar.dart';
-
-import '../../pages/session/models/study_session_draft.dart';
+import 'package:bookexample/pages/session/models/study_session_draft.dart';
 
 class IsarStudySessionRepositoryImpl extends BaseRepository
     implements StudySessionRepository {
-  final Isar isar;
+  IsarStudySessionRepositoryImpl(DataSource dataSource) : super(dataSource);
 
-  IsarStudySessionRepositoryImpl({required this.isar}) : super(isar);
+  IsarDataSource get _isarDataSource => dataSource as IsarDataSource;
 
   @override
   Future<void> saveSession(StudySessionDraft draft) async {
@@ -29,34 +29,36 @@ class IsarStudySessionRepositoryImpl extends BaseRepository
       });
     }
 
-    await executeDbOperation(
-      () async {
-        await isar.writeTxn(() async {
-          final session = StudySessionEntity()
-            ..endedAt = DateTime.now()
-            ..totalCards = draft.answers.length
-            ..correctAnswers = draft.answers.where((a) => a.isCorrect).length
-            ..isCompleted = true;
-  
-          await isar.studySessionEntitys.put(session);
-  
-          for (final a in draft.answers) {
-            final answer = StudyAnswerEntity()
-              ..cardId = a.cardId
-              ..isCorrect = a.isCorrect
-              ..session.value = session;
-  
-            await isar.studyAnswerEntitys.put(answer);
-            await answer.session.save();
-          }
-        });
-  
-        AppLogger.info(
-          'Saved study session: ${draft.answers.length} cards, '
-          '${draft.answers.where((a) => a.isCorrect).length} correct',
-        );
-      },
-      'saveSession',
-    );
+    await executeDbOperation(() async {
+      await dataSource.executeTransaction(() async {
+        final session = StudySessionEntity()
+          ..endedAt = DateTime.now()
+          ..totalCards = draft.answers.length
+          ..correctAnswers = draft.answers.where((a) => a.isCorrect).length
+          ..isCompleted = true;
+
+        final sessionId = await dataSource.insert<StudySessionEntity>(session);
+        session.id = sessionId;
+
+        for (final a in draft.answers) {
+          final answer = StudyAnswerEntity()
+            ..cardId = a.cardId
+            ..isCorrect = a.isCorrect
+            ..session.value = session;
+
+          final answerId = await dataSource.insert<StudyAnswerEntity>(answer);
+          answer.id = answerId;
+
+          await _isarDataSource.saveLinks(answer);
+        }
+
+        await _isarDataSource.saveLinks(session);
+      });
+
+      AppLogger.info(
+        'Saved study session: ${draft.answers.length} cards, '
+        '${draft.answers.where((a) => a.isCorrect).length} correct',
+      );
+    }, 'saveSession');
   }
 }

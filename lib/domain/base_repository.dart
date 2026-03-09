@@ -1,11 +1,11 @@
 import 'package:bookexample/core/exceptions/app_exceptions.dart';
 import 'package:bookexample/core/logging/app_logger.dart';
-import 'package:isar_community/isar.dart';
+import 'package:bookexample/data/data_source.dart';
 
 abstract class BaseRepository {
-  final Isar isar;
+  final DataSource dataSource;
 
-  BaseRepository(this.isar);
+  BaseRepository(this.dataSource);
 
   Future<T> executeDbOperation<T>(
     Future<T> Function() operation,

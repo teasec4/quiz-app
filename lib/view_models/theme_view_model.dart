@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:bookexample/core/view_models/base_view_model.dart';
+import 'package:bookexample/view_models/base_view_model.dart';
 import 'package:bookexample/core/theme/app_theme.dart';
 import 'package:bookexample/core/logging/app_logger.dart';
 import 'package:bookexample/core/theme/theme_storage.dart';

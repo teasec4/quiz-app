@@ -1,6 +1,6 @@
 import 'package:bookexample/domain/isar_model/user_stats/user_stats_entity.dart';
 import 'package:bookexample/domain/repositories/stats_repository.dart';
-import 'package:bookexample/core/view_models/base_view_model.dart';
+import 'package:bookexample/view_models/base_view_model.dart';
 
 class StatsViewModel extends BaseViewModel {
   final StatsRepository repository;
