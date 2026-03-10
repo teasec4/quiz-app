@@ -1,5 +1,5 @@
+import 'package:bookexample/view_models/base_view_model.dart';
 import 'package:flutter/material.dart';
-import 'package:bookexample/core/view_models/base_view_model.dart';
 
 /// A reusable widget for displaying error banners at the top of the screen.
 class ErrorBannerWidget extends StatelessWidget {

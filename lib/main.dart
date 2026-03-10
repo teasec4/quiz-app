@@ -1,8 +1,9 @@
 import 'package:bookexample/core/service_locator.dart';
 import 'package:bookexample/core/theme/app_theme.dart';
-import 'package:bookexample/core/view_models/base_view_model.dart';
+
 import 'package:bookexample/l10n/app_localizations.dart';
 import 'package:bookexample/router/router.dart';
+import 'package:bookexample/view_models/base_view_model.dart';
 import 'package:bookexample/view_models/library_view_model.dart';
 import 'package:bookexample/view_models/locale_view_model.dart';
 import 'package:bookexample/view_models/stats_view_model.dart';

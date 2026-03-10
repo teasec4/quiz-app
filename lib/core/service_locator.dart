@@ -1,3 +1,5 @@
+import 'package:bookexample/data/data_source.dart';
+import 'package:bookexample/data/isar_data_source.dart';
 import 'package:bookexample/data/repositories/isar_library_repository_impl.dart';
 import 'package:bookexample/data/repositories/isar_study_session_repository_impl.dart';
 import 'package:bookexample/data/repositories/stats_repository_impl.dart';
@@ -20,14 +22,17 @@ Future<void> setupServiceLocator() async {
   await Isar.initializeIsarCore(download: true);
   final isar = await initDB(dbSchema);
 
-  // DB
-  getIt.registerSingleton<Isar>(isar);
+  // DataSource
+  final dataSource = IsarDataSource(isar);
+  getIt.registerSingleton<DataSource>(dataSource);
 
   // Repositories
-  getIt.registerSingleton<LibraryRepository>(IsarLibraryRepositoryImpl(isar));
-  getIt.registerSingleton<StatsRepository>(StatsRepositoryImpl(isar: isar));
+  getIt.registerSingleton<LibraryRepository>(
+    IsarLibraryRepositoryImpl(dataSource),
+  );
+  getIt.registerSingleton<StatsRepository>(StatsRepositoryImpl(dataSource));
   getIt.registerSingleton<StudySessionRepository>(
-    IsarStudySessionRepositoryImpl(isar: isar),
+    IsarStudySessionRepositoryImpl(dataSource),
   );
 
   // ViewModels
@@ -41,7 +46,7 @@ Future<void> setupServiceLocator() async {
     StudySessionViewModel(
       studyRepo: getIt<StudySessionRepository>(),
       libraryRepo: getIt<LibraryRepository>(),
-      statsVM: getIt<StatsViewModel>(),
+      statsRepo: getIt<StatsRepository>(),
     ),
   );
   getIt.registerSingleton<ThemeViewModel>(ThemeViewModel());

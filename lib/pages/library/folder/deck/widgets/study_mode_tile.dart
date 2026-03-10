@@ -35,7 +35,7 @@ class ModeTile extends StatelessWidget {
           mode.icon,
           color: mode.disabled
               ? colorScheme.onSurfaceVariant
-              : colorScheme.primary,
+              : colorScheme.secondary,
           size: 28,
         ),
         title: Text(

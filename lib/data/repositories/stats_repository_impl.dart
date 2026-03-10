@@ -1,19 +1,18 @@
 import 'package:bookexample/core/exceptions/app_exceptions.dart';
 import 'package:bookexample/core/logging/app_logger.dart';
+import 'package:bookexample/data/data_source.dart';
+import 'package:bookexample/domain/base_repository.dart';
 import 'package:bookexample/domain/isar_model/session/study_session_entity.dart';
 import 'package:bookexample/domain/isar_model/user_stats/user_stats_entity.dart';
 import 'package:bookexample/domain/repositories/stats_repository.dart';
-import 'package:isar_community/isar.dart';
 
-class StatsRepositoryImpl implements StatsRepository {
-  final Isar isar;
-
-  StatsRepositoryImpl({required this.isar});
+class StatsRepositoryImpl extends BaseRepository implements StatsRepository {
+  StatsRepositoryImpl(DataSource dataSource) : super(dataSource);
 
   @override
   Future<UserStatsEntity> getStats() async {
-    try {
-      final stats = await isar.userStatsEntitys.get(0);
+    return await executeDbOperation(() async {
+      final stats = await dataSource.get<UserStatsEntity>(0);
       if (stats != null) return stats;
 
       final newStats = UserStatsEntity()
@@ -21,20 +20,13 @@ class StatsRepositoryImpl implements StatsRepository {
         ..correctAnswers = 0
         ..lastSessionDate = DateTime.now();
 
-      await isar.writeTxn(() async {
-        await isar.userStatsEntitys.put(newStats);
+      await dataSource.executeTransaction(() async {
+        await dataSource.insert<UserStatsEntity>(newStats);
       });
 
       AppLogger.info('Created new user stats entity');
       return newStats;
-    } catch (e, stackTrace) {
-      AppLogger.error('Failed to get or create stats', e, stackTrace);
-      throw DatabaseException(
-        'Failed to get or create stats',
-        originalError: e,
-        stackTrace: stackTrace,
-      );
-    }
+    }, 'getStats');
   }
 
   @override
@@ -62,35 +54,27 @@ class StatsRepositoryImpl implements StatsRepository {
       });
     }
 
-    try {
-      await isar.writeTxn(() async {
+    return await executeDbOperation(() async {
+      await dataSource.executeTransaction(() async {
         final stats = await getStats();
 
         stats.totalCards += sessionTotalCard;
         stats.correctAnswers += sessionCorrectAnswers;
         stats.lastSessionDate = sessionDate;
 
-        await isar.userStatsEntitys.put(stats);
+        await dataSource.update<UserStatsEntity>(stats);
       });
 
       AppLogger.info(
         'Updated stats: +$sessionTotalCard cards, +$sessionCorrectAnswers correct',
       );
-    } catch (e, stackTrace) {
-      if (e is AppException) rethrow;
-      AppLogger.error('Failed to update stats', e, stackTrace);
-      throw DatabaseException(
-        'Failed to update stats',
-        originalError: e,
-        stackTrace: stackTrace,
-      );
-    }
+    }, 'updateStats');
   }
 
   @override
   Future<int> calculateStreak() async {
-    try {
-      final allSessions = await isar.studySessionEntitys.where().findAll();
+    return await executeDbOperation(() async {
+      final allSessions = await dataSource.getAll<StudySessionEntity>();
 
       if (allSessions.isEmpty) return 0;
 
@@ -132,13 +116,6 @@ class StatsRepositoryImpl implements StatsRepository {
 
       AppLogger.debug('Calculated streak: $streak days');
       return streak;
-    } catch (e, stackTrace) {
-      AppLogger.error('Failed to calculate streak', e, stackTrace);
-      throw DatabaseException(
-        'Failed to calculate streak',
-        originalError: e,
-        stackTrace: stackTrace,
-      );
-    }
+    }, 'calculateStreak');
   }
 }

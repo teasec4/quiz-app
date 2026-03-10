@@ -453,7 +453,6 @@ class _CreateDeckState extends State<CreateDeck> {
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text(widget.deckId == null ? "Create Deck" : "Edit Deck"),
-        elevation: 2,
         actions: [
           IconButton(
             icon: const Icon(Icons.close),

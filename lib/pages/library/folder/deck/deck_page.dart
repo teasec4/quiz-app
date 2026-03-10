@@ -96,7 +96,7 @@ class _DeckPageState extends State<DeckPage>
                       children: [
                         Icon(
                           Icons.style,
-                          color: Theme.of(context).colorScheme.primary,
+                          color: Theme.of(context).colorScheme.onPrimary,
                           size: 32,
                         ),
                         const SizedBox(height: 8),

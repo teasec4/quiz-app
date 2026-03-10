@@ -3,7 +3,7 @@ import 'package:bookexample/domain/isar_model/library/flashcard_entity.dart';
 import 'package:bookexample/domain/isar_model/library/folder_entity.dart';
 import 'package:bookexample/domain/repositories/library_repository.dart';
 import 'package:bookexample/pages/session/models/study_session_draft.dart';
-import 'package:bookexample/core/view_models/base_view_model.dart';
+import 'package:bookexample/view_models/base_view_model.dart';
 
 class LibraryViewModel extends BaseViewModel {
   final LibraryRepository repository;

@@ -17,17 +17,11 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     final themeViewModel = context.watch<ThemeViewModel>();
     final localeViewModel = context.watch<LocaleViewModel>();
-    final theme = Theme.of(context);
+
     final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n?.settingsTitle ?? 'Settings'),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: theme.colorScheme.surface,
-        foregroundColor: theme.colorScheme.onSurface,
-      ),
+      appBar: AppBar(title: Text(l10n?.settingsTitle ?? 'Settings')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -39,15 +33,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
             // Language Section
             _buildLanguageSection(context, localeViewModel, l10n),
-            const SizedBox(height: 24),
-
-            // Actions Section
-            _buildActionsSection(
-              context,
-              themeViewModel,
-              localeViewModel,
-              l10n,
-            ),
+            
           ],
         ),
       ),
@@ -69,11 +55,10 @@ class _SettingsPageState extends State<SettingsPage> {
           padding: const EdgeInsets.only(left: 8, bottom: 12),
           child: Row(
             children: [
-              Icon(Icons.palette, color: theme.colorScheme.primary, size: 20),
-              const SizedBox(width: 8),
+              
               Text(
                 l10n?.themeSettings ?? 'Theme Settings',
-                style: theme.textTheme.titleMedium?.copyWith(
+                style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -118,20 +103,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
     return Row(
       children: [
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: theme.colorScheme.primaryContainer,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Icon(
-            themeViewModel.isDarkMode ? Icons.dark_mode : Icons.light_mode,
-            color: theme.colorScheme.onPrimaryContainer,
-            size: 20,
-          ),
-        ),
-        const SizedBox(width: 12),
+        
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -173,16 +145,10 @@ class _SettingsPageState extends State<SettingsPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          l10n?.themeVariant ?? 'Theme Variant',
-          style: theme.textTheme.titleSmall?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 12),
+        
         Wrap(
-          spacing: 12,
-          runSpacing: 12,
+          spacing: 16,
+          runSpacing: 16,
           children: themeViewModel.availableVariants.map((variant) {
             return _buildThemeVariantChip(context, variant, themeViewModel);
           }).toList(),
@@ -208,8 +174,8 @@ class _SettingsPageState extends State<SettingsPage> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
-        width: 100,
-        padding: const EdgeInsets.all(12),
+        constraints: BoxConstraints(minWidth: 50, maxWidth: 70),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           color: isSelected
               ? theme.colorScheme.primaryContainer
@@ -224,7 +190,7 @@ class _SettingsPageState extends State<SettingsPage> {
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: theme.colorScheme.primary.withOpacity(0.2),
+                    color: theme.colorScheme.primary.withOpacity(0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -237,8 +203,8 @@ class _SettingsPageState extends State<SettingsPage> {
             AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
-              width: 40,
-              height: 40,
+              width: 30,
+              height: 30,
               decoration: BoxDecoration(
                 color: color,
                 borderRadius: BorderRadius.circular(8),
@@ -262,23 +228,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     : SizedBox.shrink(key: UniqueKey()),
               ),
             ),
-            const SizedBox(height: 8),
-            // Theme Name
-            AnimatedDefaultTextStyle(
-              duration: const Duration(milliseconds: 300),
-              style: theme.textTheme.labelMedium!.copyWith(
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                color: isSelected
-                    ? theme.colorScheme.onPrimaryContainer
-                    : theme.colorScheme.onSurface,
-              ),
-              child: Text(
-                preview['name'] as String,
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
+            
           ],
         ),
       ),
@@ -300,11 +250,10 @@ class _SettingsPageState extends State<SettingsPage> {
           padding: const EdgeInsets.only(left: 8, bottom: 12),
           child: Row(
             children: [
-              Icon(Icons.language, color: theme.colorScheme.primary, size: 20),
-              const SizedBox(width: 8),
+              
               Text(
                 l10n?.languageSettings ?? 'Language Settings',
-                style: theme.textTheme.titleMedium?.copyWith(
+                style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -349,7 +298,7 @@ class _SettingsPageState extends State<SettingsPage> {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
-            padding: const EdgeInsets.symmetric(vertical: 12),
+            padding: EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: isSelected
                   ? theme.colorScheme.primaryContainer
@@ -358,25 +307,7 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             child: Row(
               children: [
-                // Flag
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? theme.colorScheme.primary.withOpacity(0.1)
-                        : theme.colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    localeInfo['flag'] as String,
-                    style: const TextStyle(fontSize: 20),
-                  ),
-                ),
-                const SizedBox(width: 12),
+                
                 // Language Info
                 Expanded(
                   child: Column(
@@ -423,106 +354,8 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
         ),
         // Divider (except for last item)
-        if (locale != localeViewModel.supportedLocales.last)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            child: Divider(color: theme.colorScheme.outlineVariant, height: 1),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildActionsSection(
-    BuildContext context,
-    ThemeViewModel themeViewModel,
-    LocaleViewModel localeViewModel,
-    AppLocalizations? l10n,
-  ) {
-    final theme = Theme.of(context);
-
-    return Row(
-      children: [
-        // Reset Theme Button
-        Expanded(
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            child: OutlinedButton(
-              onPressed: () async {
-                await themeViewModel.resetToDefaults();
-                _showSnackBar(
-                  context,
-                  l10n?.resetToDefaults ?? 'Theme reset to defaults',
-                );
-              },
-              style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                side: BorderSide(color: theme.colorScheme.outline),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.restart_alt,
-                    size: 18,
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    l10n?.resetToDefaults ?? 'Reset Theme',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        // Reset Language Button
-        Expanded(
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            child: FilledButton(
-              onPressed: () async {
-                await localeViewModel.resetToDefault();
-                _showSnackBar(
-                  context,
-                  l10n?.resetToEnglish ?? 'Language reset to English',
-                );
-              },
-              style: FilledButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                backgroundColor: theme.colorScheme.primary,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.language,
-                    size: 18,
-                    color: theme.colorScheme.onPrimary,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    l10n?.resetToEnglish ?? 'Reset Language',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onPrimary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
+        // if (locale != localeViewModel.supportedLocales.last)
+        // Divider(color: theme.colorScheme.outlineVariant, height: 1),
       ],
     );
   }

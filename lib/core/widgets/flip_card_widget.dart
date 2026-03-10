@@ -412,14 +412,17 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
 
     // Default gradients with clear visual differentiation
     if (isFlipped) {
-      // Back side (answer) - use secondary container colors for distinction
+      // Back side (answer) - use tertiary colors for better contrast
       return [
-        colorScheme.secondaryContainer,
-        colorScheme.secondaryContainer.withValues(alpha: 0.8),
+        colorScheme.tertiaryContainer,
+        colorScheme.tertiaryContainer.withValues(alpha: 0.8),
       ];
     } else {
-      // Front side (question) - use primary/surface colors
-      return [colorScheme.surface, colorScheme.surfaceContainerHighest];
+      // Front side (question) - use primary container colors
+      return [
+        colorScheme.primaryContainer,
+        colorScheme.primaryContainer.withValues(alpha: 0.8),
+      ];
     }
   }
 }

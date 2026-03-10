@@ -1,18 +1,19 @@
 import 'package:bookexample/domain/repositories/library_repository.dart';
+import 'package:bookexample/domain/repositories/stats_repository.dart';
 import 'package:bookexample/domain/repositories/study_session_repository.dart';
 import 'package:bookexample/pages/session/models/study_session_draft.dart';
-import 'package:bookexample/view_models/stats_view_model.dart';
-import 'package:bookexample/core/view_models/base_view_model.dart';
+
+import 'package:bookexample/view_models/base_view_model.dart';
 
 class StudySessionViewModel extends BaseViewModel {
   final StudySessionRepository studyRepo;
   final LibraryRepository libraryRepo;
-  final StatsViewModel statsVM;
+  final StatsRepository statsRepo;
 
   StudySessionViewModel({
     required this.studyRepo,
     required this.libraryRepo,
-    required this.statsVM,
+    required this.statsRepo,
   });
 
   StudySessionDraft? _session;
@@ -46,7 +47,7 @@ class StudySessionViewModel extends BaseViewModel {
       await studyRepo.saveSession(_session!);
 
       // Обновить stats
-      await statsVM.updateStats(
+      await statsRepo.updateStats(
         _session!.cards.length,
         _session!.correctCount,
         DateTime.now(),
