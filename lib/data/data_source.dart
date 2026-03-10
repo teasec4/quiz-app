@@ -18,6 +18,9 @@ abstract class DataSource {
   Future<List<T>> filter<T>(FilterQuery<T> query);
   Stream<List<T>> watchFilter<T>(FilterQuery<T> query);
 
+  // Property-based filtering
+  Future<List<T>> filterByPropertyIn<T, V>(String property, List<V> values);
+
   // Specific operations for Isar
   Future<void> loadLinks<T>(T entity);
   Future<void> saveLinks<T>(T entity);

@@ -167,6 +167,58 @@ class IsarDataSource implements data_source.DataSource {
     throw ArgumentError('Unsupported filter: $property for type $T');
   }
 
+  Future<List<T>> filterByPropertyIn<T, V>(
+    String property,
+    List<V> values,
+  ) async {
+    final collection = _getCollection<T>();
+
+    if (values.isEmpty) {
+      return <T>[];
+    }
+
+    // For Isar, we need to build OR conditions manually
+    if (T == DeckEntity && property == 'folderId') {
+      final intValues = values.cast<int>();
+      final query = (collection as IsarCollection<DeckEntity>).where();
+
+      if (intValues.length == 1) {
+        return await query.filter().folderIdEqualTo(intValues.first).findAll()
+            as List<T>;
+      }
+
+      // Build OR condition by combining multiple queries
+      final results = <DeckEntity>[];
+      for (final value in intValues) {
+        final deckResults = await query
+            .filter()
+            .folderIdEqualTo(value)
+            .findAll();
+        results.addAll(deckResults);
+      }
+      return results as List<T>;
+    } else if (T == FlashCardEntity && property == 'deckId') {
+      final intValues = values.cast<int>();
+      final query = (collection as IsarCollection<FlashCardEntity>).where();
+
+      if (intValues.length == 1) {
+        return await query.filter().deckIdEqualTo(intValues.first).findAll()
+            as List<T>;
+      }
+
+      // Build OR condition by combining multiple queries
+      final results = <FlashCardEntity>[];
+      for (final value in intValues) {
+        final cardResults = await query.filter().deckIdEqualTo(value).findAll();
+        results.addAll(cardResults);
+      }
+      return results as List<T>;
+    }
+    throw ArgumentError(
+      'Unsupported filter: $property for type $T with multiple values',
+    );
+  }
+
   Stream<List<T>> watchByProperty<T, V>(String property, V value) {
     final collection = _getCollection<T>();
     // This is a simplified implementation

@@ -2,7 +2,7 @@ import 'package:bookexample/domain/repositories/library_repository.dart';
 import 'package:bookexample/domain/repositories/stats_repository.dart';
 import 'package:bookexample/domain/repositories/study_session_repository.dart';
 import 'package:bookexample/pages/session/models/study_session_draft.dart';
-import 'package:bookexample/view_models/stats_view_model.dart';
+
 import 'package:bookexample/view_models/base_view_model.dart';
 
 class StudySessionViewModel extends BaseViewModel {
@@ -52,7 +52,7 @@ class StudySessionViewModel extends BaseViewModel {
         _session!.correctCount,
         DateTime.now(),
       );
-      
+
       // Сохранить карточки как выученные
       final answers = _session!.answers;
       if (answers.isNotEmpty) {

@@ -15,11 +15,11 @@ abstract class BaseRepository {
       return await operation();
     } on AppException catch (e) {
       rethrow;
-    } catch (e, stackTrace) {
-      AppLogger.error('Failed to $operationName', e, stackTrace);
+    } catch (error, stackTrace) {
+      AppLogger.error('Failed to $operationName', error, stackTrace);
       throw DatabaseException(
         'Failed to $operationName',
-        originalError: e,
+        originalError: error,
         stackTrace: stackTrace,
       );
     }

@@ -27,28 +27,23 @@ class IsarLibraryRepositoryImpl extends BaseRepository
 
   @override
   Future<List<DeckEntity>> getAllDecksById(int folderId) async {
-    return await _isarDataSource.filterByProperty<DeckEntity, int>(
-      'folderId',
-      folderId,
-    );
+    return await executeDbOperation(() async {
+      return await _isarDataSource.filterByProperty<DeckEntity, int>(
+        'folderId',
+        folderId,
+      );
+    }, 'getAllDecksById');
   }
 
   @override
   Future<FolderEntity> getFolderById(int id) async {
-    try {
+    return await executeDbOperation(() async {
       final folder = await dataSource.get<FolderEntity>(id);
       if (folder == null) {
         throw FolderNotFoundException(id);
       }
       return folder;
-    } catch (e, stackTrace) {
-      if (e is AppException) rethrow;
-      throw DatabaseException(
-        'Failed to get folder',
-        originalError: e,
-        stackTrace: stackTrace,
-      );
-    }
+    }, 'getFolderById');
   }
 
   @override
@@ -59,7 +54,7 @@ class IsarLibraryRepositoryImpl extends BaseRepository
       throw ValidationException('Invalid folder data', validation.errors);
     }
 
-    try {
+    return await executeDbOperation(() async {
       final folder = FolderEntity()
         ..name = name.trim()
         ..createdAt = DateTime.now();
@@ -67,14 +62,7 @@ class IsarLibraryRepositoryImpl extends BaseRepository
       await dataSource.executeTransaction(() async {
         await dataSource.insert<FolderEntity>(folder);
       });
-    } catch (e, stackTrace) {
-      if (e is AppException) rethrow;
-      throw DatabaseException(
-        'Failed to create folder',
-        originalError: e,
-        stackTrace: stackTrace,
-      );
-    }
+    }, 'addFolder');
   }
 
   @override
@@ -85,7 +73,7 @@ class IsarLibraryRepositoryImpl extends BaseRepository
       throw ValidationException('Invalid folder name', validation.errors);
     }
 
-    try {
+    return await executeDbOperation(() async {
       await dataSource.executeTransaction(() async {
         final folder = await dataSource.get<FolderEntity>(folderId);
         if (folder == null) {
@@ -94,19 +82,12 @@ class IsarLibraryRepositoryImpl extends BaseRepository
         folder.name = newName.trim();
         await dataSource.update<FolderEntity>(folder);
       });
-    } catch (e, stackTrace) {
-      if (e is AppException) rethrow;
-      throw DatabaseException(
-        'Failed to rename folder',
-        originalError: e,
-        stackTrace: stackTrace,
-      );
-    }
+    }, 'renameFolder');
   }
 
   @override
   Future<void> deleteFolder(int folderId) async {
-    try {
+    return await executeDbOperation(() async {
       await dataSource.executeTransaction(() async {
         // Verify folder exists
         final folder = await dataSource.get<FolderEntity>(folderId);
@@ -114,22 +95,23 @@ class IsarLibraryRepositoryImpl extends BaseRepository
           throw FolderNotFoundException(folderId);
         }
 
-        // Get all deck IDs for this folder
-        final deckIds = await _isarDataSource
-            .filterByProperty<DeckEntity, int>('folderId', folderId)
-            .then((decks) => decks.map((deck) => deck.id).toList());
+        // Get all decks in this folder in one query
+        final decks = await _isarDataSource.filterByProperty<DeckEntity, int>(
+          'folderId',
+          folderId,
+        );
 
-        if (deckIds.isNotEmpty) {
-          // Get all card IDs for these decks
-          final cardIds = <int>[];
-          for (final deckId in deckIds) {
-            final cards = await _isarDataSource
-                .filterByProperty<FlashCardEntity, int>('deckId', deckId);
-            cardIds.addAll(cards.map((card) => card.id));
-          }
+        if (decks.isNotEmpty) {
+          // Get all deck IDs
+          final deckIds = decks.map((deck) => deck.id).toList();
+
+          // Get all cards for all decks using filterByPropertyIn
+          final cards = await _isarDataSource
+              .filterByPropertyIn<FlashCardEntity, int>('deckId', deckIds);
 
           // Batch delete all cards
-          if (cardIds.isNotEmpty) {
+          if (cards.isNotEmpty) {
+            final cardIds = cards.map((card) => card.id).toList();
             await dataSource.deleteAll<FlashCardEntity>(cardIds);
           }
 
@@ -140,14 +122,7 @@ class IsarLibraryRepositoryImpl extends BaseRepository
         // Delete folder
         await dataSource.delete<FolderEntity>(folderId);
       });
-    } catch (e, stackTrace) {
-      if (e is AppException) rethrow;
-      throw DatabaseException(
-        'Failed to delete folder',
-        originalError: e,
-        stackTrace: stackTrace,
-      );
-    }
+    }, 'deleteFolder');
   }
 
   @override
@@ -178,7 +153,7 @@ class IsarLibraryRepositoryImpl extends BaseRepository
 
   @override
   Future<DeckEntity> getDeckById(int deckId) async {
-    try {
+    return await executeDbOperation(() async {
       final deck = await dataSource.get<DeckEntity>(deckId);
       if (deck == null) {
         throw DeckNotFoundException(deckId);
@@ -186,14 +161,7 @@ class IsarLibraryRepositoryImpl extends BaseRepository
       // Load cards through DataSource
       await _isarDataSource.loadLinks(deck);
       return deck;
-    } catch (e, stackTrace) {
-      if (e is AppException) rethrow;
-      throw DatabaseException(
-        'Failed to get deck',
-        originalError: e,
-        stackTrace: stackTrace,
-      );
-    }
+    }, 'getDeckById');
   }
 
   @override
@@ -208,7 +176,7 @@ class IsarLibraryRepositoryImpl extends BaseRepository
       throw ValidationException('Invalid deck data', validation.errors);
     }
 
-    try {
+    return await executeDbOperation(() async {
       await dataSource.executeTransaction(() async {
         // Verify parent folder exists
         final folder = await dataSource.get<FolderEntity>(folderId);
@@ -241,19 +209,12 @@ class IsarLibraryRepositoryImpl extends BaseRepository
         deck.cards.addAll(cardEntities);
         await _isarDataSource.saveLinks(deck);
       });
-    } catch (e, stackTrace) {
-      if (e is AppException) rethrow;
-      throw DatabaseException(
-        'Failed to create deck',
-        originalError: e,
-        stackTrace: stackTrace,
-      );
-    }
+    }, 'createDeckWithCard');
   }
 
   @override
   Future<void> deleteDeck(int deckId) async {
-    try {
+    return await executeDbOperation(() async {
       await dataSource.executeTransaction(() async {
         // Verify deck exists
         final deck = await dataSource.get<DeckEntity>(deckId);
@@ -261,9 +222,9 @@ class IsarLibraryRepositoryImpl extends BaseRepository
           throw DeckNotFoundException(deckId);
         }
 
-        // Get all card IDs for this deck
+        // Get all card IDs for this deck using filterByPropertyIn for consistency
         final cards = await _isarDataSource
-            .filterByProperty<FlashCardEntity, int>('deckId', deckId);
+            .filterByPropertyIn<FlashCardEntity, int>('deckId', [deckId]);
         final cardIds = cards.map((card) => card.id).toList();
 
         // Batch delete all cards
@@ -274,14 +235,7 @@ class IsarLibraryRepositoryImpl extends BaseRepository
         // Delete the deck
         await dataSource.delete<DeckEntity>(deckId);
       });
-    } catch (e, stackTrace) {
-      if (e is AppException) rethrow;
-      throw DatabaseException(
-        'Failed to delete deck',
-        originalError: e,
-        stackTrace: stackTrace,
-      );
-    }
+    }, 'deleteDeck');
   }
 
   @override
@@ -296,7 +250,7 @@ class IsarLibraryRepositoryImpl extends BaseRepository
       throw ValidationException('Invalid deck data', validation.errors);
     }
 
-    try {
+    return await executeDbOperation(() async {
       await dataSource.executeTransaction(() async {
         final deck = await dataSource.get<DeckEntity>(deckId);
         if (deck == null) {
@@ -307,9 +261,9 @@ class IsarLibraryRepositoryImpl extends BaseRepository
         deck.title = title.trim();
         await dataSource.update<DeckEntity>(deck);
 
-        // Get old card IDs
+        // Get old card IDs using filterByPropertyIn for consistency
         final oldCards = await _isarDataSource
-            .filterByProperty<FlashCardEntity, int>('deckId', deckId);
+            .filterByPropertyIn<FlashCardEntity, int>('deckId', [deckId]);
         final oldCardIds = oldCards.map((card) => card.id).toList();
 
         // Batch delete old cards
@@ -332,36 +286,33 @@ class IsarLibraryRepositoryImpl extends BaseRepository
         deck.cards.addAll(cardEntities);
         await _isarDataSource.saveLinks(deck);
       });
-    } catch (e, stackTrace) {
-      if (e is AppException) rethrow;
-      throw DatabaseException(
-        'Failed to update deck',
-        originalError: e,
-        stackTrace: stackTrace,
-      );
-    }
+    }, 'updateDeckWithCards');
   }
 
   @override
   Future<List<FlashCardEntity>> getCardsByDeck(int deckId) async {
-    return await _isarDataSource.filterByProperty<FlashCardEntity, int>(
-      'deckId',
-      deckId,
-    );
+    return await executeDbOperation(() async {
+      return await _isarDataSource.filterByProperty<FlashCardEntity, int>(
+        'deckId',
+        deckId,
+      );
+    }, 'getCardsByDeck');
   }
 
   @override
   Future<void> setCardsLearned(List<AnswerDraft> answeredCards) async {
-    await dataSource.executeTransaction(() async {
-      for (var card in answeredCards) {
-        final cardEntityFromDB = await dataSource.get<FlashCardEntity>(
-          card.cardId,
-        );
-        if (cardEntityFromDB != null) {
-          cardEntityFromDB.isLearned = card.isCorrect;
-          await dataSource.update<FlashCardEntity>(cardEntityFromDB);
+    return await executeDbOperation(() async {
+      await dataSource.executeTransaction(() async {
+        for (var card in answeredCards) {
+          final cardEntityFromDB = await dataSource.get<FlashCardEntity>(
+            card.cardId,
+          );
+          if (cardEntityFromDB != null) {
+            cardEntityFromDB.isLearned = card.isCorrect;
+            await dataSource.update<FlashCardEntity>(cardEntityFromDB);
+          }
         }
-      }
-    });
+      });
+    }, 'setCardsLearned');
   }
 }
