@@ -2,25 +2,32 @@
 
 ID: TASK-001
 
-Feature: Study Session
+## Context
 
-Description:
+Currently the UI listens directly to database streams using `StreamBuilder`.
 
-Load cards from a deck to start a study session.
+Example flow:
 
-Requirements:
+Isar Stream → UI (StreamBuilder) → Render
 
-- cards must be loaded from FlashCardEntity
-- only cards belonging to selected deck
-- cards must be shuffled
+This violates the intended architecture, where the UI should only observe the ViewModel.
 
-Files involved:
+The ViewModel (`LibraryViewModel`) already exposes methods:
 
-- study_session_view_model.dart
-- library_repository.dart
+- watchFolders()
+- watchDecksByFolder(int folderId)
 
-Output:
+But currently the UI is responsible for handling the streams.
 
-A method:
+## Goal
 
-loadCardsForSession(int deckId)
+Move all database stream subscriptions into `LibraryViewModel`.
+
+The ViewModel should listen to repository streams, update its internal state, and notify the UI using `notifyListeners()`.
+
+After the change, the UI must only read lists from the ViewModel.
+
+New flow:
+
+Isar Stream → ViewModel → notifyListeners() → UI
+

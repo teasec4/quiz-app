@@ -24,7 +24,3 @@ Instructions:
 - follow Clean Architecture
 - do not refactor code outside the scope
 
-Output:
-
-1. explanation of implementation
-2. code changes

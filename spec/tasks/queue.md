@@ -2,5 +2,5 @@
 
 ## Study Session Feature
 
-- TASK-001 implement StudySessionDraft model
+- TASK-001 Reactive UI Updates in LibraryViewModel
 
