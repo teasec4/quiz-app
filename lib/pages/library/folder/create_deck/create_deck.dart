@@ -198,9 +198,10 @@ class _CreateDeckState extends State<CreateDeck> {
               error: vm.error!,
               onRetry: () => _showSaveConfirmation(),
             );
-          } else {
+          } else if (vm.isSuccess) {
             context.showOperationSuccessSnackBar(operation: 'Deck saved');
             context.pop();
+            vm.resetSuccess();
           }
         }
       } else {
@@ -213,9 +214,10 @@ class _CreateDeckState extends State<CreateDeck> {
               error: vm.error!,
               onRetry: () => _showSaveConfirmation(),
             );
-          } else {
+          } else if (vm.isSuccess) {
             context.showOperationSuccessSnackBar(operation: 'Deck updated');
             context.pop();
+            vm.resetSuccess();
           }
         }
       }
@@ -264,6 +266,7 @@ class _CreateDeckState extends State<CreateDeck> {
         cards.removeAt(index);
         _hasChanges = true;
       });
+      // Card deletion is a local operation, not using ViewModel
       context.showOperationSuccessSnackBar(operation: 'Card deleted');
     }
   }

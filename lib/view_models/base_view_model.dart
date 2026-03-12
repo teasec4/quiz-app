@@ -31,6 +31,7 @@ abstract class BaseViewModel extends ChangeNotifier {
   ErrorState? get error => _error;
   bool get isLoading => _state == ViewState.loading;
   bool get hasError => _state == ViewState.error;
+  bool get isSuccess => _state == ViewState.success;
 
   @protected
   void setState(ViewState newState) {
@@ -57,6 +58,17 @@ abstract class BaseViewModel extends ChangeNotifier {
     }
   }
 
+  /// Resets the state from success to idle.
+  ///
+  /// Call this method from UI after handling a successful operation
+  /// (e.g., after showing a success message or navigating).
+  void resetSuccess() {
+    if (_state == ViewState.success) {
+      _state = ViewState.idle;
+      notifyListeners();
+    }
+  }
+
   @protected
   Future<T> executeAsync<T>(
     Future<T> Function() operation, {
@@ -65,6 +77,10 @@ abstract class BaseViewModel extends ChangeNotifier {
     try {
       setState(ViewState.loading);
       clearError();
+      // Reset success state when starting a new operation
+      if (_state == ViewState.success) {
+        _state = ViewState.idle;
+      }
 
       if (operationName != null) {
         AppLogger.info('Starting operation: $operationName');
@@ -72,7 +88,7 @@ abstract class BaseViewModel extends ChangeNotifier {
 
       final result = await operation();
 
-      setState(ViewState.idle);
+      setState(ViewState.success);
 
       if (operationName != null) {
         AppLogger.info('Completed operation: $operationName');
