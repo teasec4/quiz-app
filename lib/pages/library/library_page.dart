@@ -17,13 +17,13 @@ class LibraryPage extends StatefulWidget {
 }
 
 class _LibraryPageState extends State<LibraryPage> {
-  late final Stream<List<FolderEntity>> _foldersStream;
-
+  late Stream<List<FolderEntity>> _foldersStream;
+  late final LibraryViewModel _vm;
   @override
   void initState() {
     super.initState();
-    final vm = context.read<LibraryViewModel>();
-    _foldersStream = vm.watchFolders();
+    _vm = context.read<LibraryViewModel>();
+    _foldersStream = _vm.watchFolders();
   }
 
   // creating folder bottom sheet
@@ -50,10 +50,11 @@ class _LibraryPageState extends State<LibraryPage> {
           error: vm.error!,
           onRetry: () => _showCreateFolder(context),
         );
-      } else {
+      } else if (vm.isSuccess) {
         context.showOperationSuccessSnackBar(
           operation: 'Folder "$newFolderName" created',
         );
+        vm.resetSuccess();
       }
     }
   }
@@ -86,10 +87,11 @@ class _LibraryPageState extends State<LibraryPage> {
           error: vm.error!,
           onRetry: () => _showRenameFolder(context, folderId, oldName),
         );
-      } else {
+      } else if (vm.isSuccess) {
         context.showOperationSuccessSnackBar(
           operation: 'Folder "$oldName" renamed to "$newFolderName"',
         );
+        vm.resetSuccess();
       }
     }
   }
@@ -126,10 +128,11 @@ class _LibraryPageState extends State<LibraryPage> {
                     onRetry: () =>
                         _showDeleteConfirmation(context, folderId, folderName),
                   );
-                } else {
+                } else if (vm.isSuccess) {
                   context.showOperationSuccessSnackBar(
                     operation: 'Folder "$folderName" deleted',
                   );
+                  vm.resetSuccess();
                 }
               }
             },
@@ -145,12 +148,10 @@ class _LibraryPageState extends State<LibraryPage> {
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<LibraryViewModel>();
-
     return Scaffold(
       appBar: AppBar(title: const Text("Library")),
       floatingActionButton: FloatingActionButton(
-        onPressed: vm.isLoading
+        onPressed: _vm.isLoading
             ? null
             : () {
                 _showCreateFolder(context);
@@ -214,7 +215,7 @@ class _LibraryPageState extends State<LibraryPage> {
                     );
             },
           ),
-          if (vm.isLoading) LoadingOverlayWidget.scrim(opacity: 0.3),
+          if (_vm.isLoading) LoadingOverlayWidget.scrim(opacity: 0.3),
         ],
       ),
     );

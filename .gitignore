@@ -9,6 +9,17 @@
 !lib/
 !lib/**
 
+# =========================
+# Spec for Agent work flow
+!spec/
+!spec/**
+# =========================
+#
+# =========================
+# Agents 
+!agents
+!agents/**
+
 
 # =========================
 # Allow dependency config

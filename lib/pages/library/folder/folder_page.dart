@@ -20,24 +20,14 @@ class FolderPage extends StatefulWidget {
 class _FolderPageState extends State<FolderPage> {
   late Future _folderFuture;
   late final Stream<List<DeckEntity>> _decksStream;
-
+  late final LibraryViewModel _vm;
+  
   @override
   void initState() {
     super.initState();
-    final vm = context.read<LibraryViewModel>();
-    _folderFuture = vm.getFolderById(widget.folderId);
-    _decksStream = vm.watchDecksByFolder(widget.folderId);
-  }
-
-  @override
-  void didUpdateWidget(covariant FolderPage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (widget.folderId != oldWidget.folderId) {
-      final vm = context.read<LibraryViewModel>();
-      _folderFuture = vm.getFolderById(widget.folderId);
-      _decksStream = vm.watchDecksByFolder(widget.folderId);
-    }
+    _vm = context.read<LibraryViewModel>();
+    _folderFuture = _vm.getFolderById(widget.folderId);
+    _decksStream = _vm.watchDecksByFolder(widget.folderId);
   }
 
   // edit deck
@@ -63,23 +53,24 @@ class _FolderPageState extends State<FolderPage> {
           ),
           TextButton(
             onPressed: () async {
-              final vm = context.read<LibraryViewModel>();
-              await vm.deleteDeck(deckId);
+              
+              await _vm.deleteDeck(deckId);
 
               if (context.mounted) {
                 Navigator.pop(context);
 
-                if (vm.hasError && vm.error != null) {
+                if (_vm.hasError && _vm.error != null) {
                   context.showOperationErrorSnackBar(
                     operation: 'deleting deck',
-                    error: vm.error!,
+                    error: _vm.error!,
                     onRetry: () =>
                         _showDeleteConfirmation(context, deckId, deckTitle),
                   );
-                } else {
+                } else if (_vm.isSuccess) {
                   context.showOperationSuccessSnackBar(
                     operation: 'Deck "$deckTitle" deleted',
                   );
+                  _vm.resetSuccess();
                 }
               }
             },
@@ -95,7 +86,7 @@ class _FolderPageState extends State<FolderPage> {
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<LibraryViewModel>();
+    
     return FutureBuilder(
       future: _folderFuture,
       builder: (context, asyncSnapshot) {
@@ -104,7 +95,7 @@ class _FolderPageState extends State<FolderPage> {
         return Scaffold(
           appBar: AppBar(title: Text(folderTitle ?? "Loading")),
           floatingActionButton: FloatingActionButton(
-            onPressed: vm.isLoading
+            onPressed: _vm.isLoading
                 ? null
                 : () {
                     context.go('/library/folder/${widget.folderId}/createdeck');
@@ -120,7 +111,7 @@ class _FolderPageState extends State<FolderPage> {
                 builder: (context, asyncSnapshot) {
                   final decks = asyncSnapshot.data ?? [];
                   return decks.isEmpty
-                      ? _buildEmptyState()
+                      ? EmptyStateWidget.decks()
                       : Column(
                           children: [
                             Align(
@@ -178,15 +169,15 @@ class _FolderPageState extends State<FolderPage> {
                         );
                 },
               ),
-              if (vm.isLoading) LoadingOverlayWidget.scrim(opacity: 0.3),
-              if (vm.hasError && vm.error != null)
+              if (_vm.isLoading) LoadingOverlayWidget.scrim(opacity: 0.3),
+              if (_vm.hasError && _vm.error != null)
                 Positioned(
                   top: 0,
                   left: 0,
                   right: 0,
                   child: ErrorBannerWidget.fromError(
-                    error: vm.error!,
-                    onClose: vm.clearError,
+                    error: _vm.error!,
+                    onClose: _vm.clearError,
                     onTap: () {
                       // Retry loading folder
                       setState(() {});
@@ -200,7 +191,4 @@ class _FolderPageState extends State<FolderPage> {
     );
   }
 
-  Widget _buildEmptyState() {
-    return EmptyStateWidget.decks();
-  }
 }

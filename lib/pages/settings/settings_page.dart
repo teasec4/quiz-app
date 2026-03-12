@@ -33,7 +33,6 @@ class _SettingsPageState extends State<SettingsPage> {
 
             // Language Section
             _buildLanguageSection(context, localeViewModel, l10n),
-            
           ],
         ),
       ),
@@ -51,18 +50,10 @@ class _SettingsPageState extends State<SettingsPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Section Header
-        Padding(
-          padding: const EdgeInsets.only(left: 8, bottom: 12),
-          child: Row(
-            children: [
-              
-              Text(
-                l10n?.themeSettings ?? 'Theme Settings',
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
+        Text(
+          l10n?.themeSettings ?? 'Theme Settings',
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w600,
           ),
         ),
 
@@ -103,7 +94,6 @@ class _SettingsPageState extends State<SettingsPage> {
 
     return Row(
       children: [
-        
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -145,7 +135,6 @@ class _SettingsPageState extends State<SettingsPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        
         Wrap(
           spacing: 16,
           runSpacing: 16,
@@ -162,6 +151,7 @@ class _SettingsPageState extends State<SettingsPage> {
     AppThemeVariant variant,
     ThemeViewModel themeViewModel,
   ) {
+    // Theme is used implicitly by Theme.of(context) in child widgets
     final theme = Theme.of(context);
     final isSelected = themeViewModel.isSelected(variant);
     final preview = themeViewModel.getThemePreview(variant);
@@ -228,7 +218,6 @@ class _SettingsPageState extends State<SettingsPage> {
                     : SizedBox.shrink(key: UniqueKey()),
               ),
             ),
-            
           ],
         ),
       ),
@@ -246,18 +235,10 @@ class _SettingsPageState extends State<SettingsPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Section Header
-        Padding(
-          padding: const EdgeInsets.only(left: 8, bottom: 12),
-          child: Row(
-            children: [
-              
-              Text(
-                l10n?.languageSettings ?? 'Language Settings',
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
+        Text(
+          l10n?.languageSettings ?? 'Language Settings',
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w600,
           ),
         ),
 
@@ -307,7 +288,6 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             child: Row(
               children: [
-                
                 // Language Info
                 Expanded(
                   child: Column(
@@ -357,24 +337,6 @@ class _SettingsPageState extends State<SettingsPage> {
         // if (locale != localeViewModel.supportedLocales.last)
         // Divider(color: theme.colorScheme.outlineVariant, height: 1),
       ],
-    );
-  }
-
-  void _showSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: const Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        action: SnackBarAction(
-          label: 'OK',
-          textColor: Theme.of(context).colorScheme.primary,
-          onPressed: () {
-            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-          },
-        ),
-      ),
     );
   }
 }
