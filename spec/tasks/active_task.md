@@ -1,14 +1,14 @@
 # Active Task
 
-ID: (No active task)
+ID: TASK-003
 
-## Status
-All tasks completed. Check the queue for next tasks.
-
-## Next Steps
-1. Review completed tasks in `spec/tasks/completed/`
-2. Check `spec/tasks/queue.md` for next tasks to work on
-3. Create a new active task when ready to begin next implementation
-
-## Recently Completed
-- TASK-001: Reactive UI Updates in LibraryViewModel (Moved database stream subscriptions into ViewModel)
+Implement Spacing System
+**Priority**: Critical  
+**Complexity**: 3 SP  
+**Dependencies**: None  
+**Status**: Not Started  
+**Description**: Create unified spacing system based on 8px increments
+- Create `lib/core/theme/spacing.dart` with `AppSpacing` class
+- Define spacing constants: xs(4), sm(8), md(16), lg(24), xl(32), xxl(48)
+- Create standard padding configurations: screenPadding, cardPadding, listItemPadding
+- Update initial screens to use new spacing system

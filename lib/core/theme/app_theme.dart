@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppColors {
   // Success / Green (Emerald-600 palette - matches modern design)
@@ -10,10 +11,12 @@ class AppColors {
 
 class AppTheme {
   static ThemeData lightTheme(ColorScheme scheme) {
+    final textTheme = GoogleFonts.interTextTheme();
+
     return ThemeData(
       useMaterial3: true,
       colorScheme: scheme,
-
+      textTheme: textTheme,
       scaffoldBackgroundColor: scheme.surface,
 
       cardColor: scheme.surfaceContainerHighest,
@@ -22,6 +25,9 @@ class AppTheme {
         backgroundColor: scheme.primaryContainer,
         foregroundColor: scheme.onPrimaryContainer,
         centerTitle: true,
+        titleTextStyle: textTheme.titleLarge?.copyWith(
+          fontWeight: FontWeight.w600,
+        ),
       ),
 
       floatingActionButtonTheme: FloatingActionButtonThemeData(
@@ -57,13 +63,18 @@ class AppTheme {
 
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return const TextStyle(
+            return TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: 13,
               letterSpacing: 0.3,
+              fontFamily: GoogleFonts.inter().fontFamily,
             );
           }
-          return const TextStyle(fontWeight: FontWeight.w400, fontSize: 12);
+          return TextStyle(
+            fontWeight: FontWeight.w400,
+            fontSize: 12,
+            fontFamily: GoogleFonts.inter().fontFamily,
+          );
         }),
 
         iconTheme: WidgetStateProperty.resolveWith((states) {
@@ -84,10 +95,13 @@ class AppTheme {
   }
 
   static ThemeData darkTheme(ColorScheme scheme) {
+    final textTheme = GoogleFonts.interTextTheme(ThemeData.dark().textTheme);
+
     return ThemeData(
       useMaterial3: true,
       colorScheme: scheme,
       brightness: Brightness.dark,
+      textTheme: textTheme,
 
       scaffoldBackgroundColor: scheme.surface,
 
@@ -97,6 +111,9 @@ class AppTheme {
         backgroundColor: scheme.surface,
         foregroundColor: scheme.onSurface,
         centerTitle: true,
+        titleTextStyle: textTheme.titleLarge?.copyWith(
+          fontWeight: FontWeight.w600,
+        ),
       ),
 
       floatingActionButtonTheme: FloatingActionButtonThemeData(
@@ -139,12 +156,14 @@ class AppTheme {
               fontSize: 13,
               letterSpacing: 0.3,
               color: scheme.onSecondaryContainer,
+              fontFamily: GoogleFonts.inter().fontFamily,
             );
           }
           return TextStyle(
             fontWeight: FontWeight.w400,
             fontSize: 12,
             color: scheme.onSurfaceVariant,
+            fontFamily: GoogleFonts.inter().fontFamily,
           );
         }),
 
