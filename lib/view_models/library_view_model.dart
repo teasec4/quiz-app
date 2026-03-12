@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bookexample/domain/isar_model/library/deck_entity.dart';
 import 'package:bookexample/domain/isar_model/library/flashcard_entity.dart';
 import 'package:bookexample/domain/isar_model/library/folder_entity.dart';
@@ -7,14 +9,81 @@ import 'package:bookexample/view_models/base_view_model.dart';
 
 class LibraryViewModel extends BaseViewModel {
   final LibraryRepository repository;
-  LibraryViewModel(this.repository);
 
-  Stream<List<FolderEntity>> watchFolders() {
-    return repository.watchFolders();
+  // Internal state for folders and decks
+  List<FolderEntity> _folders = [];
+  Map<int, List<DeckEntity>> _decksByFolder = {};
+
+  // Stream subscriptions
+  StreamSubscription<List<FolderEntity>>? _foldersSubscription;
+  final Map<int, StreamSubscription<List<DeckEntity>>> _deckSubscriptions = {};
+
+  LibraryViewModel(this.repository) {
+    _initializeStreams();
   }
 
-  Stream<List<DeckEntity>> watchDecksByFolder(int folderId) {
-    return repository.watchDecksByFolder(folderId);
+  // Getters for UI
+  List<FolderEntity> get folders => _folders;
+
+  List<DeckEntity> getDecksForFolder(int folderId) {
+    return _decksByFolder[folderId] ?? [];
+  }
+
+  // Initialize stream subscriptions
+  void _initializeStreams() {
+    // Subscribe to folders stream
+    _foldersSubscription = repository.watchFolders().listen(
+      (folders) {
+        _folders = folders;
+        notifyListeners();
+      },
+      onError: (error) {
+        setError('Failed to load folders: $error');
+      },
+    );
+  }
+
+  // Subscribe to decks for a specific folder
+  void _subscribeToDecksForFolder(int folderId) {
+    if (_deckSubscriptions.containsKey(folderId)) {
+      return; // Already subscribed
+    }
+
+    final subscription = repository
+        .watchDecksByFolder(folderId)
+        .listen(
+          (decks) {
+            _decksByFolder[folderId] = decks;
+            notifyListeners();
+          },
+          onError: (error) {
+            setError('Failed to load decks for folder $folderId: $error');
+          },
+        );
+
+    _deckSubscriptions[folderId] = subscription;
+  }
+
+  // Unsubscribe from decks for a specific folder
+  void _unsubscribeFromDecksForFolder(int folderId) {
+    final subscription = _deckSubscriptions.remove(folderId);
+    subscription?.cancel();
+  }
+
+  // Ensure decks for a folder are being watched
+  void ensureDecksWatched(int folderId) {
+    _subscribeToDecksForFolder(folderId);
+  }
+
+  // Clean up all subscriptions
+  @override
+  void dispose() {
+    _foldersSubscription?.cancel();
+    for (final subscription in _deckSubscriptions.values) {
+      subscription.cancel();
+    }
+    _deckSubscriptions.clear();
+    super.dispose();
   }
 
   Future<List<FolderEntity>> getAllFolder() async {
@@ -53,10 +122,16 @@ class LibraryViewModel extends BaseViewModel {
   }
 
   Future<void> deleteFolder(int folderId) async {
-    await executeAsync(
-      () => repository.deleteFolder(folderId),
-      operationName: 'Delete folder: $folderId',
-    );
+    
+      await executeAsync(
+        () => repository.deleteFolder(folderId),
+        operationName: 'Delete folder: $folderId',
+      );
+      // Clean up deck subscriptions for the deleted folder
+      // Only do this if the delete succeeded
+      _unsubscribeFromDecksForFolder(folderId);
+      _decksByFolder.remove(folderId);
+    
   }
 
   Future<void> renameFolder(int folderId, String newName) async {

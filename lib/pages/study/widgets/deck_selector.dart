@@ -1,9 +1,6 @@
-import 'package:bookexample/domain/isar_model/library/deck_entity.dart';
-import 'package:bookexample/domain/isar_model/library/folder_entity.dart';
 import 'package:bookexample/view_models/library_view_model.dart';
 import 'package:bookexample/core/widgets/empty_state_widget.dart';
 import 'package:flutter/material.dart';
-
 import 'package:provider/provider.dart';
 
 class DeckSelector extends StatefulWidget {
@@ -95,13 +92,9 @@ class _DeckSelectorState extends State<DeckSelector> {
   }
 
   Widget _buildFolderList() {
-    return StreamBuilder<List<FolderEntity>>(
-      stream: context.read<LibraryViewModel>().watchFolders(),
-      builder: (context, asyncSnapshot) {
-        final folders = asyncSnapshot.data;
-        if (folders == null) {
-          return Center(child: CircularProgressIndicator());
-        }
+    return Consumer<LibraryViewModel>(
+      builder: (context, viewModel, child) {
+        final folders = viewModel.folders;
         if (folders.isEmpty) {
           return _buildEmptyStateFolder();
         }
@@ -127,6 +120,7 @@ class _DeckSelectorState extends State<DeckSelector> {
                 onTap: () {
                   setState(() {
                     selectedFolderId = folder.id;
+                    viewModel.ensureDecksWatched(folder.id);
                   });
                 },
               ),
@@ -138,13 +132,9 @@ class _DeckSelectorState extends State<DeckSelector> {
   }
 
   Widget _buildDeckList(int folderId) {
-    return StreamBuilder<List<DeckEntity>>(
-      stream: context.read<LibraryViewModel>().watchDecksByFolder(folderId),
-      builder: (context, asyncSnapshot) {
-        final decks = asyncSnapshot.data;
-        if (decks == null) {
-          return Center(child: CircularProgressIndicator());
-        }
+    return Consumer<LibraryViewModel>(
+      builder: (context, viewModel, child) {
+        final decks = viewModel.getDecksForFolder(folderId);
         if (decks.isEmpty) {
           return _buildEmptyStateDeck();
         }
