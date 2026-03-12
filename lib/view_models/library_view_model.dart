@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:bookexample/domain/isar_model/library/deck_entity.dart';
 import 'package:bookexample/domain/isar_model/library/flashcard_entity.dart';
 import 'package:bookexample/domain/isar_model/library/folder_entity.dart';
@@ -17,6 +18,7 @@ class LibraryViewModel extends BaseViewModel {
   // Stream subscriptions
   StreamSubscription<List<FolderEntity>>? _foldersSubscription;
   final Map<int, StreamSubscription<List<DeckEntity>>> _deckSubscriptions = {};
+  StreamSubscription<List<FlashCardEntity>>? _flashcardsSubscription;
 
   LibraryViewModel(this.repository) {
     _initializeStreams();
@@ -29,6 +31,10 @@ class LibraryViewModel extends BaseViewModel {
     return _decksByFolder[folderId] ?? [];
   }
 
+  FolderEntity? getFolderByIdSync(int folderId) {
+    return _folders.firstWhereOrNull((folder) => folder.id == folderId);
+  }
+
   // Initialize stream subscriptions
   void _initializeStreams() {
     // Subscribe to folders stream
@@ -39,6 +45,17 @@ class LibraryViewModel extends BaseViewModel {
       },
       onError: (error) {
         setError('Failed to load folders: $error');
+      },
+    );
+
+    // Subscribe to flashcards stream to detect changes in card status
+    _flashcardsSubscription = repository.watchAllFlashcards().listen(
+      (_) {
+        // When flashcards change, refresh all deck data
+        _refreshAllDecksData();
+      },
+      onError: (error) {
+        setError('Failed to watch flashcards: $error');
       },
     );
   }
@@ -83,6 +100,7 @@ class LibraryViewModel extends BaseViewModel {
       subscription.cancel();
     }
     _deckSubscriptions.clear();
+    _flashcardsSubscription?.cancel();
     super.dispose();
   }
 
@@ -122,16 +140,14 @@ class LibraryViewModel extends BaseViewModel {
   }
 
   Future<void> deleteFolder(int folderId) async {
-    
-      await executeAsync(
-        () => repository.deleteFolder(folderId),
-        operationName: 'Delete folder: $folderId',
-      );
-      // Clean up deck subscriptions for the deleted folder
-      // Only do this if the delete succeeded
-      _unsubscribeFromDecksForFolder(folderId);
-      _decksByFolder.remove(folderId);
-    
+    await executeAsync(
+      () => repository.deleteFolder(folderId),
+      operationName: 'Delete folder: $folderId',
+    );
+    // Clean up deck subscriptions for the deleted folder
+    // Only do this if the delete succeeded
+    _unsubscribeFromDecksForFolder(folderId);
+    _decksByFolder.remove(folderId);
   }
 
   Future<void> renameFolder(int folderId, String newName) async {
@@ -182,5 +198,23 @@ class LibraryViewModel extends BaseViewModel {
       () => repository.setCardsLearned(answeredCards),
       operationName: 'Set cards learned',
     );
+  }
+
+  /// Refresh all deck data when flashcards change
+  void _refreshAllDecksData() {
+    for (final folderId in _deckSubscriptions.keys) {
+      _forceRefreshFolderDecks(folderId);
+    }
+  }
+
+  /// Force refresh decks for a specific folder
+  Future<void> _forceRefreshFolderDecks(int folderId) async {
+    try {
+      final decks = await repository.getAllDecksById(folderId);
+      _decksByFolder[folderId] = decks;
+      notifyListeners();
+    } catch (error) {
+      setError('Failed to refresh decks for folder $folderId: $error');
+    }
   }
 }

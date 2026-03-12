@@ -1,3 +1,4 @@
+import 'package:bookexample/domain/isar_model/library/deck_entity.dart';
 import 'package:bookexample/view_models/library_view_model.dart';
 import 'package:bookexample/pages/library/folder/widgets/deck_tile.dart';
 import 'package:bookexample/core/widgets/empty_state_widget.dart';
@@ -18,13 +19,10 @@ class FolderPage extends StatefulWidget {
 }
 
 class _FolderPageState extends State<FolderPage> {
-  late Future _folderFuture;
-
   @override
   void initState() {
     super.initState();
     final vm = context.read<LibraryViewModel>();
-    _folderFuture = vm.getFolderById(widget.folderId);
     vm.ensureDecksWatched(widget.folderId);
   }
 
@@ -87,50 +85,49 @@ class _FolderPageState extends State<FolderPage> {
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<LibraryViewModel>();
-    return FutureBuilder(
-      future: _folderFuture,
-      builder: (context, asyncSnapshot) {
-        final folder = asyncSnapshot.data;
-        final folderTitle = folder?.name;
-        return Scaffold(
-          appBar: AppBar(title: Text(folderTitle ?? "Loading")),
-          floatingActionButton: FloatingActionButton(
-            onPressed: vm.isLoading
-                ? null
-                : () {
-                    context.go('/library/folder/${widget.folderId}/createdeck');
-                  },
-            mini: true,
-            child: const Icon(Icons.add),
-          ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-          body: Stack(
-            children: [
-              _buildDecksList(context, vm),
-              if (vm.isLoading) LoadingOverlayWidget.scrim(opacity: 0.3),
-              if (vm.hasError && vm.error != null)
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: ErrorBannerWidget.fromError(
-                    error: vm.error!,
-                    onClose: vm.clearError,
-                    onTap: () {
-                      // Retry loading folder
-                      setState(() {});
-                    },
-                  ),
-                ),
-            ],
-          ),
-        );
-      },
+    final decks = vm.getDecksForFolder(widget.folderId);
+    final folder = vm.getFolderByIdSync(widget.folderId);
+    final folderTitle = folder?.name ?? "Loading";
+
+    return Scaffold(
+      appBar: AppBar(title: Text(folderTitle)),
+      floatingActionButton: FloatingActionButton(
+        onPressed: vm.isLoading
+            ? null
+            : () {
+                context.go('/library/folder/${widget.folderId}/createdeck');
+              },
+        mini: true,
+        child: const Icon(Icons.add),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      body: Stack(
+        children: [
+          _buildDecksList(context, vm, decks),
+          if (vm.isLoading) LoadingOverlayWidget.scrim(opacity: 0.3),
+          if (vm.hasError && vm.error != null)
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: ErrorBannerWidget.fromError(
+                error: vm.error!,
+                onClose: vm.clearError,
+                onTap: () {
+                  // Retry loading folder
+                },
+              ),
+            ),
+        ],
+      ),
     );
   }
 
-  Widget _buildDecksList(BuildContext context, LibraryViewModel vm) {
-    final decks = vm.getDecksForFolder(widget.folderId);
+  Widget _buildDecksList(
+    BuildContext context,
+    LibraryViewModel vm,
+    List<DeckEntity> decks,
+  ) {
     return decks.isEmpty
         ? EmptyStateWidget.decks()
         : Column(
@@ -142,42 +139,55 @@ class _FolderPageState extends State<FolderPage> {
                   child: Text('Decks', style: context.titleLargeBold),
                 ),
               ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 12,
-                          crossAxisSpacing: 12,
-                          childAspectRatio: 1,
-                        ),
-                    itemCount: decks.length,
-                    itemBuilder: (context, index) {
-                      final deck = decks[index];
-                      return DeckTile(
-                        deckName: deck.title,
-                        cardCount: deck.cards.length,
-                        learnedCount: deck.cards
-                            .where((c) => c.isLearned)
-                            .length,
-                        onTap: () {
-                          context.go(
-                            '/library/folder/${widget.folderId}/deck/${deck.id}',
-                          );
-                        },
-                        onEdit: () {
-                          _editDeck(context, deck.id);
-                        },
-                        onDelete: () {
-                          _showDeleteConfirmation(context, deck.id, deck.title);
-                        },
-                      );
-                    },
+              if (decks.isEmpty)
+                Center(
+                  child: EmptyStateWidget(
+                    icon: Icons.menu_book,
+                    title: 'No decks yet',
+                    subtitle: 'Create your first deck to start learning',
+                  ),
+                )
+              else
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 12,
+                            crossAxisSpacing: 12,
+                            childAspectRatio: 1,
+                          ),
+                      itemCount: decks.length,
+                      itemBuilder: (context, index) {
+                        final deck = decks[index];
+                        return DeckTile(
+                          deckName: deck.title,
+                          cardCount: deck.cards.length,
+                          learnedCount: deck.cards
+                              .where((c) => c.isLearned)
+                              .length,
+                          onTap: () {
+                            context.go(
+                              '/library/folder/${widget.folderId}/deck/${deck.id}',
+                            );
+                          },
+                          onEdit: () {
+                            _editDeck(context, deck.id);
+                          },
+                          onDelete: () {
+                            _showDeleteConfirmation(
+                              context,
+                              deck.id,
+                              deck.title,
+                            );
+                          },
+                        );
+                      },
+                    ),
                   ),
                 ),
-              ),
             ],
           );
   }

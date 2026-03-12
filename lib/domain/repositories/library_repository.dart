@@ -18,6 +18,9 @@ abstract class LibraryRepository {
   Stream<List<DeckEntity>> watchDecksByFolder(int folderId);
   Stream<List<DeckEntity>> watchAllDecks();
   Future<List<DeckEntity>> getAllDecksById(int folderId);
+
+  // Stream All FlashCards for UI updates
+  Stream<List<FlashCardEntity>> watchAllFlashcards();
   Future<List<DeckEntity>> getDecksByFolder(int folderId);
   Future<DeckEntity> getDeckById(int deckId);
   Future<void> createDeckWithCard(

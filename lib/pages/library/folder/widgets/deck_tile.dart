@@ -75,18 +75,91 @@ class DeckTile extends StatelessWidget {
                       minHeight: 6,
                       backgroundColor: Theme.of(
                         context,
-                      ).colorScheme.surfaceVariant,
+                      ).colorScheme.surfaceContainerHighest,
                       valueColor: AlwaysStoppedAnimation(
-                        Theme.of(context).colorScheme.primary,
+                        progress < 0.3
+                            ? Theme.of(context).colorScheme.warning
+                            : progress < 0.7
+                            ? Theme.of(context).colorScheme.info
+                            : Theme.of(context).colorScheme.success,
                       ),
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    '$learnedCount/${cardCount}',
-                    style: context.bodySmall.copyWith(
-                      color: Theme.of(context).colorScheme.textSecondary,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '$learnedCount/${cardCount}',
+                        style: context.bodySmall.copyWith(
+                          color: Theme.of(context).colorScheme.textSecondary,
+                        ),
+                      ),
+                      if (progress < 0.3)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.warningContainer,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            'Needs review',
+                            style: context.bodySmall.copyWith(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onWarningContainer,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        )
+                      else if (progress < 0.7)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.infoContainer,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            'In progress',
+                            style: context.bodySmall.copyWith(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onInfoContainer,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        )
+                      else
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.successContainer,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            'Good progress',
+                            style: context.bodySmall.copyWith(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSuccessContainer,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 ],
               ),

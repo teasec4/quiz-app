@@ -513,21 +513,14 @@ class _CreateDeckState extends State<CreateDeck> {
                     labelText: "Deck Title",
                     labelStyle: context.titleMedium,
                     prefixIcon: Icon(
-                      Icons.access_time_outlined,
+                      Icons.title,
                       color: Theme.of(context).colorScheme.primary,
                       size: 28,
                     ),
                     errorText: _deckTitleError
                         ? (_deckTitleErrorMessage ?? 'Deck title is required')
                         : null,
-                    filled: true,
-                    fillColor: Theme.of(
-                      context,
-                    ).colorScheme.surfaceContainerHighest,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 16,
-                    ),
+                    filled: false,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
