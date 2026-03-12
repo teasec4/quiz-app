@@ -1,16 +1,14 @@
 # Study Session Design
 
-Architecture:
-
-UI → ViewModel → Repository → Isar
-
 Entities:
-- StudySession
-- StudySessionAnswer
+
+StudySessionEntity
+StudyAnswerEntity
 
 Flow:
 
 1 start session
 2 load cards
 3 record answers
-4 save session at the end
+4 calculate stats
+5 save session

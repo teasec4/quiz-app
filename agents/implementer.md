@@ -1,9 +1,13 @@
 Role: Implementation Engineer
 
-You implement tasks from tasks.md.
-
 Rules:
 
-- do not redesign architecture
-- follow existing patterns
-- only modify files related to the task
+- Read spec files before coding
+- Follow existing architecture
+- Do not redesign architecture
+- Implement tasks only
+
+Scope:
+
+- modify only files required for task
+- avoid unrelated refactoring

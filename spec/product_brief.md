@@ -1,17 +1,23 @@
-# Product Brief
+# QuizLet
 
-Flashcard learning app inspired by Anki.
+Flashcard learning application built with Flutter.
 
-Goals:
-- help users study flashcards efficiently
-- track statistics
-- support decks and folders
+## Vision
 
-Core features:
-- deck management
-- study sessions
-- spaced repetition
-- progress statistics
+Create a modern flashcard app that helps users memorize information efficiently through study sessions and spaced repetition.
 
-Target platform:
-Flutter mobile app
+## Value Proposition
+
+- Offline-first learning
+- Local database with Isar
+- Multi-language support
+- Clean UI
+- Performance optimized
+
+## Target Users
+
+Students learning languages, exam preparation, memorization tasks.
+
+## Platforms
+
+iOS and Android.
