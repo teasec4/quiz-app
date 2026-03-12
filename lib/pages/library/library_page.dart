@@ -4,6 +4,8 @@ import 'package:bookexample/pages/library/widgets/folder_tile.dart';
 import 'package:bookexample/core/widgets/empty_state_widget.dart';
 import 'package:bookexample/core/widgets/loading_overlay_widget.dart';
 import 'package:bookexample/core/extensions/snackbar_extensions.dart';
+import 'package:bookexample/core/theme/spacing.dart';
+import 'package:bookexample/core/theme/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -174,13 +176,8 @@ class _LibraryPageState extends State<LibraryPage> {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Text(
-                    'Folders',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  padding: AppSpacing.screenPadding,
+                  child: Text('Folders', style: context.titleLargeBold),
                 ),
               ),
               Expanded(

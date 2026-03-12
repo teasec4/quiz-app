@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'spacing.dart';
 
 class AppColors {
   // Success / Green (Emerald-600 palette - matches modern design)
@@ -7,6 +8,12 @@ class AppColors {
 
   // Error / Red (Red-600 palette - matches modern design)
   static const Color error = Color(0xFFDC2626);
+
+  // Warning / Amber (Amber-500 palette)
+  static const Color warning = Color(0xFFF59E0B);
+
+  // Info / Blue (Blue-500 palette)
+  static const Color info = Color(0xFF3B82F6);
 }
 
 class AppTheme {
@@ -35,15 +42,15 @@ class AppTheme {
         foregroundColor: scheme.onPrimary,
         elevation: 4,
         hoverElevation: 8,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: AppSpacing.borderRadiusMd),
       ),
 
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          side: BorderSide(color: scheme.primary),
-          foregroundColor: scheme.primary,
+          side: BorderSide(color: scheme.outline),
+          foregroundColor: scheme.onSurfaceVariant,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: AppSpacing.borderRadiusMd,
           ),
         ),
       ),
@@ -51,7 +58,7 @@ class AppTheme {
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: AppSpacing.borderRadiusMd,
           ),
         ),
       ),
@@ -67,19 +74,21 @@ class AppTheme {
               fontWeight: FontWeight.w600,
               fontSize: 13,
               letterSpacing: 0.3,
+              color: scheme.onSecondaryContainer,
               fontFamily: GoogleFonts.inter().fontFamily,
             );
           }
           return TextStyle(
             fontWeight: FontWeight.w400,
             fontSize: 12,
+            color: scheme.onSurfaceVariant,
             fontFamily: GoogleFonts.inter().fontFamily,
           );
         }),
 
         iconTheme: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return IconThemeData(size: 26, color: scheme.primary);
+            return IconThemeData(size: 26, color: scheme.onSecondaryContainer);
           }
           return IconThemeData(size: 24, color: scheme.onSurfaceVariant);
         }),
@@ -121,7 +130,7 @@ class AppTheme {
         foregroundColor: scheme.onPrimary,
         elevation: 4,
         hoverElevation: 8,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: AppSpacing.borderRadiusMd),
       ),
 
       outlinedButtonTheme: OutlinedButtonThemeData(
@@ -129,7 +138,7 @@ class AppTheme {
           side: BorderSide(color: scheme.outline),
           foregroundColor: scheme.onSurfaceVariant,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: AppSpacing.borderRadiusMd,
           ),
         ),
       ),
@@ -139,7 +148,7 @@ class AppTheme {
           backgroundColor: scheme.primaryContainer,
           foregroundColor: scheme.onPrimaryContainer,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: AppSpacing.borderRadiusMd,
           ),
         ),
       ),
@@ -208,7 +217,6 @@ class AppThemeFactory {
         ).copyWith(
           error: AppColors.error,
           tertiary: AppColors.success,
-          onTertiary: Colors.white,
           surface: darkMode ? const Color(0xFF1E293B) : null,
           surfaceContainerHighest: darkMode ? const Color(0xFF334155) : null,
         );
@@ -221,7 +229,6 @@ class AppThemeFactory {
         ).copyWith(
           error: AppColors.error,
           tertiary: AppColors.success,
-          onTertiary: Colors.white,
           surface: darkMode ? const Color(0xFF1E1B4B) : null,
           surfaceContainerHighest: darkMode ? const Color(0xFF312E81) : null,
         );
@@ -234,7 +241,6 @@ class AppThemeFactory {
         ).copyWith(
           error: AppColors.error,
           tertiary: AppColors.success,
-          onTertiary: Colors.white,
           surface: darkMode ? const Color(0xFF0C4A6E) : null,
           surfaceContainerHighest: darkMode ? const Color(0xFF075985) : null,
         );

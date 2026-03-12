@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:bookexample/core/theme/color_scheme_extensions.dart';
 
 /// A universal flip card widget that can be used in different contexts.
 /// Supports both manual flip control and internal state management.
@@ -361,7 +362,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
         boxShadow: widget.showElevation
             ? [
                 BoxShadow(
-                  color: colorScheme.shadow.withValues(alpha: 0.15),
+                  color: colorScheme.shadow.withOpacity(0.15),
                   blurRadius: 15,
                   offset: const Offset(0, 8),
                 ),
@@ -377,7 +378,7 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
             isFlipped ? widget.backText : widget.frontText,
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: colorScheme.onSurface,
+              color: colorScheme.textPrimary,
               fontSize: isFlipped ? widget.backFontSize : widget.frontFontSize,
               fontWeight: FontWeight.bold,
             ),
@@ -410,18 +411,18 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
       return widget.frontGradientColors!;
     }
 
-    // Default gradients with clear visual differentiation
+    // Default gradients with clear visual differentiation using semantic colors
     if (isFlipped) {
-      // Back side (answer) - use tertiary colors for better contrast
+      // Back side (answer) - use success colors for correct answers
       return [
-        colorScheme.tertiaryContainer,
-        colorScheme.tertiaryContainer.withValues(alpha: 0.8),
+        colorScheme.successContainer,
+        colorScheme.successContainer.withOpacity(0.8),
       ];
     } else {
       // Front side (question) - use primary container colors
       return [
         colorScheme.primaryContainer,
-        colorScheme.primaryContainer.withValues(alpha: 0.8),
+        colorScheme.primaryContainer.withOpacity(0.8),
       ];
     }
   }

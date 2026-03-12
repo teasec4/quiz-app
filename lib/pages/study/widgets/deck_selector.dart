@@ -1,5 +1,7 @@
 import 'package:bookexample/view_models/library_view_model.dart';
 import 'package:bookexample/core/widgets/empty_state_widget.dart';
+import 'package:bookexample/core/theme/spacing.dart';
+import 'package:bookexample/core/theme/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -22,14 +24,16 @@ class _DeckSelectorState extends State<DeckSelector> {
       expand: false,
       builder: (context, scrollController) {
         return Container(
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(AppSpacing.md),
+            ),
           ),
           child: Column(
             children: [
               // Header
               Padding(
-                padding: const EdgeInsets.all(16),
+                padding: AppSpacing.cardPadding,
                 child: Row(
                   children: [
                     SizedBox(
@@ -54,12 +58,10 @@ class _DeckSelectorState extends State<DeckSelector> {
                             ? 'Select a Folder'
                             : 'Select a Deck',
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: context.titleLargeBold,
                       ),
                     ),
-                    const SizedBox(width: 48),
+                    SizedBox(width: AppSpacing.xxl),
                   ],
                 ),
               ),
@@ -70,7 +72,7 @@ class _DeckSelectorState extends State<DeckSelector> {
                     : _buildDeckList(selectedFolderId ?? 0),
               ),
               Padding(
-                padding: const EdgeInsets.all(16),
+                padding: AppSpacing.cardPadding,
                 child: ElevatedButton(
                   onPressed: selectedDeckId == null
                       ? null
@@ -103,9 +105,12 @@ class _DeckSelectorState extends State<DeckSelector> {
           itemBuilder: (context, index) {
             final folder = folders[index];
             return Container(
-              margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              margin: EdgeInsets.symmetric(
+                horizontal: AppSpacing.sm,
+                vertical: AppSpacing.xs,
+              ),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: AppSpacing.borderRadiusMd,
                 border: Border.all(
                   color: Theme.of(context).colorScheme.secondaryContainer,
                 ),
@@ -144,9 +149,12 @@ class _DeckSelectorState extends State<DeckSelector> {
             final deck = decks[index];
             final isSelected = selectedDeckId == deck.id;
             return Container(
-              margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              margin: EdgeInsets.symmetric(
+                horizontal: AppSpacing.sm,
+                vertical: AppSpacing.xs,
+              ),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: AppSpacing.borderRadiusMd,
                 border: Border.all(
                   color: isSelected
                       ? Theme.of(context).colorScheme.primary
@@ -166,7 +174,7 @@ class _DeckSelectorState extends State<DeckSelector> {
                 ),
                 title: Text(
                   deck.title,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  style: context.bodyLarge.copyWith(
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                   ),
                 ),

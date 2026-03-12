@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:bookexample/core/theme/color_scheme_extensions.dart';
 
 /// A reusable widget for displaying empty states with an icon, title, and optional subtitle.
 class EmptyStateWidget extends StatelessWidget {
@@ -14,13 +15,13 @@ class EmptyStateWidget extends StatelessWidget {
   /// Size of the icon
   final double iconSize;
 
-  /// Color of the icon. If null, uses Theme.of(context).colorScheme.onSurfaceVariant
+  /// Color of the icon. If null, uses Theme.of(context).colorScheme.textSecondary
   final Color? iconColor;
 
-  /// Color of the title text. If null, uses Theme.of(context).colorScheme.onSurface
+  /// Color of the title text. If null, uses Theme.of(context).colorScheme.textPrimary
   final Color? titleColor;
 
-  /// Color of the subtitle text. If null, uses Theme.of(context).colorScheme.onSurfaceVariant
+  /// Color of the subtitle text. If null, uses Theme.of(context).colorScheme.textSecondary
   final Color? subtitleColor;
 
   /// Font size of the title
@@ -108,7 +109,7 @@ class EmptyStateWidget extends StatelessWidget {
           Icon(
             icon,
             size: iconSize,
-            color: iconColor ?? colorScheme.onSurfaceVariant,
+            color: iconColor ?? colorScheme.textSecondary,
           ),
           SizedBox(height: iconTitleSpacing),
           Text(
@@ -116,7 +117,7 @@ class EmptyStateWidget extends StatelessWidget {
             style: TextStyle(
               fontSize: titleFontSize,
               fontWeight: titleFontWeight,
-              color: titleColor ?? colorScheme.onSurface,
+              color: titleColor ?? colorScheme.textPrimary,
             ),
           ),
           if (subtitle != null) ...[
@@ -125,7 +126,7 @@ class EmptyStateWidget extends StatelessWidget {
               subtitle!,
               style: TextStyle(
                 fontSize: subtitleFontSize,
-                color: subtitleColor ?? colorScheme.onSurfaceVariant,
+                color: subtitleColor ?? colorScheme.textSecondary,
               ),
             ),
           ],

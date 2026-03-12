@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:bookexample/core/widgets/context_menu_widget.dart';
+import 'package:bookexample/core/theme/text_styles.dart';
+import 'package:bookexample/core/theme/color_scheme_extensions.dart';
 
 class DeckTile extends StatelessWidget {
   final String deckName;
@@ -57,13 +59,9 @@ class DeckTile extends StatelessWidget {
               // Deck name
               Text(
                 deckName,
-                style: TextStyle(
+                style: context.titleLargeBold.copyWith(
                   color: Theme.of(context).colorScheme.onSurface,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
                 ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
               ),
 
               // Progress bar
@@ -77,7 +75,7 @@ class DeckTile extends StatelessWidget {
                       minHeight: 6,
                       backgroundColor: Theme.of(
                         context,
-                      ).colorScheme.secondaryContainer,
+                      ).colorScheme.surfaceVariant,
                       valueColor: AlwaysStoppedAnimation(
                         Theme.of(context).colorScheme.primary,
                       ),
@@ -86,9 +84,8 @@ class DeckTile extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     '$learnedCount/${cardCount}',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      fontSize: 12,
+                    style: context.bodySmall.copyWith(
+                      color: Theme.of(context).colorScheme.textSecondary,
                     ),
                   ),
                 ],

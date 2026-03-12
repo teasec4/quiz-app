@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:bookexample/core/theme/spacing.dart';
+import 'package:bookexample/core/theme/text_styles.dart';
 
 class StatsHeader extends StatelessWidget {
   final int totalLearnedCards;
@@ -25,7 +27,7 @@ class StatsHeader extends StatelessWidget {
                 value: totalLearnedCards.toString(),
               ),
             ),
-            const SizedBox(width: 12),
+            AppSpacing.horizontalMd,
             Expanded(
               child: _StatItem(
                 label: 'Accuracy Rate',
@@ -34,34 +36,27 @@ class StatsHeader extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 20),
+        AppSpacing.verticalLg,
         // Streak Days with stars
         Card(
           elevation: 2,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            padding: AppSpacing.cardPadding,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  'Days in a Row',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 12),
+                Text('Days in a Row', style: context.titleMediumSemiBold),
+                AppSpacing.verticalMd,
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ..._buildStarRow(context, streakDays),
-                    const SizedBox(width: 16),
+                    AppSpacing.horizontalMd,
                     Text(
                       '$streakDays ${streakDays == 1 ? 'day' : 'days'}',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: context.bodyLargeMedium,
                     ),
                   ],
                 ),
@@ -88,7 +83,7 @@ class StatsHeader extends StatelessWidget {
         ),
       );
       if (i < totalStars - 1) {
-        stars.add(const SizedBox(width: 4));
+        stars.add(AppSpacing.horizontalXs);
       }
     }
 
@@ -107,23 +102,22 @@ class _StatItem extends StatelessWidget {
     return Card(
       elevation: 2,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        padding: AppSpacing.cardPadding,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               value,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+              style: context.titleLargeBold.copyWith(
                 color: Theme.of(context).colorScheme.primary,
               ),
             ),
-            const SizedBox(height: 8),
+            AppSpacing.verticalSm,
             Text(
               label,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              style: context.bodySmall.copyWith(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),

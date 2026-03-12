@@ -4,6 +4,7 @@ import 'package:bookexample/core/widgets/empty_state_widget.dart';
 import 'package:bookexample/core/widgets/loading_overlay_widget.dart';
 import 'package:bookexample/core/widgets/error_banner_widget.dart';
 import 'package:bookexample/core/extensions/snackbar_extensions.dart';
+import 'package:bookexample/core/theme/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -138,12 +139,7 @@ class _FolderPageState extends State<FolderPage> {
                 alignment: Alignment.centerLeft,
                 child: Padding(
                   padding: const EdgeInsets.all(16),
-                  child: Text(
-                    'Decks',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  child: Text('Decks', style: context.titleLargeBold),
                 ),
               ),
               Expanded(

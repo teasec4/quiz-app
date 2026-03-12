@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:bookexample/core/theme/spacing.dart';
+import 'package:bookexample/core/theme/text_styles.dart';
 
 class CreateFolderSheet extends StatefulWidget {
   final String? oldName;
@@ -53,11 +55,11 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
       ),
       child: Padding(
         padding: EdgeInsets.only(
-          left: 16,
-          right: 16,
-          top: 24,
+          left: AppSpacing.md,
+          right: AppSpacing.md,
+          top: AppSpacing.lg,
           // тут вопрос нужно ли это еще ??
-          bottom: MediaQuery.of(context).viewInsets.bottom + 24,
+          bottom: MediaQuery.of(context).viewInsets.bottom + AppSpacing.lg,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -65,22 +67,17 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
           children: [
             Text(
               widget.oldName != null ? "Rename Folder" : 'Create New Folder',
-              style: Theme.of(
-                context,
-              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+              style: context.titleLargeBold,
             ),
-            const SizedBox(height: 20),
+            AppSpacing.verticalLg,
             TextField(
               focusNode: _folderNameFocus,
               controller: _nameController,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              style: context.bodyLargeMedium,
               decoration: InputDecoration(
                 hintText: 'Enter folder name',
                 labelText: 'Folder Name',
-                labelStyle: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
+                labelStyle: context.titleSmall,
                 prefixIcon: Icon(
                   Icons.folder,
                   color: Theme.of(context).colorScheme.primary,
@@ -92,14 +89,14 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
                   context,
                 ).colorScheme.primaryContainer.withValues(alpha: 0.25),
                 contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 14,
+                  horizontal: AppSpacing.md,
+                  vertical: AppSpacing.sm,
                 ),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: AppSpacing.borderRadiusMd,
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: AppSpacing.borderRadiusMd,
                   borderSide: BorderSide(
                     color: _hasError
                         ? Theme.of(context).colorScheme.error
@@ -110,7 +107,7 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: AppSpacing.borderRadiusMd,
                   borderSide: BorderSide(
                     color: _hasError
                         ? Theme.of(context).colorScheme.error
@@ -130,7 +127,7 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
                 context.pop(_nameController.text);
               },
             ),
-            const SizedBox(height: 20),
+            AppSpacing.verticalLg,
             Row(
               children: [
                 // cancel modal
@@ -150,7 +147,7 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
+                AppSpacing.horizontalMd,
                 // create a new folder
                 Expanded(
                   child: ElevatedButton(

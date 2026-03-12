@@ -1,5 +1,6 @@
 import 'package:bookexample/domain/isar_model/library/deck_entity.dart';
 import 'package:bookexample/view_models/library_view_model.dart';
+import 'package:bookexample/core/theme/text_styles.dart';
 import 'package:bookexample/pages/library/folder/deck/widgets/flip_card.dart';
 import 'package:bookexample/pages/library/folder/deck/widgets/study_mode_tile.dart';
 import 'package:flutter/material.dart';
