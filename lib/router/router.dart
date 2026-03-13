@@ -1,4 +1,5 @@
 import 'package:bookexample/core/widgets/bottom_navigation_bar.dart';
+import 'package:bookexample/core/theme/semantic_color_demo.dart';
 import 'package:bookexample/pages/library/folder/create_deck/create_deck.dart';
 import 'package:bookexample/pages/library/folder/deck/deck_page.dart';
 import 'package:bookexample/pages/library/folder/folder_page.dart';
@@ -120,6 +121,12 @@ class AppRouter {
               GoRoute(
                 path: '/settings',
                 builder: (context, state) => const SettingsPage(),
+                routes: [
+                  GoRoute(
+                    path: 'semantic-colors',
+                    builder: (context, state) => const SemanticColorDemo(),
+                  ),
+                ],
               ),
             ],
           ),

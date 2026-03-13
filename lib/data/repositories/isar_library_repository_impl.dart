@@ -144,6 +144,11 @@ class IsarLibraryRepositoryImpl extends BaseRepository
   }
 
   @override
+  Stream<List<FlashCardEntity>> watchAllFlashcards() {
+    return dataSource.watchAll<FlashCardEntity>();
+  }
+
+  @override
   Future<List<DeckEntity>> getDecksByFolder(int folderId) async {
     return await _isarDataSource.filterByProperty<DeckEntity, int>(
       'folderId',

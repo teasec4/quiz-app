@@ -5,6 +5,8 @@ import 'package:bookexample/pages/study/widgets/mode_tile.dart';
 import 'package:bookexample/pages/study/widgets/stats_header.dart';
 import 'package:bookexample/core/widgets/loading_overlay_widget.dart';
 import 'package:bookexample/core/widgets/error_banner_widget.dart';
+import 'package:bookexample/core/theme/spacing.dart';
+import 'package:bookexample/core/theme/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -37,15 +39,10 @@ class _StudyPageState extends State<StudyPage> {
       body: Stack(
         children: [
           ListView(
-            padding: const EdgeInsets.all(16),
+            padding: AppSpacing.screenPadding,
             children: [
-              Text(
-                'Stats',
-                style: Theme.of(
-                  context,
-                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 12),
+              Text('Stats', style: context.titleLargeBold),
+              AppSpacing.verticalMd,
               FutureBuilder<UserStatsEntity>(
                 future: _statsFuture,
                 builder: (context, statsSnapshot) {
@@ -63,14 +60,9 @@ class _StudyPageState extends State<StudyPage> {
                   );
                 },
               ),
-              const SizedBox(height: 32),
-              Text(
-                'Study Modes',
-                style: Theme.of(
-                  context,
-                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 12),
+              AppSpacing.verticalXl,
+              Text('Study Modes', style: context.titleLargeBold),
+              AppSpacing.verticalMd,
 
               // Start New Session
               ModeCard(
@@ -93,7 +85,7 @@ class _StudyPageState extends State<StudyPage> {
                   );
                 },
               ),
-              const SizedBox(height: 12),
+              AppSpacing.verticalMd,
               // Random Cards
               ModeCard(
                 icon: Icons.shuffle,

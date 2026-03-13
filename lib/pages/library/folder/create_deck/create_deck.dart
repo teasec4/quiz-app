@@ -5,6 +5,7 @@ import 'package:bookexample/core/validation/validators.dart';
 import 'package:bookexample/core/extensions/snackbar_extensions.dart';
 import 'package:bookexample/core/widgets/loading_overlay_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:bookexample/core/theme/text_styles.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -302,13 +303,7 @@ class _CreateDeckState extends State<CreateDeck> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  "Card ${index + 1}",
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                Text("Card ${index + 1}", style: context.titleMediumSemiBold),
                 Tooltip(
                   message: 'Delete card',
                   child: IconButton(
@@ -513,32 +508,19 @@ class _CreateDeckState extends State<CreateDeck> {
                       _hasChanges = true;
                     });
                   },
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: context.titleLargeBold.copyWith(fontSize: 18),
                   decoration: InputDecoration(
                     labelText: "Deck Title",
-                    labelStyle: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    labelStyle: context.titleMedium,
                     prefixIcon: Icon(
-                      Icons.menu_book,
+                      Icons.title,
                       color: Theme.of(context).colorScheme.primary,
                       size: 28,
                     ),
                     errorText: _deckTitleError
                         ? (_deckTitleErrorMessage ?? 'Deck title is required')
                         : null,
-                    filled: true,
-                    fillColor: Theme.of(
-                      context,
-                    ).colorScheme.primaryContainer.withValues(alpha: 0.3),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 16,
-                    ),
+                    filled: false,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -547,8 +529,7 @@ class _CreateDeckState extends State<CreateDeck> {
                       borderSide: BorderSide(
                         color: _deckTitleError
                             ? Theme.of(context).colorScheme.error
-                            : Theme.of(context).colorScheme.primaryContainer
-                                  .withValues(alpha: 0.5),
+                            : Theme.of(context).colorScheme.outline,
                         width: 1.5,
                       ),
                     ),

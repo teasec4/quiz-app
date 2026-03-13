@@ -1,10 +1,11 @@
-import 'package:bookexample/domain/isar_model/library/folder_entity.dart';
 import 'package:bookexample/view_models/library_view_model.dart';
 import 'package:bookexample/pages/library/widgets/create_folder_sheet.dart';
 import 'package:bookexample/pages/library/widgets/folder_tile.dart';
 import 'package:bookexample/core/widgets/empty_state_widget.dart';
 import 'package:bookexample/core/widgets/loading_overlay_widget.dart';
 import 'package:bookexample/core/extensions/snackbar_extensions.dart';
+import 'package:bookexample/core/theme/spacing.dart';
+import 'package:bookexample/core/theme/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -17,13 +18,9 @@ class LibraryPage extends StatefulWidget {
 }
 
 class _LibraryPageState extends State<LibraryPage> {
-  late Stream<List<FolderEntity>> _foldersStream;
-  late final LibraryViewModel _vm;
   @override
   void initState() {
     super.initState();
-    _vm = context.read<LibraryViewModel>();
-    _foldersStream = _vm.watchFolders();
   }
 
   // creating folder bottom sheet
@@ -148,10 +145,11 @@ class _LibraryPageState extends State<LibraryPage> {
 
   @override
   Widget build(BuildContext context) {
+    final vm = context.watch<LibraryViewModel>();
     return Scaffold(
       appBar: AppBar(title: const Text("Library")),
       floatingActionButton: FloatingActionButton(
-        onPressed: _vm.isLoading
+        onPressed: vm.isLoading
             ? null
             : () {
                 _showCreateFolder(context);
@@ -162,63 +160,54 @@ class _LibraryPageState extends State<LibraryPage> {
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: Stack(
         children: [
-          StreamBuilder(
-            stream: _foldersStream,
-            builder: (context, asyncSnapshot) {
-              final folders = asyncSnapshot.data ?? [];
-              return folders.isEmpty
-                  ? _buildEmptyState(context)
-                  : Column(
-                      children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Text(
-                              'Folders',
-                              style: Theme.of(context).textTheme.titleLarge
-                                  ?.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: folders.length,
-                            itemBuilder: (context, index) {
-                              final folder = folders[index];
-
-                              return FolderTile(
-                                folderName: folder.name,
-                                // deckCount: folder.decks.length,
-                                onTap: () {
-                                  context.go('/library/folder/${folder.id}');
-                                },
-                                onDelete: () {
-                                  _showDeleteConfirmation(
-                                    context,
-                                    folder.id,
-                                    folder.name,
-                                  );
-                                },
-                                onEdit: () {
-                                  _showRenameFolder(
-                                    context,
-                                    folder.id,
-                                    folder.name,
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    );
-            },
-          ),
-          if (_vm.isLoading) LoadingOverlayWidget.scrim(opacity: 0.3),
+          _buildFoldersList(context, vm),
+          if (vm.isLoading) LoadingOverlayWidget.scrim(opacity: 0.3),
         ],
       ),
     );
+  }
+
+  Widget _buildFoldersList(BuildContext context, LibraryViewModel vm) {
+    final folders = vm.folders;
+    return folders.isEmpty
+        ? _buildEmptyState(context)
+        : Column(
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: AppSpacing.screenPadding,
+                  child: Text('Folders', style: context.titleLargeBold),
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: folders.length,
+                  itemBuilder: (context, index) {
+                    final folder = folders[index];
+
+                    return FolderTile(
+                      folderName: folder.name,
+                      // deckCount: folder.decks.length,
+                      onTap: () {
+                        context.go('/library/folder/${folder.id}');
+                      },
+                      onDelete: () {
+                        _showDeleteConfirmation(
+                          context,
+                          folder.id,
+                          folder.name,
+                        );
+                      },
+                      onEdit: () {
+                        _showRenameFolder(context, folder.id, folder.name);
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          );
   }
 
   Widget _buildEmptyState(BuildContext context) {

@@ -3,7 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:bookexample/view_models/theme_view_model.dart';
 import 'package:bookexample/view_models/locale_view_model.dart';
 import 'package:bookexample/core/theme/app_theme.dart';
+import 'package:bookexample/core/theme/spacing.dart';
+import 'package:bookexample/core/theme/text_styles.dart';
+import 'package:bookexample/core/theme/color_scheme_extensions.dart';
 import 'package:bookexample/l10n/app_localizations.dart';
+import 'package:bookexample/core/theme/semantic_color_demo.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -23,16 +27,20 @@ class _SettingsPageState extends State<SettingsPage> {
     return Scaffold(
       appBar: AppBar(title: Text(l10n?.settingsTitle ?? 'Settings')),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.screenPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Theme Section
             _buildThemeSection(context, themeViewModel, l10n),
-            const SizedBox(height: 24),
+            AppSpacing.verticalLg,
 
             // Language Section
             _buildLanguageSection(context, localeViewModel, l10n),
+            AppSpacing.verticalLg,
+
+            // Developer Section
+            _buildDeveloperSection(context, l10n),
           ],
         ),
       ),
@@ -52,9 +60,7 @@ class _SettingsPageState extends State<SettingsPage> {
         // Section Header
         Text(
           l10n?.themeSettings ?? 'Theme Settings',
-          style: theme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+          style: context.titleLarge,
         ),
 
         // Theme Card
@@ -64,16 +70,16 @@ class _SettingsPageState extends State<SettingsPage> {
             borderRadius: BorderRadius.circular(16),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: AppSpacing.cardPadding,
             child: Column(
               children: [
                 // Dark Mode Toggle
                 _buildDarkModeToggle(context, themeViewModel, l10n),
-                const SizedBox(height: 16),
+                AppSpacing.verticalMd,
 
                 // Divider
                 Divider(color: theme.colorScheme.outlineVariant, height: 1),
-                const SizedBox(height: 16),
+                AppSpacing.verticalMd,
 
                 // Theme Variants
                 _buildThemeVariants(context, themeViewModel, l10n),
@@ -100,15 +106,13 @@ class _SettingsPageState extends State<SettingsPage> {
             children: [
               Text(
                 l10n?.darkMode ?? 'Dark Mode',
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.w500,
-                ),
+                style: context.bodyLargeMedium,
               ),
-              const SizedBox(height: 2),
+              AppSpacing.verticalXs,
               Text(
                 l10n?.toggleDarkTheme ?? 'Toggle dark theme',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
+                style: context.bodySmall.copyWith(
+                  color: theme.colorScheme.textSecondary,
                 ),
               ),
             ],
@@ -120,6 +124,9 @@ class _SettingsPageState extends State<SettingsPage> {
             await themeViewModel.setDarkMode(value);
           },
           activeColor: theme.colorScheme.primary,
+          trackColor: WidgetStateProperty.all(
+            theme.colorScheme.surfaceContainerHighest,
+          ),
         ),
       ],
     );
@@ -130,14 +137,12 @@ class _SettingsPageState extends State<SettingsPage> {
     ThemeViewModel themeViewModel,
     AppLocalizations? l10n,
   ) {
-    final theme = Theme.of(context);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Wrap(
-          spacing: 16,
-          runSpacing: 16,
+          spacing: AppSpacing.md,
+          runSpacing: AppSpacing.md,
           children: themeViewModel.availableVariants.map((variant) {
             return _buildThemeVariantChip(context, variant, themeViewModel);
           }).toList(),
@@ -165,16 +170,19 @@ class _SettingsPageState extends State<SettingsPage> {
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
         constraints: BoxConstraints(minWidth: 50, maxWidth: 70),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.sm,
+        ),
         decoration: BoxDecoration(
           color: isSelected
-              ? theme.colorScheme.primaryContainer
+              ? theme.colorScheme.selected
               : theme.colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: AppSpacing.borderRadiusMd,
           border: Border.all(
             color: isSelected
                 ? theme.colorScheme.primary
-                : theme.colorScheme.outlineVariant,
+                : theme.colorScheme.cardBorder,
             width: isSelected ? 2 : 1,
           ),
           boxShadow: isSelected
@@ -183,6 +191,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     color: theme.colorScheme.primary.withOpacity(0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
+                    spreadRadius: 0.5,
                   ),
                 ]
               : null,
@@ -197,7 +206,7 @@ class _SettingsPageState extends State<SettingsPage> {
               height: 30,
               decoration: BoxDecoration(
                 color: color,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: AppSpacing.borderRadiusSm,
                 boxShadow: [
                   BoxShadow(
                     color: color.withOpacity(0.3),
@@ -237,9 +246,7 @@ class _SettingsPageState extends State<SettingsPage> {
         // Section Header
         Text(
           l10n?.languageSettings ?? 'Language Settings',
-          style: theme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+          style: context.titleLarge,
         ),
 
         // Language Card
@@ -249,7 +256,7 @@ class _SettingsPageState extends State<SettingsPage> {
             borderRadius: BorderRadius.circular(16),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: AppSpacing.cardPadding,
             child: Column(
               children: localeViewModel.supportedLocales.map((locale) {
                 return _buildLanguageTile(context, locale, localeViewModel);
@@ -279,10 +286,10 @@ class _SettingsPageState extends State<SettingsPage> {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
-            padding: EdgeInsets.all(12),
+            padding: EdgeInsets.all(AppSpacing.sm),
             decoration: BoxDecoration(
               color: isSelected
-                  ? theme.colorScheme.primaryContainer
+                  ? theme.colorScheme.selected
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(10),
             ),
@@ -295,22 +302,20 @@ class _SettingsPageState extends State<SettingsPage> {
                     children: [
                       AnimatedDefaultTextStyle(
                         duration: const Duration(milliseconds: 300),
-                        style: theme.textTheme.bodyLarge!.copyWith(
-                          fontWeight: FontWeight.w500,
+                        style: context.bodyLargeMedium.copyWith(
                           color: isSelected
-                              ? theme.colorScheme.onPrimaryContainer
-                              : theme.colorScheme.onSurface,
+                              ? theme.colorScheme.onSelected
+                              : theme.colorScheme.textPrimary,
                         ),
                         child: Text(localeInfo['displayName'] as String),
                       ),
-                      const SizedBox(height: 2),
+                      AppSpacing.verticalXs,
                       AnimatedDefaultTextStyle(
                         duration: const Duration(milliseconds: 300),
-                        style: theme.textTheme.bodySmall!.copyWith(
+                        style: context.bodySmall.copyWith(
                           color: isSelected
-                              ? theme.colorScheme.onPrimaryContainer
-                                    .withOpacity(0.8)
-                              : theme.colorScheme.onSurfaceVariant,
+                              ? theme.colorScheme.onSelected.withOpacity(0.8)
+                              : theme.colorScheme.textSecondary,
                         ),
                         child: Text(locale.languageCode.toUpperCase()),
                       ),
@@ -327,7 +332,12 @@ class _SettingsPageState extends State<SettingsPage> {
                           size: 24,
                           key: UniqueKey(),
                         )
-                      : SizedBox(width: 24, height: 24, key: UniqueKey()),
+                      : Icon(
+                          Icons.circle_outlined,
+                          color: theme.colorScheme.textDisabled,
+                          size: 24,
+                          key: UniqueKey(),
+                        ),
                 ),
               ],
             ),
@@ -336,6 +346,61 @@ class _SettingsPageState extends State<SettingsPage> {
         // Divider (except for last item)
         // if (locale != localeViewModel.supportedLocales.last)
         // Divider(color: theme.colorScheme.outlineVariant, height: 1),
+      ],
+    );
+  }
+
+  Widget _buildDeveloperSection(BuildContext context, AppLocalizations? l10n) {
+    final theme = Theme.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Section Header
+        Text('Developer Tools', style: context.titleLarge),
+
+        // Developer Card
+        Card(
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: AppSpacing.cardPadding,
+            child: Column(
+              children: [
+                // Semantic Colors Demo
+                ListTile(
+                  leading: Icon(
+                    Icons.color_lens_outlined,
+                    color: theme.colorScheme.primary,
+                  ),
+                  title: Text(
+                    'Semantic Colors Demo',
+                    style: context.bodyLargeMedium,
+                  ),
+                  subtitle: Text(
+                    'View all semantic colors and their usage',
+                    style: context.bodySmall.copyWith(
+                      color: theme.colorScheme.textSecondary,
+                    ),
+                  ),
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: theme.colorScheme.textSecondary,
+                  ),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const SemanticColorDemo(),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }

@@ -1,5 +1,6 @@
 import 'package:bookexample/view_models/base_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:bookexample/core/theme/spacing.dart';
 
 /// A reusable widget for displaying error banners at the top of the screen.
 class ErrorBannerWidget extends StatelessWidget {
@@ -55,9 +56,12 @@ class ErrorBannerWidget extends StatelessWidget {
     this.iconColor,
     this.iconSize = 24.0,
     this.showIcon = true,
-    this.padding = const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-    this.margin = const EdgeInsets.all(8.0),
-    this.borderRadius = 8.0,
+    this.padding = const EdgeInsets.symmetric(
+      horizontal: AppSpacing.md,
+      vertical: AppSpacing.sm,
+    ),
+    this.margin = const EdgeInsets.all(AppSpacing.sm),
+    this.borderRadius = AppSpacing.sm,
     this.elevation = 2.0,
     this.onTap,
     this.onClose,
@@ -75,11 +79,11 @@ class ErrorBannerWidget extends StatelessWidget {
     double iconSize = 24.0,
     bool showIcon = true,
     EdgeInsetsGeometry padding = const EdgeInsets.symmetric(
-      horizontal: 16.0,
-      vertical: 12.0,
+      horizontal: AppSpacing.md,
+      vertical: AppSpacing.sm,
     ),
-    EdgeInsetsGeometry margin = const EdgeInsets.all(8.0),
-    double borderRadius = 8.0,
+    EdgeInsetsGeometry margin = const EdgeInsets.all(AppSpacing.sm),
+    double borderRadius = AppSpacing.sm,
     double elevation = 2.0,
     VoidCallback? onTap,
     VoidCallback? onClose,

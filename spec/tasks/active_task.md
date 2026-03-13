@@ -1,26 +1,15 @@
 # Active Task
 
-ID: TASK-001
+ID: TASK-004
 
-Feature: Study Session
-
-Description:
-
-Load cards from a deck to start a study session.
-
-Requirements:
-
-- cards must be loaded from FlashCardEntity
-- only cards belonging to selected deck
-- cards must be shuffled
-
-Files involved:
-
-- study_session_view_model.dart
-- library_repository.dart
-
-Output:
-
-A method:
-
-loadCardsForSession(int deckId)
+Implement Typography System
+**Priority**: High  
+**Complexity**: 5 SP  
+**Dependencies**: DS-001  
+**Status**: Completed  
+**Description**: Create semantic typography system for consistent text styling
+- Create `lib/core/theme/text_styles.dart` with `AppTextStyles` class
+- Define semantic text styles: displayLarge, headlineMedium, titleLarge, bodyLarge, bodyMedium, labelLarge, labelSmall
+- Ensure proper font sizes, weights, and letter spacing
+- Create helper method for consistent theme usage
+- Update all text style references across the app

@@ -26,3 +26,4 @@ Important:
 
 All business logic must live in ViewModels and repositories.
 UI widgets must remain dumb.
+Do not change navigation or architecture without explicit instruction.

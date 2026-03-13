@@ -1,10 +1,11 @@
-import 'package:bookexample/view_models/library_view_model.dart';
 import 'package:bookexample/domain/isar_model/library/deck_entity.dart';
+import 'package:bookexample/view_models/library_view_model.dart';
 import 'package:bookexample/pages/library/folder/widgets/deck_tile.dart';
 import 'package:bookexample/core/widgets/empty_state_widget.dart';
 import 'package:bookexample/core/widgets/loading_overlay_widget.dart';
 import 'package:bookexample/core/widgets/error_banner_widget.dart';
 import 'package:bookexample/core/extensions/snackbar_extensions.dart';
+import 'package:bookexample/core/theme/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -18,16 +19,11 @@ class FolderPage extends StatefulWidget {
 }
 
 class _FolderPageState extends State<FolderPage> {
-  late Future _folderFuture;
-  late final Stream<List<DeckEntity>> _decksStream;
-  late final LibraryViewModel _vm;
-  
   @override
   void initState() {
     super.initState();
-    _vm = context.read<LibraryViewModel>();
-    _folderFuture = _vm.getFolderById(widget.folderId);
-    _decksStream = _vm.watchDecksByFolder(widget.folderId);
+    final vm = context.read<LibraryViewModel>();
+    vm.ensureDecksWatched(widget.folderId);
   }
 
   // edit deck
@@ -43,152 +39,156 @@ class _FolderPageState extends State<FolderPage> {
   ) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete Deck?'),
-        content: Text('All $deckTitle cards will be deleted.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () async {
-              
-              await _vm.deleteDeck(deckId);
-
-              if (context.mounted) {
-                Navigator.pop(context);
-
-                if (_vm.hasError && _vm.error != null) {
-                  context.showOperationErrorSnackBar(
-                    operation: 'deleting deck',
-                    error: _vm.error!,
-                    onRetry: () =>
-                        _showDeleteConfirmation(context, deckId, deckTitle),
-                  );
-                } else if (_vm.isSuccess) {
-                  context.showOperationSuccessSnackBar(
-                    operation: 'Deck "$deckTitle" deleted',
-                  );
-                  _vm.resetSuccess();
-                }
-              }
-            },
-            child: Text(
-              'Delete',
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
+      builder: (context) {
+        final vm = context.read<LibraryViewModel>();
+        return AlertDialog(
+          title: const Text('Delete Deck?'),
+          content: Text('All $deckTitle cards will be deleted.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
             ),
-          ),
-        ],
-      ),
-    );
-  }
+            TextButton(
+              onPressed: () async {
+                await vm.deleteDeck(deckId);
 
-  @override
-  Widget build(BuildContext context) {
-    
-    return FutureBuilder(
-      future: _folderFuture,
-      builder: (context, asyncSnapshot) {
-        final folder = asyncSnapshot.data;
-        final folderTitle = folder?.name;
-        return Scaffold(
-          appBar: AppBar(title: Text(folderTitle ?? "Loading")),
-          floatingActionButton: FloatingActionButton(
-            onPressed: _vm.isLoading
-                ? null
-                : () {
-                    context.go('/library/folder/${widget.folderId}/createdeck');
-                  },
-            mini: true,
-            child: const Icon(Icons.add),
-          ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-          body: Stack(
-            children: [
-              StreamBuilder<List<DeckEntity>>(
-                stream: _decksStream,
-                builder: (context, asyncSnapshot) {
-                  final decks = asyncSnapshot.data ?? [];
-                  return decks.isEmpty
-                      ? EmptyStateWidget.decks()
-                      : Column(
-                          children: [
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Text(
-                                  'Decks',
-                                  style: Theme.of(context).textTheme.titleLarge
-                                      ?.copyWith(fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(12),
-                                child: GridView.builder(
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 2,
-                                        mainAxisSpacing: 12,
-                                        crossAxisSpacing: 12,
-                                        childAspectRatio: 1,
-                                      ),
-                                  itemCount: decks.length,
-                                  itemBuilder: (context, index) {
-                                    final deck = decks[index];
-                                    return DeckTile(
-                                      deckName: deck.title,
-                                      cardCount: deck.cards.length,
-                                      learnedCount: deck.cards
-                                          .where((c) => c.isLearned)
-                                          .length,
-                                      onTap: () {
-                                        context.go(
-                                          '/library/folder/${widget.folderId}/deck/${deck.id}',
-                                        );
-                                      },
-                                      onEdit: () {
-                                        _editDeck(context, deck.id);
-                                      },
-                                      onDelete: () {
-                                        _showDeleteConfirmation(
-                                          context,
-                                          deck.id,
-                                          deck.title,
-                                        );
-                                      },
-                                    );
-                                  },
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                },
+                if (context.mounted) {
+                  Navigator.pop(context);
+
+                  if (vm.hasError && vm.error != null) {
+                    context.showOperationErrorSnackBar(
+                      operation: 'deleting deck',
+                      error: vm.error!,
+                      onRetry: () =>
+                          _showDeleteConfirmation(context, deckId, deckTitle),
+                    );
+                  } else if (vm.isSuccess) {
+                    context.showOperationSuccessSnackBar(
+                      operation: 'Deck "$deckTitle" deleted',
+                    );
+                    vm.resetSuccess();
+                  }
+                }
+              },
+              child: Text(
+                'Delete',
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
-              if (_vm.isLoading) LoadingOverlayWidget.scrim(opacity: 0.3),
-              if (_vm.hasError && _vm.error != null)
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: ErrorBannerWidget.fromError(
-                    error: _vm.error!,
-                    onClose: _vm.clearError,
-                    onTap: () {
-                      // Retry loading folder
-                      setState(() {});
-                    },
-                  ),
-                ),
-            ],
-          ),
+            ),
+          ],
         );
       },
     );
   }
 
+  @override
+  Widget build(BuildContext context) {
+    final vm = context.watch<LibraryViewModel>();
+    final decks = vm.getDecksForFolder(widget.folderId);
+    final folder = vm.getFolderByIdSync(widget.folderId);
+    final folderTitle = folder?.name ?? "Loading";
+
+    return Scaffold(
+      appBar: AppBar(title: Text(folderTitle)),
+      floatingActionButton: FloatingActionButton(
+        onPressed: vm.isLoading
+            ? null
+            : () {
+                context.go('/library/folder/${widget.folderId}/createdeck');
+              },
+        mini: true,
+        child: const Icon(Icons.add),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      body: Stack(
+        children: [
+          _buildDecksList(context, vm, decks),
+          if (vm.isLoading) LoadingOverlayWidget.scrim(opacity: 0.3),
+          if (vm.hasError && vm.error != null)
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: ErrorBannerWidget.fromError(
+                error: vm.error!,
+                onClose: vm.clearError,
+                onTap: () {
+                  // Retry loading folder
+                },
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDecksList(
+    BuildContext context,
+    LibraryViewModel vm,
+    List<DeckEntity> decks,
+  ) {
+    return decks.isEmpty
+        ? EmptyStateWidget.decks()
+        : Column(
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text('Decks', style: context.titleLargeBold),
+                ),
+              ),
+              if (decks.isEmpty)
+                Center(
+                  child: EmptyStateWidget(
+                    icon: Icons.menu_book,
+                    title: 'No decks yet',
+                    subtitle: 'Create your first deck to start learning',
+                  ),
+                )
+              else
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 12,
+                            crossAxisSpacing: 12,
+                            childAspectRatio: 1,
+                          ),
+                      itemCount: decks.length,
+                      itemBuilder: (context, index) {
+                        final deck = decks[index];
+                        return DeckTile(
+                          deckName: deck.title,
+                          cardCount: deck.cards.length,
+                          learnedCount: deck.cards
+                              .where((c) => c.isLearned)
+                              .length,
+                          onTap: () {
+                            context.go(
+                              '/library/folder/${widget.folderId}/deck/${deck.id}',
+                            );
+                          },
+                          onEdit: () {
+                            _editDeck(context, deck.id);
+                          },
+                          onDelete: () {
+                            _showDeleteConfirmation(
+                              context,
+                              deck.id,
+                              deck.title,
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ),
+            ],
+          );
+  }
 }

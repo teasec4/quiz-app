@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:bookexample/core/theme/text_styles.dart';
 
 class StudyMode {
   final String title;
@@ -40,7 +41,7 @@ class ModeTile extends StatelessWidget {
         ),
         title: Text(
           mode.title,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          style: context.titleMedium.copyWith(
             color: mode.disabled
                 ? colorScheme.onSurfaceVariant.withValues(alpha: 0.7)
                 : null,
@@ -48,7 +49,7 @@ class ModeTile extends StatelessWidget {
         ),
         subtitle: Text(
           mode.subtitle,
-          style: TextStyle(
+          style: context.bodySmall.copyWith(
             color: mode.disabled ? colorScheme.onSurfaceVariant : null,
           ),
         ),

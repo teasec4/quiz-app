@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:bookexample/core/theme/color_scheme_extensions.dart';
 
 /// A universal context menu widget for folder and deck tiles.
 /// Provides consistent menu styling and behavior across the app.
@@ -19,8 +20,8 @@ class ContextMenuWidget {
           value: 'edit',
           icon: Icons.edit_outlined,
           label: 'Edit name',
-          iconColor: Theme.of(context).colorScheme.onSurfaceVariant,
-          textColor: Theme.of(context).colorScheme.onSurface,
+          iconColor: Theme.of(context).colorScheme.textSecondary,
+          textColor: Theme.of(context).colorScheme.textPrimary,
         ),
         _buildMenuItem(
           context: context,
@@ -55,8 +56,8 @@ class ContextMenuWidget {
             value: 'edit',
             icon: Icons.edit_outlined,
             label: 'Edit',
-            iconColor: Theme.of(context).colorScheme.onSurfaceVariant,
-            textColor: Theme.of(context).colorScheme.onSurface,
+            iconColor: Theme.of(context).colorScheme.textSecondary,
+            textColor: Theme.of(context).colorScheme.textPrimary,
             fontSize: 14,
             iconSize: 18,
           ),
@@ -145,7 +146,7 @@ class ContextMenuWidget {
         child: Icon(
           Icons.more_horiz,
           size: size,
-          color: color ?? Theme.of(context).colorScheme.secondary,
+          color: color ?? Theme.of(context).colorScheme.textSecondary,
         ),
       ),
     );
@@ -166,13 +167,13 @@ class ContextMenuWidget {
                 Icon(
                   Icons.edit_outlined,
                   size: 20,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  color: Theme.of(context).colorScheme.textSecondary,
                 ),
                 const SizedBox(width: 12),
                 Text(
                   'Edit name',
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface,
+                    color: Theme.of(context).colorScheme.textPrimary,
                   ),
                 ),
               ],
@@ -218,14 +219,14 @@ class ContextMenuWidget {
                   Icon(
                     Icons.edit_outlined,
                     size: 18,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    color: Theme.of(context).colorScheme.textSecondary,
                   ),
                   const SizedBox(width: 10),
                   Text(
                     'Edit',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Theme.of(context).colorScheme.onSurface,
+                      color: Theme.of(context).colorScheme.textPrimary,
                     ),
                   ),
                 ],

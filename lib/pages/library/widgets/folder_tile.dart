@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:bookexample/core/widgets/context_menu_widget.dart';
+import 'package:bookexample/core/theme/spacing.dart';
+import 'package:bookexample/core/theme/text_styles.dart';
+import 'package:bookexample/core/theme/color_scheme_extensions.dart';
 
 class FolderTile extends StatelessWidget {
   final String folderName;
@@ -20,22 +23,22 @@ class FolderTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
+      ),
       child: ListTile(
         leading: Icon(
           Icons.folder_outlined,
           size: 32,
           color: Theme.of(context).colorScheme.primary,
         ),
-        title: Text(
-          folderName,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-        ),
+        title: Text(folderName, style: context.bodyLargeMedium),
         // subtitle: Text(
         //   "${deckCount} decks",
         //   style: TextStyle(
         //     fontSize: 14,
-        //     color: Theme.of(context).colorScheme.onSurfaceVariant,
+        //     color: Theme.of(context).colorScheme.textSecondary,
         //   ),
         // ),
         trailing: ContextMenuWidget.folderPopupMenuButton(

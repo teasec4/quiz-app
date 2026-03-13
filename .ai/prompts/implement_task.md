@@ -6,7 +6,8 @@ spec/memory_bank/project_context.md
 spec/memory_bank/architecture_patterns.md
 spec/memory_bank/state_management.md
 spec/memory_bank/database_patterns.md
-spec/project_rules.md
+spec/memory_bank/ui_patterns.md
+
 
 Then read the feature specification:
 
@@ -24,7 +25,3 @@ Instructions:
 - follow Clean Architecture
 - do not refactor code outside the scope
 
-Output:
-
-1. explanation of implementation
-2. code changes
