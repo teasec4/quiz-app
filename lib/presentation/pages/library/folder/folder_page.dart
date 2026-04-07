@@ -83,7 +83,9 @@ class _FolderPageState extends State<FolderPage> {
       builder: (context, vm, child) {
         // Initialize stream subscription on first build
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          vm.ensureDecksWatched(widget.folderId);
+          if (mounted) {
+            vm.ensureDecksWatched(widget.folderId);
+          }
         });
 
         final decks = vm.getDecksForFolder(widget.folderId);

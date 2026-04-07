@@ -85,10 +85,10 @@ class _CreateDeckState extends State<CreateDeck> {
       cards.clear();
 
       // Reload deck data if editing a different deck
-      if (widget.deckId != null) {
+      if (widget.deckId != null && mounted) {
         final vm = context.read<LibraryViewModel>();
         _deckFuture = vm.getDeckById(widget.deckId!);
-      } else {
+      } else if (widget.deckId == null) {
         // If switching from edit to create mode, add a default card
         cards.add(CardFormFields());
       }

@@ -20,6 +20,8 @@ class LibraryViewModel extends BaseViewModel {
   final Map<int, StreamSubscription<List<DeckEntity>>> _deckSubscriptions = {};
   StreamSubscription<List<FlashCardEntity>>? _flashcardsSubscription;
 
+  bool _isInitialized = false;
+
   LibraryViewModel(this.repository) {
     _initializeStreams();
   }
@@ -37,6 +39,9 @@ class LibraryViewModel extends BaseViewModel {
 
   // Initialize stream subscriptions
   void _initializeStreams() {
+    if (_isInitialized) return;
+    _isInitialized = true;
+
     // Subscribe to folders stream
     _foldersSubscription = repository.watchFolders().listen(
       (folders) {

@@ -43,6 +43,7 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
   double dragOffset = 0;
   bool showBack = false;
   bool isAnimating = false;
+  bool _isCompleting = false;
 
   @override
   void initState() {
@@ -52,8 +53,13 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
       begin: animationStartValue,
       end: animationResetValue,
     ).animate(_controller);
-    _studyVM = context.read<StudySessionViewModel>();
-    _studyVM.startSession(widget.deckId);
+    _studyVM = Provider.of<StudySessionViewModel>(context, listen: false);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _studyVM.startSession(widget.deckId);
+      }
+    });
   }
 
   @override
@@ -93,9 +99,13 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
         isAnimating = false;
       });
 
-      // Если закончилась сессия
+      // Если закончилась сессия - показать диалог после кадра
       if (_studyVM.session?.isFinished ?? false) {
-        _showSessionComplete();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            _showSessionComplete();
+          }
+        });
       }
     });
   }
@@ -118,46 +128,174 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
     final session = _studyVM.session;
     if (session == null) return;
 
+    final totalCards = session.cards.length;
+    final correctPercent = totalCards > 0
+        ? (session.correctCount / totalCards * 100).round()
+        : 0;
+
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (_) => AlertDialog(
-        title: const Text('Session Complete'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Correct: ${session.correctCount}/${session.cards.length}'),
-            const SizedBox(height: smallSpacing),
-            Text(
-              'Incorrect: ${session.incorrectCount}/${session.cards.length}',
-            ),
-            const SizedBox(height: mediumSpacing),
-            LinearProgressIndicator(
-              value: session.correctCount / session.cards.length,
-              minHeight: 8,
-              backgroundColor: Theme.of(
-                context,
-              ).colorScheme.error.withValues(alpha: 0.2),
-              valueColor: AlwaysStoppedAnimation(
-                Theme.of(context).colorScheme.tertiary,
+      barrierColor: Colors.black87,
+      builder: (_) => Dialog(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        elevation: 8,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        child: Padding(
+          padding: const EdgeInsets.all(28),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: correctPercent >= 70
+                      ? Theme.of(context).colorScheme.primaryContainer
+                      : Theme.of(context).colorScheme.surfaceContainerHighest,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  correctPercent >= 70
+                      ? Icons.emoji_events
+                      : Icons.sentiment_neutral,
+                  size: 56,
+                  color: correctPercent >= 70
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.tertiary,
+                ),
               ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              await _studyVM.completeSession();
-
-              if (mounted) {
-                Navigator.pop(context);
-                context.go('/study');
-              }
-            },
-            child: const Text('Done'),
+              const SizedBox(height: 20),
+              Text(
+                'Session Complete!',
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                correctPercent >= 70
+                    ? 'Great job! Keep it up!'
+                    : 'Keep practicing, you\'ll get better!',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 28),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _resultStat(
+                    context,
+                    icon: Icons.check_circle_outline,
+                    label: 'Correct',
+                    value: '${session.correctCount}',
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  Container(
+                    height: 40,
+                    width: 1,
+                    color: Theme.of(context).colorScheme.outlineVariant,
+                  ),
+                  _resultStat(
+                    context,
+                    icon: Icons.cancel_outlined,
+                    label: 'Incorrect',
+                    value: '${session.incorrectCount}',
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+                  Container(
+                    height: 40,
+                    width: 1,
+                    color: Theme.of(context).colorScheme.outlineVariant,
+                  ),
+                  _resultStat(
+                    context,
+                    icon: Icons.percent,
+                    label: 'Score',
+                    value: '$correctPercent%',
+                    color: Theme.of(context).colorScheme.tertiary,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: LinearProgressIndicator(
+                  value: session.correctCount / totalCards,
+                  minHeight: 16,
+                  backgroundColor: Theme.of(
+                    context,
+                  ).colorScheme.surfaceContainerHighest,
+                  valueColor: AlwaysStoppedAnimation(
+                    correctPercent >= 70
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).colorScheme.tertiary,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '${session.correctCount} of $totalCards cards correct',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 32),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  onPressed: _isCompleting
+                      ? null
+                      : () async {
+                          setState(() => _isCompleting = true);
+                          await _studyVM.completeSession();
+                          if (mounted) {
+                            Navigator.pop(context);
+                            context.go('/study');
+                          }
+                        },
+                  child: _isCompleting
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Text('Done'),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
+    );
+  }
+
+  Widget _resultStat(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required String value,
+    required Color color,
+  }) {
+    return Column(
+      children: [
+        Icon(icon, color: color, size: 28),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
+        ),
+        Text(
+          label,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ],
     );
   }
 
@@ -184,15 +322,62 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
       builder: (context, studyVM, _) {
         final session = studyVM.session;
 
+        // Session is null - either loading or completed
         if (session == null) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+          // If there's an error, show error state
+          if (studyVM.hasError) {
+            return Scaffold(
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(studyVM.error?.userFriendlyMessage ?? 'Error'),
+                    const SizedBox(height: 16),
+                    FilledButton(
+                      onPressed: () => context.go('/study'),
+                      child: const Text('Go to Study'),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          // If loading, show progress
+          if (studyVM.isLoading) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+
+          // Session is null, not loading, no error - completed
+          return Scaffold(
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Session finished'),
+                  const SizedBox(height: 16),
+                  FilledButton(
+                    onPressed: () => context.go('/study'),
+                    child: const Text('Go to Study'),
+                  ),
+                ],
+              ),
+            ),
           );
         }
 
         final card = session.currentCard;
         if (card == null) {
-          return const Scaffold(body: Center(child: Text('Session finished')));
+          return Scaffold(
+            body: Center(
+              child: FilledButton(
+                onPressed: () => context.go('/study'),
+                child: const Text('Session Complete'),
+              ),
+            ),
+          );
         }
 
         return Scaffold(

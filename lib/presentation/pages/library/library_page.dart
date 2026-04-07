@@ -3,6 +3,7 @@ import 'package:bookexample/presentation/pages/library/widgets/create_folder_she
 import 'package:bookexample/presentation/pages/library/widgets/folder_tile.dart';
 import 'package:bookexample/core/widgets/empty_state_widget.dart';
 import 'package:bookexample/core/widgets/loading_overlay_widget.dart';
+import 'package:bookexample/core/widgets/error_banner_widget.dart';
 import 'package:bookexample/core/extensions/snackbar_extensions.dart';
 import 'package:bookexample/core/theme/spacing.dart';
 import 'package:bookexample/core/theme/text_styles.dart';
@@ -153,6 +154,17 @@ class LibraryPage extends StatelessWidget {
             children: [
               _buildFoldersList(context, vm),
               if (vm.isLoading) LoadingOverlayWidget.scrim(opacity: 0.3),
+              if (vm.hasError && vm.error != null)
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: ErrorBannerWidget.fromError(
+                    error: vm.error!,
+                    onClose: vm.clearError,
+                    onTap: () {},
+                  ),
+                ),
             ],
           ),
         );
