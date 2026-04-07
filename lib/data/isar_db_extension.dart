@@ -1,7 +1,7 @@
-import 'package:bookexample/domain/isar_model/library/deck_entity.dart';
-import 'package:bookexample/domain/isar_model/library/flashcard_entity.dart';
-import 'package:bookexample/domain/isar_model/session/study_answer_entity.dart';
-import 'package:bookexample/domain/isar_model/session/study_session_entity.dart';
+import 'package:bookexample/data/models/library/deck_entity.dart';
+import 'package:bookexample/data/models/library/flashcard_entity.dart';
+import 'package:bookexample/data/models/session/study_answer_entity.dart';
+import 'package:bookexample/data/models/session/study_session_entity.dart';
 import 'package:isar_community/isar.dart';
 
 extension IsarDbExtension on Isar {

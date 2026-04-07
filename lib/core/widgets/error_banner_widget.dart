@@ -1,4 +1,4 @@
-import 'package:bookexample/view_models/base_view_model.dart';
+import 'package:bookexample/presentation/view_models/base_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:bookexample/core/theme/spacing.dart';
 

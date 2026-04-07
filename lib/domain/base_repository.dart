@@ -1,5 +1,5 @@
 import 'package:bookexample/core/exceptions/app_exceptions.dart';
-import 'package:bookexample/core/logging/app_logger.dart';
+import 'package:bookexample/core/logging/logger.dart';
 import 'package:isar_community/isar.dart';
 
 abstract class BaseRepository {

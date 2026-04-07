@@ -1,14 +1,14 @@
-import 'package:bookexample/core/service_locator.dart';
+import 'package:bookexample/core/di/service_locator.dart';
 import 'package:bookexample/core/theme/app_theme.dart';
 
 import 'package:bookexample/l10n/app_localizations.dart';
-import 'package:bookexample/router/router.dart';
-import 'package:bookexample/view_models/base_view_model.dart';
-import 'package:bookexample/view_models/library_view_model.dart';
-import 'package:bookexample/view_models/locale_view_model.dart';
-import 'package:bookexample/view_models/stats_view_model.dart';
-import 'package:bookexample/view_models/study_session_view_model.dart';
-import 'package:bookexample/view_models/theme_view_model.dart';
+import 'package:bookexample/presentation/router/router.dart';
+import 'package:bookexample/presentation/view_models/base_view_model.dart';
+import 'package:bookexample/presentation/view_models/library_view_model.dart';
+import 'package:bookexample/presentation/view_models/locale_view_model.dart';
+import 'package:bookexample/presentation/view_models/stats_view_model.dart';
+import 'package:bookexample/presentation/view_models/study_session_view_model.dart';
+import 'package:bookexample/presentation/view_models/theme_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';

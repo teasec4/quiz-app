@@ -1,8 +1,8 @@
 import 'package:bookexample/core/exceptions/app_exceptions.dart';
-import 'package:bookexample/core/logging/app_logger.dart';
+import 'package:bookexample/core/logging/logger.dart';
 import 'package:bookexample/domain/base_repository.dart';
-import 'package:bookexample/domain/isar_model/session/study_session_entity.dart';
-import 'package:bookexample/domain/isar_model/user_stats/user_stats_entity.dart';
+import 'package:bookexample/data/models/session/study_session_entity.dart';
+import 'package:bookexample/data/models/user_stats/user_stats_entity.dart';
 import 'package:bookexample/domain/repositories/stats_repository.dart';
 import 'package:isar_community/isar.dart';
 
