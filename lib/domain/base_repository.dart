@@ -1,11 +1,11 @@
 import 'package:bookexample/core/exceptions/app_exceptions.dart';
 import 'package:bookexample/core/logging/app_logger.dart';
-import 'package:bookexample/data/data_source.dart';
+import 'package:isar_community/isar.dart';
 
 abstract class BaseRepository {
-  final DataSource dataSource;
+  final Isar isar;
 
-  BaseRepository(this.dataSource);
+  BaseRepository(this.isar);
 
   Future<T> executeDbOperation<T>(
     Future<T> Function() operation,
@@ -13,7 +13,7 @@ abstract class BaseRepository {
   ) async {
     try {
       return await operation();
-    } on AppException catch (e) {
+    } on AppException catch (_) {
       rethrow;
     } catch (error, stackTrace) {
       AppLogger.error('Failed to $operationName', error, stackTrace);

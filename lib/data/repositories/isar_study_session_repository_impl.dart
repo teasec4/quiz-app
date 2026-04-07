@@ -1,7 +1,6 @@
 import 'package:bookexample/core/exceptions/app_exceptions.dart';
 import 'package:bookexample/core/logging/app_logger.dart';
-import 'package:bookexample/data/data_source.dart';
-import 'package:bookexample/data/isar_data_source.dart';
+import 'package:bookexample/data/isar_db_extension.dart';
 import 'package:bookexample/domain/base_repository.dart';
 import 'package:bookexample/domain/isar_model/session/study_answer_entity.dart';
 import 'package:bookexample/domain/isar_model/session/study_session_entity.dart';
@@ -10,13 +9,10 @@ import 'package:bookexample/pages/session/models/study_session_draft.dart';
 
 class IsarStudySessionRepositoryImpl extends BaseRepository
     implements StudySessionRepository {
-  IsarStudySessionRepositoryImpl(DataSource dataSource) : super(dataSource);
-
-  IsarDataSource get _isarDataSource => dataSource as IsarDataSource;
+  IsarStudySessionRepositoryImpl(super.isar);
 
   @override
   Future<void> saveSession(StudySessionDraft draft) async {
-    // Validate session data
     if (draft.answers.isEmpty) {
       throw ValidationException('Invalid session data', {
         'answers': 'Session must contain at least one answer',
@@ -30,14 +26,14 @@ class IsarStudySessionRepositoryImpl extends BaseRepository
     }
 
     await executeDbOperation(() async {
-      await dataSource.executeTransaction(() async {
+      await isar.writeTxn(() async {
         final session = StudySessionEntity()
           ..endedAt = DateTime.now()
           ..totalCards = draft.answers.length
           ..correctAnswers = draft.answers.where((a) => a.isCorrect).length
           ..isCompleted = true;
 
-        final sessionId = await dataSource.insert<StudySessionEntity>(session);
+        final sessionId = await isar.studySessionEntitys.put(session);
         session.id = sessionId;
 
         for (final a in draft.answers) {
@@ -46,13 +42,13 @@ class IsarStudySessionRepositoryImpl extends BaseRepository
             ..isCorrect = a.isCorrect
             ..session.value = session;
 
-          final answerId = await dataSource.insert<StudyAnswerEntity>(answer);
+          final answerId = await isar.studyAnswerEntitys.put(answer);
           answer.id = answerId;
 
-          await _isarDataSource.saveLinks(answer);
+          await isar.saveAnswerLinks(answer);
         }
 
-        await _isarDataSource.saveLinks(session);
+        await isar.saveSessionLinks(session);
       });
 
       AppLogger.info(

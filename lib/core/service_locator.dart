@@ -1,5 +1,3 @@
-import 'package:bookexample/data/data_source.dart';
-import 'package:bookexample/data/isar_data_source.dart';
 import 'package:bookexample/data/repositories/isar_library_repository_impl.dart';
 import 'package:bookexample/data/repositories/isar_study_session_repository_impl.dart';
 import 'package:bookexample/data/repositories/stats_repository_impl.dart';
@@ -22,17 +20,10 @@ Future<void> setupServiceLocator() async {
   await Isar.initializeIsarCore(download: true);
   final isar = await initDB(dbSchema);
 
-  // DataSource
-  final dataSource = IsarDataSource(isar);
-  getIt.registerSingleton<DataSource>(dataSource);
-
-  // Repositories
-  getIt.registerSingleton<LibraryRepository>(
-    IsarLibraryRepositoryImpl(dataSource),
-  );
-  getIt.registerSingleton<StatsRepository>(StatsRepositoryImpl(dataSource));
+  getIt.registerSingleton<LibraryRepository>(IsarLibraryRepositoryImpl(isar));
+  getIt.registerSingleton<StatsRepository>(StatsRepositoryImpl(isar));
   getIt.registerSingleton<StudySessionRepository>(
-    IsarStudySessionRepositoryImpl(dataSource),
+    IsarStudySessionRepositoryImpl(isar),
   );
 
   // ViewModels
