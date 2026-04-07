@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
-import 'package:bookexample/core/logging/app_logger.dart';
+import 'package:bookexample/core/logging/logger.dart';
 
 /// Storage for theme preferences as fallback when shared_preferences fails
 class ThemeStorage {

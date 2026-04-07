@@ -1,4 +1,4 @@
-import 'package:bookexample/domain/isar_model/library/flashcard_entity.dart';
+import 'package:bookexample/data/models/library/flashcard_entity.dart';
 import 'package:flutter/material.dart';
 import 'flip_card_widget.dart';
 

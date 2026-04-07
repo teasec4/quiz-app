@@ -1,7 +1,7 @@
-import 'package:bookexample/domain/isar_model/library/deck_entity.dart';
-import 'package:bookexample/domain/isar_model/library/flashcard_entity.dart';
-import 'package:bookexample/domain/isar_model/library/folder_entity.dart';
-import 'package:bookexample/pages/session/models/study_session_draft.dart';
+import 'package:bookexample/data/models/library/deck_entity.dart';
+import 'package:bookexample/data/models/library/flashcard_entity.dart';
+import 'package:bookexample/data/models/library/folder_entity.dart';
+import 'package:bookexample/presentation/pages/session/models/study_session_draft.dart';
 
 abstract class LibraryRepository {
   // Folders
