@@ -7,17 +7,18 @@ Layers:
 Presentation
 - UI Widgets
 - ViewModels
-- Navigation
+- Navigation (router)
+- Pages
 
 Domain
-- Entities
 - Repository interfaces
-- Business rules
+- Business rules (base_repository.dart)
 
 Data
 - Repository implementations
-- Data sources
-- Database models
+- Isar database (direct usage, no abstraction layer)
+- Data models (Isar entities)
+- Extensions (isar_db_extension.dart)
 
 Core
 - Utilities
@@ -26,4 +27,4 @@ Core
 - Themes
 - Widgets (reusable for main parts)
 - Validation
-- DI (getIt)
+- DI (service_locator in core/di/)

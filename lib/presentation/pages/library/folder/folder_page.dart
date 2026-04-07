@@ -1,4 +1,5 @@
 import 'package:bookexample/data/models/library/deck_entity.dart';
+import 'package:bookexample/presentation/view_models/base_view_model.dart';
 import 'package:bookexample/presentation/view_models/library_view_model.dart';
 import 'package:bookexample/presentation/pages/library/widgets/deck_tile.dart';
 import 'package:bookexample/core/widgets/empty_state_widget.dart';
@@ -19,57 +20,51 @@ class FolderPage extends StatefulWidget {
 }
 
 class _FolderPageState extends State<FolderPage> {
-  @override
-  void initState() {
-    super.initState();
-    final vm = context.read<LibraryViewModel>();
-    vm.ensureDecksWatched(widget.folderId);
+  void _deleteDeck(
+    BuildContext context,
+    LibraryViewModel vm,
+    int deckId,
+    String deckTitle,
+  ) async {
+    await vm.deleteDeck(deckId);
+
+    if (context.mounted) {
+      if (vm.hasError && vm.error != null) {
+        context.showOperationErrorSnackBar(
+          operation: 'deleting deck',
+          error: vm.error!,
+          onRetry: () => _deleteDeck(context, vm, deckId, deckTitle),
+        );
+      } else if (vm.isSuccess) {
+        context.showOperationSuccessSnackBar(
+          operation: 'Deck "$deckTitle" deleted',
+        );
+        vm.resetSuccess();
+      }
+    }
   }
 
-  // edit deck
-  void _editDeck(BuildContext context, int deckId) {
-    context.go('/library/folder/${widget.folderId}/editdeck/$deckId');
-  }
-
-  // delete deck
   void _showDeleteConfirmation(
     BuildContext context,
+    LibraryViewModel vm,
     int deckId,
     String deckTitle,
   ) {
     showDialog(
       context: context,
-      builder: (context) {
-        final vm = context.read<LibraryViewModel>();
+      builder: (dialogContext) {
         return AlertDialog(
           title: const Text('Delete Deck?'),
           content: Text('All $deckTitle cards will be deleted.'),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(dialogContext),
               child: const Text('Cancel'),
             ),
             TextButton(
-              onPressed: () async {
-                await vm.deleteDeck(deckId);
-
-                if (context.mounted) {
-                  Navigator.pop(context);
-
-                  if (vm.hasError && vm.error != null) {
-                    context.showOperationErrorSnackBar(
-                      operation: 'deleting deck',
-                      error: vm.error!,
-                      onRetry: () =>
-                          _showDeleteConfirmation(context, deckId, deckTitle),
-                    );
-                  } else if (vm.isSuccess) {
-                    context.showOperationSuccessSnackBar(
-                      operation: 'Deck "$deckTitle" deleted',
-                    );
-                    vm.resetSuccess();
-                  }
-                }
+              onPressed: () {
+                Navigator.pop(dialogContext);
+                _deleteDeck(context, vm, deckId, deckTitle);
               },
               child: Text(
                 'Delete',
@@ -84,42 +79,48 @@ class _FolderPageState extends State<FolderPage> {
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<LibraryViewModel>();
-    final decks = vm.getDecksForFolder(widget.folderId);
-    final folder = vm.getFolderByIdSync(widget.folderId);
-    final folderTitle = folder?.name ?? "Loading";
+    return Consumer<LibraryViewModel>(
+      builder: (context, vm, child) {
+        // Initialize stream subscription on first build
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          vm.ensureDecksWatched(widget.folderId);
+        });
 
-    return Scaffold(
-      appBar: AppBar(title: Text(folderTitle)),
-      floatingActionButton: FloatingActionButton(
-        onPressed: vm.isLoading
-            ? null
-            : () {
-                context.go('/library/folder/${widget.folderId}/createdeck');
-              },
-        mini: true,
-        child: const Icon(Icons.add),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: Stack(
-        children: [
-          _buildDecksList(context, vm, decks),
-          if (vm.isLoading) LoadingOverlayWidget.scrim(opacity: 0.3),
-          if (vm.hasError && vm.error != null)
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: ErrorBannerWidget.fromError(
-                error: vm.error!,
-                onClose: vm.clearError,
-                onTap: () {
-                  // Retry loading folder
-                },
-              ),
-            ),
-        ],
-      ),
+        final decks = vm.getDecksForFolder(widget.folderId);
+        final folder = vm.getFolderByIdSync(widget.folderId);
+        final folderTitle = folder?.name ?? "Loading";
+
+        return Scaffold(
+          appBar: AppBar(title: Text(folderTitle)),
+          floatingActionButton: FloatingActionButton(
+            onPressed: vm.isLoading
+                ? null
+                : () {
+                    context.go('/library/folder/${widget.folderId}/createdeck');
+                  },
+            mini: true,
+            child: const Icon(Icons.add),
+          ),
+          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+          body: Stack(
+            children: [
+              _buildDecksList(context, vm, decks),
+              if (vm.isLoading) LoadingOverlayWidget.scrim(opacity: 0.3),
+              if (vm.hasError && vm.error != null)
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: ErrorBannerWidget.fromError(
+                    error: vm.error!,
+                    onClose: vm.clearError,
+                    onTap: () {},
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -174,11 +175,14 @@ class _FolderPageState extends State<FolderPage> {
                             );
                           },
                           onEdit: () {
-                            _editDeck(context, deck.id);
+                            context.go(
+                              '/library/folder/${widget.folderId}/editdeck/${deck.id}',
+                            );
                           },
                           onDelete: () {
                             _showDeleteConfirmation(
                               context,
+                              vm,
                               deck.id,
                               deck.title,
                             );
