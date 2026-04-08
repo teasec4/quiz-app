@@ -1,4 +1,5 @@
 import 'package:bookexample/data/models/user_stats/user_stats_entity.dart';
+import 'package:bookexample/l10n/app_localizations.dart';
 import 'package:bookexample/presentation/view_models/stats_view_model.dart';
 import 'package:bookexample/presentation/pages/study/widgets/deck_selector.dart';
 import 'package:bookexample/presentation/pages/study/widgets/mode_tile.dart';
@@ -32,16 +33,17 @@ class _StudyPageState extends State<StudyPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final vm = context.watch<StatsViewModel>();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Study')),
+      appBar: AppBar(title: Text(l10n.study)),
       body: Stack(
         children: [
           ListView(
             padding: AppSpacing.screenPadding,
             children: [
-              Text('Stats', style: context.titleLargeBold),
+              Text(l10n.stats, style: context.titleLargeBold),
               AppSpacing.verticalMd,
               FutureBuilder<UserStatsEntity>(
                 future: _statsFuture,
@@ -61,14 +63,14 @@ class _StudyPageState extends State<StudyPage> {
                 },
               ),
               AppSpacing.verticalXl,
-              Text('Study Modes', style: context.titleLargeBold),
+              Text(l10n.studyModesTitle, style: context.titleLargeBold),
               AppSpacing.verticalMd,
 
               // Start New Session
               ModeCard(
                 icon: Icons.book,
-                title: 'Start New Session',
-                subtitle: 'Begin a fresh study session',
+                title: l10n.startSession,
+                subtitle: l10n.beginFreshSession,
                 onTap: () {
                   showModalBottomSheet(
                     context: context,
@@ -89,8 +91,8 @@ class _StudyPageState extends State<StudyPage> {
               // Random Cards
               ModeCard(
                 icon: Icons.shuffle,
-                title: 'Start Random 10 Cards',
-                subtitle: 'Quick random study session',
+                title: l10n.startRandom10Cards,
+                subtitle: l10n.quickRandomStudy,
                 onTap: () {},
                 disabled: true,
               ),

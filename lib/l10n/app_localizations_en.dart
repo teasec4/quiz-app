@@ -42,6 +42,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get edit => 'Edit';
 
   @override
+  String get editName => 'Edit name';
+
+  @override
   String get done => 'Done';
 
   @override
@@ -51,7 +54,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get studyTitle => 'Study';
 
   @override
-  String get selectDeck => 'Select Deck';
+  String get selectDeck => 'Select a Deck';
 
   @override
   String get noDecksAvailable => 'No decks available';
@@ -117,7 +120,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String cardsCount(int count) {
-    return '$count cards';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count cards',
+      one: '1 card',
+      zero: 'no cards',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -239,7 +249,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deckCreated => 'Deck created successfully';
 
   @override
-  String get folderCreated => 'Folder created successfully';
+  String folderCreated(String name) {
+    return 'Folder \"$name\" created';
+  }
 
   @override
   String get cardAdded => 'Card added successfully';
@@ -262,7 +274,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Are you sure you want to delete this folder? All decks inside will also be deleted.';
 
   @override
-  String get deleteCardConfirm => 'Are you sure you want to delete this card?';
+  String get deleteCardConfirm => 'Are you sure?';
 
   @override
   String get noFolders => 'No folders yet';
@@ -292,7 +304,280 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get sessionComplete => 'Session Complete!';
+
+  @override
+  String get greatJob => 'Great job! Keep it up!';
+
+  @override
+  String get keepPracticing => 'Keep practicing, you\'ll get better!';
+
+  @override
+  String get scoreLabel => 'Score';
+
+  @override
+  String get sessionDone => 'Done';
+
+  @override
+  String cardsCorrect(int correct, int total) {
+    return '$correct of $total cards correct';
+  }
+
+  @override
   String daysAgo(int count) {
     return '$count days ago';
   }
+
+  @override
+  String get goToStudy => 'Go to Study';
+
+  @override
+  String get sessionFinished => 'Session finished';
+
+  @override
+  String get flashcardSession => 'Flashcard Session';
+
+  @override
+  String get createDeckTitle => 'Create Deck';
+
+  @override
+  String get editDeckTitle => 'Edit Deck';
+
+  @override
+  String get saveChanges => 'Save Changes?';
+
+  @override
+  String get editMore => 'Edit More';
+
+  @override
+  String get deleteCard => 'Delete card?';
+
+  @override
+  String get unsavedChanges => 'Unsaved Changes';
+
+  @override
+  String get unsavedChangesMessage =>
+      'You have unsaved changes. Do you want to leave?';
+
+  @override
+  String get stay => 'Stay';
+
+  @override
+  String get leave => 'Leave';
+
+  @override
+  String get libraryPageTitle => 'Library';
+
+  @override
+  String deleteFolderTitle(String folderName) {
+    return 'Delete Folder - $folderName?';
+  }
+
+  @override
+  String get deleteFolderMessage =>
+      'This will also delete all decks and cards inside.';
+
+  @override
+  String get decksTitle => 'Decks';
+
+  @override
+  String get deleteDeckTitle => 'Delete Deck?';
+
+  @override
+  String deleteDeckMessage(String deckTitle) {
+    return 'All $deckTitle cards will be deleted.';
+  }
+
+  @override
+  String get startSession => 'Start Session';
+
+  @override
+  String get error => 'Error';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get loading => 'Loading...';
+
+  @override
+  String get studyPageTitle => 'Study';
+
+  @override
+  String get statsTitle => 'Stats';
+
+  @override
+  String get studyModesTitle => 'Study Modes';
+
+  @override
+  String get daysInARow => 'Days in a Row';
+
+  @override
+  String get invalidProjectId => 'Invalid project id';
+
+  @override
+  String get invalidFolderId => 'Invalid folder id';
+
+  @override
+  String get invalidFolderOrDeckId => 'Invalid folder or deck id';
+
+  @override
+  String get deckNotFoundTitle => 'Deck not found';
+
+  @override
+  String get developerTools => 'Developer Tools';
+
+  @override
+  String get startRandom10Cards => 'Start Random 10 Cards';
+
+  @override
+  String get quickRandomStudy => 'Quick random study session';
+
+  @override
+  String get beginFreshSession => 'Begin a fresh study session';
+
+  @override
+  String get matchingMode => 'Matching';
+
+  @override
+  String get pairTerms => 'Pair terms';
+
+  @override
+  String get testMode => 'Test Mode';
+
+  @override
+  String get practiceMode => 'Practice';
+
+  @override
+  String get flashcards => 'Flashcards';
+
+  @override
+  String get learnWithFlashcards => 'Learn with flashcards';
+
+  @override
+  String get multipleChoice => 'Multiple Choice';
+
+  @override
+  String get writeAnswer => 'Write Answer';
+
+  @override
+  String questionsCount(int count) {
+    return '$count questions';
+  }
+
+  @override
+  String cardNumber(int number) {
+    return 'Card $number';
+  }
+
+  @override
+  String get frontRequired => 'Front required';
+
+  @override
+  String get backRequired => 'Back required';
+
+  @override
+  String get pasteFromClipboard => 'Paste from clipboard';
+
+  @override
+  String get fixValidationErrors => 'Please fix validation errors';
+
+  @override
+  String cardValidationError(int number, String error) {
+    return 'Card $number: $error';
+  }
+
+  @override
+  String get fillRequiredFields => 'Please fill all required fields';
+
+  @override
+  String get deckSaved => 'Deck saved';
+
+  @override
+  String get deckUpdated => 'Deck updated';
+
+  @override
+  String get cardDeleted => 'Card deleted';
+
+  @override
+  String get deckTitleRequired => 'Deck title is required';
+
+  @override
+  String get savingDeck => 'saving deck';
+
+  @override
+  String get updatingDeck => 'updating deck';
+
+  @override
+  String get deletingCardConfirm => 'Delete card?';
+
+  @override
+  String get areYouSure => 'Are you sure?';
+
+  @override
+  String get removeThisCard => 'Remove this card';
+
+  @override
+  String deckWithCards(String deckName) {
+    return 'Deck: $deckName';
+  }
+
+  @override
+  String cardCountLabel(int count) {
+    return 'Cards: $count';
+  }
+
+  @override
+  String get selectFolder => 'Select a Folder';
+
+  @override
+  String get creatingFolder => 'creating folder';
+
+  @override
+  String get renamingFolder => 'renaming folder';
+
+  @override
+  String get deletingFolder => 'deleting folder';
+
+  @override
+  String folderRenamed(String old, String newName) {
+    return 'Folder \"$old\" renamed to \"$newName\"';
+  }
+
+  @override
+  String folderDeleted(String name) {
+    return 'Folder \"$name\" deleted';
+  }
+
+  @override
+  String deckDeleted(String name) {
+    return 'Deck \"$name\" deleted';
+  }
+
+  @override
+  String get createNewFolder => 'Create New Folder';
+
+  @override
+  String get renameFolder => 'Rename Folder';
+
+  @override
+  String get enterFolderName => 'Enter folder name';
+
+  @override
+  String get folderNameRequired => 'Folder name is required';
+
+  @override
+  String get needsReview => 'Needs review';
+
+  @override
+  String get inProgress => 'In progress';
+
+  @override
+  String get goodProgress => 'Good progress';
+
+  @override
+  String get deletingDeck => 'deleting deck';
+
+  @override
+  String get failedToLoadDeck => 'Failed to load deck';
 }

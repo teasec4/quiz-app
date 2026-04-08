@@ -42,6 +42,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get edit => 'Редактировать';
 
   @override
+  String get editName => 'Переименовать';
+
+  @override
   String get done => 'Готово';
 
   @override
@@ -57,14 +60,14 @@ class AppLocalizationsRu extends AppLocalizations {
   String get noDecksAvailable => 'Нет доступных колод';
 
   @override
-  String get startStudySession => 'Начать сессию учебы';
+  String get startStudySession => 'Начать учебную сессию';
 
   @override
   String get continueStudy => 'Продолжить учебу';
 
   @override
   String cardsRemaining(int count) {
-    return 'Осталось $count карточек';
+    return '$count карточек осталось';
   }
 
   @override
@@ -117,7 +120,15 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String cardsCount(int count) {
-    return '$count карточек';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count карточек',
+      few: 'от 2 до 4 карточек',
+      one: '1 карточка',
+      zero: 'нет карточек',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -142,22 +153,22 @@ class AppLocalizationsRu extends AppLocalizations {
   String get customizeAppearance => 'Настройте внешний вид приложения';
 
   @override
-  String get darkMode => 'Темная тема';
+  String get darkMode => 'Тёмная тема';
 
   @override
-  String get toggleDarkTheme => 'Переключить темную тему';
+  String get toggleDarkTheme => 'Переключить тёмную тему';
 
   @override
   String get themeVariant => 'Вариант темы';
 
   @override
-  String get minimalTheme => 'Минимализм';
+  String get minimalTheme => 'Минимальная';
 
   @override
   String get techTheme => 'Техно';
 
   @override
-  String get modernTheme => 'Модерн';
+  String get modernTheme => 'Современная';
 
   @override
   String get resetToDefaults => 'Сбросить настройки';
@@ -193,7 +204,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get cardsStudied => 'Изучено карточек';
 
   @override
-  String get accuracyRate => 'Точность';
+  String get accuracyRate => 'Процент верных ответов';
 
   @override
   String get streak => 'Серия';
@@ -202,25 +213,25 @@ class AppLocalizationsRu extends AppLocalizations {
   String get today => 'Сегодня';
 
   @override
-  String get thisWeek => 'На этой неделе';
+  String get thisWeek => 'Эта неделя';
 
   @override
-  String get thisMonth => 'В этом месяце';
+  String get thisMonth => 'Этот месяц';
 
   @override
-  String get allTime => 'За все время';
+  String get allTime => 'Всё время';
 
   @override
   String get errorTitle => 'Ошибка';
 
   @override
-  String get unexpectedError => 'Произошла непредвиденная ошибка';
+  String get unexpectedError => 'Произошла неожиданная ошибка';
 
   @override
   String get networkError => 'Ошибка сети. Проверьте подключение.';
 
   @override
-  String get validationError => 'Проверьте введенные данные';
+  String get validationError => 'Проверьте ввод';
 
   @override
   String get emptyFieldError => 'Это поле не может быть пустым';
@@ -232,25 +243,27 @@ class AppLocalizationsRu extends AppLocalizations {
   String get folderNotFound => 'Папка не найдена';
 
   @override
-  String get successTitle => 'Успех';
+  String get successTitle => 'Успешно';
 
   @override
   String get deckCreated => 'Колода успешно создана';
 
   @override
-  String get folderCreated => 'Папка успешно создана';
+  String folderCreated(String name) {
+    return 'Папка \"$name\" создана';
+  }
 
   @override
   String get cardAdded => 'Карточка успешно добавлена';
 
   @override
-  String get changesSaved => 'Изменения успешно сохранены';
+  String get changesSaved => 'Изменения сохранены';
 
   @override
-  String get studySessionSaved => 'Сессия учебы сохранена';
+  String get studySessionSaved => 'Учебная сессия сохранена';
 
   @override
-  String get confirmDelete => 'Подтверждение удаления';
+  String get confirmDelete => 'Подтвердить удаление';
 
   @override
   String get deleteDeckConfirm =>
@@ -261,24 +274,23 @@ class AppLocalizationsRu extends AppLocalizations {
       'Вы уверены, что хотите удалить эту папку? Все колоды внутри также будут удалены.';
 
   @override
-  String get deleteCardConfirm =>
-      'Вы уверены, что хотите удалить эту карточку?';
+  String get deleteCardConfirm => 'Вы уверены?';
 
   @override
-  String get noFolders => 'Пока нет папок';
+  String get noFolders => 'Папок пока нет';
 
   @override
-  String get noDecks => 'Пока нет колод';
+  String get noDecks => 'Колод пока нет';
 
   @override
-  String get noCards => 'Пока нет карточек';
+  String get noCards => 'Карточек пока нет';
 
   @override
-  String get noStudySessions => 'Пока нет сессий учебы';
+  String get noStudySessions => 'Учебных сессий пока нет';
 
   @override
   String createFirstItem(String item) {
-    return 'Создайте свой первый $item, чтобы начать';
+    return 'Создайте первый $item, чтобы начать';
   }
 
   @override
@@ -292,7 +304,282 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get sessionComplete => 'Сессия завершена!';
+
+  @override
+  String get greatJob => 'Отлично! Так держать!';
+
+  @override
+  String get keepPracticing =>
+      'Продолжай практиковаться, у тебя всё получится!';
+
+  @override
+  String get scoreLabel => 'Результат';
+
+  @override
+  String get sessionDone => 'Готово';
+
+  @override
+  String cardsCorrect(int correct, int total) {
+    return '$correct из $total карточек правильно';
+  }
+
+  @override
   String daysAgo(int count) {
     return '$count дней назад';
   }
+
+  @override
+  String get goToStudy => 'Перейти к учебе';
+
+  @override
+  String get sessionFinished => 'Сессия завершена';
+
+  @override
+  String get flashcardSession => 'Карточки';
+
+  @override
+  String get createDeckTitle => 'Создать колоду';
+
+  @override
+  String get editDeckTitle => 'Редактировать колоду';
+
+  @override
+  String get saveChanges => 'Сохранить изменения?';
+
+  @override
+  String get editMore => 'Редактировать ещё';
+
+  @override
+  String get deleteCard => 'Удалить карточку?';
+
+  @override
+  String get unsavedChanges => 'Несохранённые изменения';
+
+  @override
+  String get unsavedChangesMessage =>
+      'У вас есть несохранённые изменения. Вы хотите уйти?';
+
+  @override
+  String get stay => 'Остаться';
+
+  @override
+  String get leave => 'Уйти';
+
+  @override
+  String get libraryPageTitle => 'Библиотека';
+
+  @override
+  String deleteFolderTitle(String folderName) {
+    return 'Удалить папку - $folderName?';
+  }
+
+  @override
+  String get deleteFolderMessage =>
+      'Все колоды и карточки внутри также будут удалены.';
+
+  @override
+  String get decksTitle => 'Колоды';
+
+  @override
+  String get deleteDeckTitle => 'Удалить колоду?';
+
+  @override
+  String deleteDeckMessage(String deckTitle) {
+    return 'Все карточки колоды $deckTitle будут удалены.';
+  }
+
+  @override
+  String get startSession => 'Начать сессию';
+
+  @override
+  String get error => 'Ошибка';
+
+  @override
+  String get retry => 'Повторить';
+
+  @override
+  String get loading => 'Загрузка...';
+
+  @override
+  String get studyPageTitle => 'Учеба';
+
+  @override
+  String get statsTitle => 'Статистика';
+
+  @override
+  String get studyModesTitle => 'Режимы учебы';
+
+  @override
+  String get daysInARow => 'Дней подряд';
+
+  @override
+  String get invalidProjectId => 'Неверный идентификатор проекта';
+
+  @override
+  String get invalidFolderId => 'Неверный идентификатор папки';
+
+  @override
+  String get invalidFolderOrDeckId => 'Неверный идентификатор папки или колоды';
+
+  @override
+  String get deckNotFoundTitle => 'Колода не найдена';
+
+  @override
+  String get developerTools => 'Инструменты разработчика';
+
+  @override
+  String get startRandom10Cards => 'Начать 10 случайных карточек';
+
+  @override
+  String get quickRandomStudy => 'Быстрая случайная учебная сессия';
+
+  @override
+  String get beginFreshSession => 'Начните новую учебную сессию';
+
+  @override
+  String get matchingMode => 'Сопоставление';
+
+  @override
+  String get pairTerms => 'Сопоставьте термины';
+
+  @override
+  String get testMode => 'Тестовый режим';
+
+  @override
+  String get practiceMode => 'Практика';
+
+  @override
+  String get flashcards => 'Карточки';
+
+  @override
+  String get learnWithFlashcards => 'Учите с карточками';
+
+  @override
+  String get multipleChoice => 'Multiple Choice';
+
+  @override
+  String get writeAnswer => 'Написать ответ';
+
+  @override
+  String questionsCount(int count) {
+    return '$count вопросов';
+  }
+
+  @override
+  String cardNumber(int number) {
+    return 'Карточка $number';
+  }
+
+  @override
+  String get frontRequired => 'Лицевая сторона обязательна';
+
+  @override
+  String get backRequired => 'Обратная сторона обязательна';
+
+  @override
+  String get pasteFromClipboard => 'Вставить из буфера обмена';
+
+  @override
+  String get fixValidationErrors => 'Пожалуйста, исправьте ошибки валидации';
+
+  @override
+  String cardValidationError(int number, String error) {
+    return 'Карточка $number: $error';
+  }
+
+  @override
+  String get fillRequiredFields =>
+      'Пожалуйста, заполните все обязательные поля';
+
+  @override
+  String get deckSaved => 'Колода сохранена';
+
+  @override
+  String get deckUpdated => 'Колода обновлена';
+
+  @override
+  String get cardDeleted => 'Карточка удалена';
+
+  @override
+  String get deckTitleRequired => 'Название колоды обязательно';
+
+  @override
+  String get savingDeck => 'сохранение колоды';
+
+  @override
+  String get updatingDeck => 'обновление колоды';
+
+  @override
+  String get deletingCardConfirm => 'Удалить карточку?';
+
+  @override
+  String get areYouSure => 'Вы уверены?';
+
+  @override
+  String get removeThisCard => 'Удалить эту карточку';
+
+  @override
+  String deckWithCards(String deckName) {
+    return 'Колода: $deckName';
+  }
+
+  @override
+  String cardCountLabel(int count) {
+    return 'Карточек: $count';
+  }
+
+  @override
+  String get selectFolder => 'Выберите папку';
+
+  @override
+  String get creatingFolder => 'создание папки';
+
+  @override
+  String get renamingFolder => 'переименование папки';
+
+  @override
+  String get deletingFolder => 'удаление папки';
+
+  @override
+  String folderRenamed(String old, String newName) {
+    return 'Папка \"$old\" переименована в \"$newName\"';
+  }
+
+  @override
+  String folderDeleted(String name) {
+    return 'Папка \"$name\" удалена';
+  }
+
+  @override
+  String deckDeleted(String name) {
+    return 'Колода \"$name\" удалена';
+  }
+
+  @override
+  String get createNewFolder => 'Создать новую папку';
+
+  @override
+  String get renameFolder => 'Переименовать папку';
+
+  @override
+  String get enterFolderName => 'Введите название папки';
+
+  @override
+  String get folderNameRequired => 'Название папки обязательно';
+
+  @override
+  String get needsReview => 'Нужно повторить';
+
+  @override
+  String get inProgress => 'В процессе';
+
+  @override
+  String get goodProgress => 'Хороший прогресс';
+
+  @override
+  String get deletingDeck => 'удаление колоды';
+
+  @override
+  String get failedToLoadDeck => 'Не удалось загрузить колоду';
 }

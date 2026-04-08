@@ -46,6 +46,10 @@
   "@edit": {
     "description": "Edit button label"
   },
+  "editName": "Edit name",
+  "@editName": {
+    "description": "Edit name option"
+  },
   "done": "Done",
   "@done": {
     "description": "Done button label"
@@ -152,7 +156,7 @@
   "@deckDescription": {
     "description": "Deck description input label"
   },
-  "cardsCount": "{count} cards",
+  "cardsCount": "{count, plural, =0{no cards} =1{1 card} other{{count} cards}}",
   "@cardsCount": {
     "description": "Number of cards in deck",
     "placeholders": {
@@ -410,6 +414,38 @@
       }
     }
   },
+  "sessionComplete": "Session Complete!",
+  "@sessionComplete": {
+    "description": "Session complete dialog title"
+  },
+  "greatJob": "Great job! Keep it up!",
+  "@greatJob": {
+    "description": "Motivational message for good score"
+  },
+  "keepPracticing": "Keep practicing, you'll get better!",
+  "@keepPracticing": {
+    "description": "Motivational message for low score"
+  },
+  "scoreLabel": "Score",
+  "@scoreLabel": {
+    "description": "Score label in session complete dialog"
+  },
+  "sessionDone": "Done",
+  "@sessionDone": {
+    "description": "Done button in session complete dialog"
+  },
+  "cardsCorrect": "{correct} of {total} cards correct",
+  "@cardsCorrect": {
+    "description": "Cards correct summary",
+    "placeholders": {
+      "correct": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "daysAgo": "{count} days ago",
   "@daysAgo": {
     "description": "Time format for days ago",
@@ -419,5 +455,424 @@
         "example": "3"
       }
     }
+  },
+  "goToStudy": "Go to Study",
+  "@goToStudy": {
+    "description": "Button to navigate to study page"
+  },
+  "sessionFinished": "Session finished",
+  "@sessionFinished": {
+    "description": "Message when session is finished"
+  },
+  "flashcardSession": "Flashcard Session",
+  "@flashcardSession": {
+    "description": "Flashcard session page title"
+  },
+  "createDeckTitle": "Create Deck",
+  "@createDeckTitle": {
+    "description": "Create deck page title"
+  },
+  "editDeckTitle": "Edit Deck",
+  "@editDeckTitle": {
+    "description": "Edit deck page title"
+  },
+  "saveChanges": "Save Changes?",
+  "@saveChanges": {
+    "description": "Save changes dialog title"
+  },
+  "editMore": "Edit More",
+  "@editMore": {
+    "description": "Edit more button"
+  },
+  "deleteCard": "Delete card?",
+  "@deleteCard": {
+    "description": "Delete card dialog title"
+  },
+  "deleteCardConfirm": "Are you sure?",
+  "@deleteCardConfirm": {
+    "description": "Delete card confirmation"
+  },
+  "unsavedChanges": "Unsaved Changes",
+  "@unsavedChanges": {
+    "description": "Unsaved changes dialog title"
+  },
+  "unsavedChangesMessage": "You have unsaved changes. Are you sure you want to leave?",
+  "@unsavedChangesMessage": {
+    "description": "Unsaved changes dialog message"
+  },
+  "stay": "Stay",
+  "@stay": {
+    "description": "Stay button"
+  },
+  "leave": "Leave",
+  "@leave": {
+    "description": "Leave button"
+  },
+  "addCard": "Add Card",
+  "@addCard": {
+    "description": "Add card button"
+  },
+  "libraryPageTitle": "Library",
+  "@libraryPageTitle": {
+    "description": "Library page title"
+  },
+  "deleteFolderTitle": "Delete Folder - {folderName}?",
+  "@deleteFolderTitle": {
+    "description": "Delete folder dialog title",
+    "placeholders": {
+      "folderName": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteFolderMessage": "This will also delete all decks and cards inside.",
+  "@deleteFolderMessage": {
+    "description": "Delete folder confirmation message"
+  },
+  "decksTitle": "Decks",
+  "@decksTitle": {
+    "description": "Decks section title"
+  },
+  "deleteDeckTitle": "Delete Deck?",
+  "@deleteDeckTitle": {
+    "description": "Delete deck dialog title"
+  },
+  "deleteDeckMessage": "All {deckTitle} cards will be deleted.",
+  "@deleteDeckMessage": {
+    "description": "Delete deck confirmation message",
+    "placeholders": {
+      "deckTitle": {
+        "type": "String"
+      }
+    }
+  },
+  "startSession": "Start Session",
+  "@startSession": {
+    "description": "Start session button"
+  },
+  "error": "Error",
+  "@error": {
+    "description": "Error title"
+  },
+  "retry": "Retry",
+  "@retry": {
+    "description": "Retry button"
+  },
+  "loading": "Loading...",
+  "@loading": {
+    "description": "Loading message"
+  },
+  "studyPageTitle": "Study",
+  "@studyPageTitle": {
+    "description": "Study page title"
+  },
+  "statsTitle": "Stats",
+  "@statsTitle": {
+    "description": "Stats section title"
+  },
+  "studyModesTitle": "Study Modes",
+  "@studyModesTitle": {
+    "description": "Study modes section title"
+  },
+  "daysInARow": "Days in a Row",
+  "@daysInARow": {
+    "description": "Days in a row label"
+  },
+  "invalidProjectId": "Invalid project id",
+  "@invalidProjectId": {
+    "description": "Invalid project id error"
+  },
+  "invalidFolderId": "Invalid folder id",
+  "@invalidFolderId": {
+    "description": "Invalid folder id error"
+  },
+  "invalidFolderOrDeckId": "Invalid folder or deck id",
+  "@invalidFolderOrDeckId": {
+    "description": "Invalid folder or deck id error"
+  },
+  "deckNotFoundTitle": "Deck not found",
+  "@deckNotFoundTitle": {
+    "description": "Deck not found error title"
+  },
+  "developerTools": "Developer Tools",
+  "@developerTools": {
+    "description": "Developer tools section title"
+  },
+  "startRandom10Cards": "Start Random 10 Cards",
+  "@startRandom10Cards": {
+    "description": "Start random 10 cards button"
+  },
+  "quickRandomStudy": "Quick random study session",
+  "@quickRandomStudy": {
+    "description": "Quick random study subtitle"
+  },
+  "beginFreshSession": "Begin a fresh study session",
+  "@beginFreshSession": {
+    "description": "Begin fresh study session subtitle"
+  },
+  "matchingMode": "Matching",
+  "@matchingMode": {
+    "description": "Matching study mode"
+  },
+  "pairTerms": "Pair terms",
+  "@pairTerms": {
+    "description": "Pair terms subtitle"
+  },
+  "testMode": "Test Mode",
+  "@testMode": {
+    "description": "Test mode tile title"
+  },
+  "practiceMode": "Practice",
+  "@practiceMode": {
+    "description": "Practice mode title"
+  },
+  "flashcards": "Flashcards",
+  "@flashcards": {
+    "description": "Flashcards mode"
+  },
+  "learnWithFlashcards": "Learn with flashcards",
+  "@learnWithFlashcards": {
+    "description": "Learn with flashcards subtitle"
+  },
+  "multipleChoice": "Multiple Choice",
+  "@multipleChoice": {
+    "description": "Multiple choice mode"
+  },
+  "writeAnswer": "Write Answer",
+  "@writeAnswer": {
+    "description": "Write answer mode"
+  },
+  "questionsCount": "{count} questions",
+  "@questionsCount": {
+    "description": "Number of questions",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "10"
+      }
+    }
+  },
+  "cardNumber": "Card {number}",
+  "@cardNumber": {
+    "description": "Card number label",
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "frontRequired": "Front required",
+  "@frontRequired": {
+    "description": "Front field required error"
+  },
+  "backRequired": "Back required",
+  "@backRequired": {
+    "description": "Back field required error"
+  },
+  "pasteFromClipboard": "Paste from clipboard",
+  "@pasteFromClipboard": {
+    "description": "Paste tooltip"
+  },
+  "fixValidationErrors": "Please fix validation errors",
+  "@fixValidationErrors": {
+    "description": "Validation error message"
+  },
+  "cardValidationError": "Card {number}: {error}",
+  "@cardValidationError": {
+    "description": "Card validation error",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      },
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "fillRequiredFields": "Please fill all required fields",
+  "@fillRequiredFields": {
+    "description": "Fill required fields error"
+  },
+  "deckSaved": "Deck saved",
+  "@deckSaved": {
+    "description": "Deck saved message"
+  },
+  "deckUpdated": "Deck updated",
+  "@deckUpdated": {
+    "description": "Deck updated message"
+  },
+  "cardDeleted": "Card deleted",
+  "@cardDeleted": {
+    "description": "Card deleted message"
+  },
+  "unsavedChanges": "Unsaved Changes",
+  "@unsavedChanges": {
+    "description": "Unsaved changes title"
+  },
+  "unsavedChangesMessage": "You have unsaved changes. Do you want to leave?",
+  "@unsavedChangesMessage": {
+    "description": "Unsaved changes message"
+  },
+  "stay": "Stay",
+  "@stay": {
+    "description": "Stay button"
+  },
+  "leave": "Leave",
+  "@leave": {
+    "description": "Leave button"
+  },
+  "deckTitleRequired": "Deck title is required",
+  "@deckTitleRequired": {
+    "description": "Deck title required error"
+  },
+  "savingDeck": "saving deck",
+  "@savingDeck": {
+    "description": "Saving deck operation"
+  },
+  "updatingDeck": "updating deck",
+  "@updatingDeck": {
+    "description": "Updating deck operation"
+  },
+  "deletingCardConfirm": "Delete card?",
+  "@deletingCardConfirm": {
+    "description": "Delete card dialog title"
+  },
+  "areYouSure": "Are you sure?",
+  "@areYouSure": {
+    "description": "Confirmation message"
+  },
+  "removeThisCard": "Remove this card",
+  "@removeThisCard": {
+    "description": "Remove card tooltip"
+  },
+  "editMore": "Edit More",
+  "@editMore": {
+    "description": "Edit more button"
+  },
+  "deckWithCards": "Deck: {deckName}",
+  "@deckWithCards": {
+    "description": "Deck name in confirmation",
+    "placeholders": {
+      "deckName": {
+        "type": "String"
+      }
+    }
+  },
+  "cardCountLabel": "Cards: {count}",
+  "@cardCountLabel": {
+    "description": "Card count in confirmation",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button"
+  },
+  "selectFolder": "Select a Folder",
+  "@selectFolder": {
+    "description": "Select folder prompt"
+  },
+  "selectDeck": "Select a Deck",
+  "@selectDeck": {
+    "description": "Select deck prompt"
+  },
+  "creatingFolder": "creating folder",
+  "@creatingFolder": {
+    "description": "Creating folder operation"
+  },
+  "renamingFolder": "renaming folder",
+  "@renamingFolder": {
+    "description": "Renaming folder operation"
+  },
+  "deletingFolder": "deleting folder",
+  "@deletingFolder": {
+    "description": "Deleting folder operation"
+  },
+  "folderCreated": "Folder \"{name}\" created",
+  "@folderCreated": {
+    "description": "Folder created message",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "folderRenamed": "Folder \"{old}\" renamed to \"{newName}\"",
+  "@folderRenamed": {
+    "description": "Folder renamed message",
+    "placeholders": {
+      "old": {
+        "type": "String"
+      },
+      "newName": {
+        "type": "String"
+      }
+    }
+  },
+  "folderDeleted": "Folder \"{name}\" deleted",
+  "@folderDeleted": {
+    "description": "Folder deleted message",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deckDeleted": "Deck \"{name}\" deleted",
+  "@deckDeleted": {
+    "description": "Deck deleted message",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "decksTitle": "Decks",
+  "@decksTitle": {
+    "description": "Decks section title"
+  },
+  "createNewFolder": "Create New Folder",
+  "@createNewFolder": {
+    "description": "Create new folder title"
+  },
+  "renameFolder": "Rename Folder",
+  "@renameFolder": {
+    "description": "Rename folder title"
+  },
+  "enterFolderName": "Enter folder name",
+  "@enterFolderName": {
+    "description": "Folder name hint"
+  },
+  "folderName": "Folder Name",
+  "@folderName": {
+    "description": "Folder name label"
+  },
+  "folderNameRequired": "Folder name is required",
+  "@folderNameRequired": {
+    "description": "Folder name required error"
+  },
+  "needsReview": "Needs review",
+  "@needsReview": {
+    "description": "Needs review status"
+  },
+  "inProgress": "In progress",
+  "@inProgress": {
+    "description": "In progress status"
+  },
+  "goodProgress": "Good progress",
+  "@goodProgress": {
+    "description": "Good progress status"
+  },
+  "deletingDeck": "deleting deck",
+  "@deletingDeck": {
+    "description": "Deleting deck operation"
+  },
+  "failedToLoadDeck": "Failed to load deck",
+  "@failedToLoadDeck": {
+    "description": "Failed to load deck error"
   }
 }

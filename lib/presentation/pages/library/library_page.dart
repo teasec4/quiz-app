@@ -1,3 +1,4 @@
+import 'package:bookexample/l10n/app_localizations.dart';
 import 'package:bookexample/presentation/view_models/library_view_model.dart';
 import 'package:bookexample/presentation/pages/library/widgets/create_folder_sheet.dart';
 import 'package:bookexample/presentation/pages/library/widgets/folder_tile.dart';
@@ -15,6 +16,7 @@ class LibraryPage extends StatelessWidget {
   const LibraryPage({super.key});
 
   void _createFolder(BuildContext context, LibraryViewModel vm) async {
+    final l10n = AppLocalizations.of(context)!;
     final newFolderName = await showModalBottomSheet<String?>(
       context: context,
       builder: (context) => const CreateFolderSheet(),
@@ -31,13 +33,13 @@ class LibraryPage extends StatelessWidget {
 
       if (vm.hasError && vm.error != null) {
         context.showOperationErrorSnackBar(
-          operation: 'creating folder',
+          operation: l10n.creatingFolder,
           error: vm.error!,
           onRetry: () => _createFolder(context, vm),
         );
       } else if (vm.isSuccess) {
         context.showOperationSuccessSnackBar(
-          operation: 'Folder "$newFolderName" created',
+          operation: l10n.folderCreated(newFolderName),
         );
         vm.resetSuccess();
       }
@@ -50,6 +52,7 @@ class LibraryPage extends StatelessWidget {
     int folderId,
     String oldName,
   ) async {
+    final l10n = AppLocalizations.of(context)!;
     final newFolderName = await showModalBottomSheet<String?>(
       context: context,
       builder: (context) => CreateFolderSheet(oldName: oldName),
@@ -66,13 +69,13 @@ class LibraryPage extends StatelessWidget {
 
       if (vm.hasError && vm.error != null) {
         context.showOperationErrorSnackBar(
-          operation: 'renaming folder',
+          operation: l10n.renamingFolder,
           error: vm.error!,
           onRetry: () => _renameFolder(context, vm, folderId, oldName),
         );
       } else if (vm.isSuccess) {
         context.showOperationSuccessSnackBar(
-          operation: 'Folder "$oldName" renamed to "$newFolderName"',
+          operation: l10n.folderRenamed(oldName, newFolderName),
         );
         vm.resetSuccess();
       }
@@ -85,19 +88,20 @@ class LibraryPage extends StatelessWidget {
     int folderId,
     String folderName,
   ) async {
+    final l10n = AppLocalizations.of(context)!;
     await vm.deleteFolder(folderId);
 
     if (!context.mounted) return;
 
     if (vm.hasError && vm.error != null) {
       context.showOperationErrorSnackBar(
-        operation: 'deleting folder',
+        operation: l10n.deletingFolder,
         error: vm.error!,
         onRetry: () => _deleteFolder(context, vm, folderId, folderName),
       );
     } else if (vm.isSuccess) {
       context.showOperationSuccessSnackBar(
-        operation: 'Folder "$folderName" deleted',
+        operation: l10n.folderDeleted(folderName),
       );
       vm.resetSuccess();
     }
@@ -109,17 +113,16 @@ class LibraryPage extends StatelessWidget {
     int folderId,
     String folderName,
   ) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: Text('Delete Folder - $folderName?'),
-        content: const Text(
-          'This will also delete all decks and cards inside.',
-        ),
+        title: Text(l10n.deleteFolderTitle(folderName)),
+        content: Text(l10n.deleteFolderMessage),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -127,7 +130,7 @@ class LibraryPage extends StatelessWidget {
               _deleteFolder(context, vm, folderId, folderName);
             },
             child: Text(
-              'Delete',
+              l10n.delete,
               style: TextStyle(
                 color: Theme.of(dialogContext).colorScheme.error,
               ),
@@ -140,10 +143,12 @@ class LibraryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Consumer<LibraryViewModel>(
       builder: (context, vm, child) {
+        final l10n = AppLocalizations.of(context)!;
         return Scaffold(
-          appBar: AppBar(title: const Text("Library")),
+          appBar: AppBar(title: Text(l10n.library)),
           floatingActionButton: FloatingActionButton(
             onPressed: vm.isLoading ? null : () => _createFolder(context, vm),
             mini: true,
@@ -173,6 +178,7 @@ class LibraryPage extends StatelessWidget {
   }
 
   Widget _buildFoldersList(BuildContext context, LibraryViewModel vm) {
+    final l10n = AppLocalizations.of(context)!;
     final folders = vm.folders;
     return folders.isEmpty
         ? EmptyStateWidget.folders()
@@ -182,7 +188,7 @@ class LibraryPage extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 child: Padding(
                   padding: AppSpacing.screenPadding,
-                  child: Text('Folders', style: context.titleLargeBold),
+                  child: Text(l10n.folders, style: context.titleLargeBold),
                 ),
               ),
               Expanded(

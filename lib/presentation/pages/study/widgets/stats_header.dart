@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:bookexample/l10n/app_localizations.dart';
 import 'package:bookexample/core/theme/spacing.dart';
 import 'package:bookexample/core/theme/text_styles.dart';
 
@@ -16,6 +17,7 @@ class StatsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       children: [
         // Total Cards and Accuracy Rate
@@ -23,14 +25,14 @@ class StatsHeader extends StatelessWidget {
           children: [
             Expanded(
               child: _StatItem(
-                label: 'Learned Cards',
+                label: l10n.cardsStudied,
                 value: totalLearnedCards.toString(),
               ),
             ),
             AppSpacing.horizontalMd,
             Expanded(
               child: _StatItem(
-                label: 'Accuracy Rate',
+                label: l10n.accuracyRate,
                 value: '${(accuracyRate * 100).toStringAsFixed(0)}%',
               ),
             ),
@@ -46,7 +48,7 @@ class StatsHeader extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text('Days in a Row', style: context.titleMediumSemiBold),
+                Text(l10n.daysInARow, style: context.titleMediumSemiBold),
                 AppSpacing.verticalMd,
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,

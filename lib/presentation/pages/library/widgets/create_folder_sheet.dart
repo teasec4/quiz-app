@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:bookexample/l10n/app_localizations.dart';
 import 'package:bookexample/core/theme/spacing.dart';
 import 'package:bookexample/core/theme/text_styles.dart';
 
@@ -49,6 +50,7 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -66,7 +68,7 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              widget.oldName != null ? "Rename Folder" : 'Create New Folder',
+              widget.oldName != null ? l10n.renameFolder : l10n.createNewFolder,
               style: context.titleLargeBold,
             ),
             AppSpacing.verticalLg,
@@ -75,15 +77,15 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
               controller: _nameController,
               style: context.bodyLargeMedium,
               decoration: InputDecoration(
-                hintText: 'Enter folder name',
-                labelText: 'Folder Name',
+                hintText: l10n.enterFolderName,
+                labelText: l10n.folderName,
                 labelStyle: context.titleSmall,
                 prefixIcon: Icon(
                   Icons.folder,
                   color: Theme.of(context).colorScheme.primary,
                   size: 24,
                 ),
-                errorText: _hasError ? 'Folder name is required' : null,
+                errorText: _hasError ? l10n.folderNameRequired : null,
                 filled: true,
                 fillColor: Theme.of(
                   context,

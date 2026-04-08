@@ -1,5 +1,5 @@
 import 'package:bookexample/data/models/library/deck_entity.dart';
-import 'package:bookexample/presentation/view_models/base_view_model.dart';
+import 'package:bookexample/l10n/app_localizations.dart';
 import 'package:bookexample/presentation/view_models/library_view_model.dart';
 import 'package:bookexample/presentation/pages/library/widgets/deck_tile.dart';
 import 'package:bookexample/core/widgets/empty_state_widget.dart';
@@ -26,18 +26,19 @@ class _FolderPageState extends State<FolderPage> {
     int deckId,
     String deckTitle,
   ) async {
+    final l10n = AppLocalizations.of(context)!;
     await vm.deleteDeck(deckId);
 
     if (context.mounted) {
       if (vm.hasError && vm.error != null) {
         context.showOperationErrorSnackBar(
-          operation: 'deleting deck',
+          operation: l10n.deletingDeck,
           error: vm.error!,
           onRetry: () => _deleteDeck(context, vm, deckId, deckTitle),
         );
       } else if (vm.isSuccess) {
         context.showOperationSuccessSnackBar(
-          operation: 'Deck "$deckTitle" deleted',
+          operation: l10n.deckDeleted(deckTitle),
         );
         vm.resetSuccess();
       }
@@ -50,16 +51,17 @@ class _FolderPageState extends State<FolderPage> {
     int deckId,
     String deckTitle,
   ) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: const Text('Delete Deck?'),
-          content: Text('All $deckTitle cards will be deleted.'),
+          title: Text(l10n.deleteDeckTitle),
+          content: Text(l10n.deleteDeckMessage(deckTitle)),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('Cancel'),
+              child: Text(l10n.cancel),
             ),
             TextButton(
               onPressed: () {
@@ -67,7 +69,7 @@ class _FolderPageState extends State<FolderPage> {
                 _deleteDeck(context, vm, deckId, deckTitle);
               },
               child: Text(
-                'Delete',
+                l10n.delete,
                 style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
             ),
@@ -79,6 +81,7 @@ class _FolderPageState extends State<FolderPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Consumer<LibraryViewModel>(
       builder: (context, vm, child) {
         // Initialize stream subscription on first build
@@ -90,7 +93,7 @@ class _FolderPageState extends State<FolderPage> {
 
         final decks = vm.getDecksForFolder(widget.folderId);
         final folder = vm.getFolderByIdSync(widget.folderId);
-        final folderTitle = folder?.name ?? "Loading";
+        final folderTitle = folder?.name ?? l10n.loading;
 
         return Scaffold(
           appBar: AppBar(title: Text(folderTitle)),
@@ -131,6 +134,7 @@ class _FolderPageState extends State<FolderPage> {
     LibraryViewModel vm,
     List<DeckEntity> decks,
   ) {
+    final l10n = AppLocalizations.of(context)!;
     return decks.isEmpty
         ? EmptyStateWidget.decks()
         : Column(
@@ -139,15 +143,15 @@ class _FolderPageState extends State<FolderPage> {
                 alignment: Alignment.centerLeft,
                 child: Padding(
                   padding: const EdgeInsets.all(16),
-                  child: Text('Decks', style: context.titleLargeBold),
+                  child: Text(l10n.decks, style: context.titleLargeBold),
                 ),
               ),
               if (decks.isEmpty)
                 Center(
                   child: EmptyStateWidget(
                     icon: Icons.menu_book,
-                    title: 'No decks yet',
-                    subtitle: 'Create your first deck to start learning',
+                    title: l10n.noDecks,
+                    subtitle: l10n.createFirstItem('deck'),
                   ),
                 )
               else

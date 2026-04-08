@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:bookexample/l10n/app_localizations.dart';
 import 'package:bookexample/core/widgets/context_menu_widget.dart';
 import 'package:bookexample/core/theme/text_styles.dart';
 import 'package:bookexample/core/theme/color_scheme_extensions.dart';
@@ -32,6 +33,7 @@ class DeckTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final progress = cardCount > 0 ? learnedCount / cardCount : 0.0;
 
     return GestureDetector(
@@ -51,7 +53,7 @@ class DeckTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: .center,
                 children: [
-                  Text("${cardCount} cards"),
+                  Text(l10n.cardsCount(cardCount)),
                   _buildMenuButton(context),
                 ],
               ),
@@ -108,7 +110,7 @@ class DeckTile extends StatelessWidget {
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
-                            'Needs review',
+                            l10n.needsReview,
                             style: context.bodySmall.copyWith(
                               color: Theme.of(
                                 context,
@@ -128,7 +130,7 @@ class DeckTile extends StatelessWidget {
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
-                            'In progress',
+                            l10n.inProgress,
                             style: context.bodySmall.copyWith(
                               color: Theme.of(
                                 context,
@@ -150,7 +152,7 @@ class DeckTile extends StatelessWidget {
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
-                            'Good progress',
+                            l10n.goodProgress,
                             style: context.bodySmall.copyWith(
                               color: Theme.of(
                                 context,

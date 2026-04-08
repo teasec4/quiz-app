@@ -1,4 +1,5 @@
 import 'package:bookexample/presentation/view_models/study_session_view_model.dart';
+import 'package:bookexample/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -128,6 +129,7 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
     final session = _studyVM.session;
     if (session == null) return;
 
+    final l10n = AppLocalizations.of(context)!;
     final totalCards = session.cards.length;
     final correctPercent = totalCards > 0
         ? (session.correctCount / totalCards * 100).round()
@@ -137,8 +139,8 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
       context: context,
       barrierDismissible: false,
       barrierColor: Colors.black87,
-      builder: (_) => Dialog(
-        backgroundColor: Theme.of(context).colorScheme.surface,
+      builder: (dialogContext) => Dialog(
+        backgroundColor: Theme.of(dialogContext).colorScheme.surface,
         elevation: 8,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         child: Padding(
@@ -150,8 +152,10 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: correctPercent >= 70
-                      ? Theme.of(context).colorScheme.primaryContainer
-                      : Theme.of(context).colorScheme.surfaceContainerHighest,
+                      ? Theme.of(dialogContext).colorScheme.primaryContainer
+                      : Theme.of(
+                          dialogContext,
+                        ).colorScheme.surfaceContainerHighest,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -160,25 +164,24 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
                       : Icons.sentiment_neutral,
                   size: 56,
                   color: correctPercent >= 70
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.tertiary,
+                      ? Theme.of(dialogContext).colorScheme.primary
+                      : Theme.of(dialogContext).colorScheme.tertiary,
                 ),
               ),
               const SizedBox(height: 20),
               Text(
-                'Session Complete!',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
+                l10n.sessionComplete,
+                style: Theme.of(dialogContext).textTheme.headlineSmall
+                    ?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(dialogContext).colorScheme.onSurface,
+                    ),
               ),
               const SizedBox(height: 8),
               Text(
-                correctPercent >= 70
-                    ? 'Great job! Keep it up!'
-                    : 'Keep practicing, you\'ll get better!',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                correctPercent >= 70 ? l10n.greatJob : l10n.keepPracticing,
+                style: Theme.of(dialogContext).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(dialogContext).colorScheme.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: 28),
@@ -186,35 +189,35 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   _resultStat(
-                    context,
+                    dialogContext,
                     icon: Icons.check_circle_outline,
-                    label: 'Correct',
+                    label: l10n.correctAnswer,
                     value: '${session.correctCount}',
-                    color: Theme.of(context).colorScheme.primary,
+                    color: Theme.of(dialogContext).colorScheme.primary,
                   ),
                   Container(
                     height: 40,
                     width: 1,
-                    color: Theme.of(context).colorScheme.outlineVariant,
+                    color: Theme.of(dialogContext).colorScheme.outlineVariant,
                   ),
                   _resultStat(
-                    context,
+                    dialogContext,
                     icon: Icons.cancel_outlined,
-                    label: 'Incorrect',
+                    label: l10n.incorrectAnswer,
                     value: '${session.incorrectCount}',
-                    color: Theme.of(context).colorScheme.error,
+                    color: Theme.of(dialogContext).colorScheme.error,
                   ),
                   Container(
                     height: 40,
                     width: 1,
-                    color: Theme.of(context).colorScheme.outlineVariant,
+                    color: Theme.of(dialogContext).colorScheme.outlineVariant,
                   ),
                   _resultStat(
-                    context,
+                    dialogContext,
                     icon: Icons.percent,
-                    label: 'Score',
+                    label: l10n.scoreLabel,
                     value: '$correctPercent%',
-                    color: Theme.of(context).colorScheme.tertiary,
+                    color: Theme.of(dialogContext).colorScheme.tertiary,
                   ),
                 ],
               ),
@@ -225,20 +228,20 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
                   value: session.correctCount / totalCards,
                   minHeight: 16,
                   backgroundColor: Theme.of(
-                    context,
+                    dialogContext,
                   ).colorScheme.surfaceContainerHighest,
                   valueColor: AlwaysStoppedAnimation(
                     correctPercent >= 70
-                        ? Theme.of(context).colorScheme.primary
-                        : Theme.of(context).colorScheme.tertiary,
+                        ? Theme.of(dialogContext).colorScheme.primary
+                        : Theme.of(dialogContext).colorScheme.tertiary,
                   ),
                 ),
               ),
               const SizedBox(height: 8),
               Text(
-                '${session.correctCount} of $totalCards cards correct',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                l10n.cardsCorrect(session.correctCount, totalCards),
+                style: Theme.of(dialogContext).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(dialogContext).colorScheme.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: 32),
@@ -251,7 +254,7 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
                           setState(() => _isCompleting = true);
                           await _studyVM.completeSession();
                           if (mounted) {
-                            Navigator.pop(context);
+                            Navigator.pop(dialogContext);
                             context.go('/study');
                           }
                         },
@@ -261,7 +264,7 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
                           height: 20,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Text('Done'),
+                      : Text(l10n.sessionDone),
                 ),
               ),
             ],
@@ -318,6 +321,8 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Consumer<StudySessionViewModel>(
       builder: (context, studyVM, _) {
         final session = studyVM.session;
@@ -331,11 +336,11 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(studyVM.error?.userFriendlyMessage ?? 'Error'),
+                    Text(studyVM.error?.userFriendlyMessage ?? l10n.error),
                     const SizedBox(height: 16),
                     FilledButton(
                       onPressed: () => context.go('/study'),
-                      child: const Text('Go to Study'),
+                      child: Text(l10n.goToStudy),
                     ),
                   ],
                 ),
@@ -356,11 +361,11 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Session finished'),
+                  Text(l10n.sessionFinished),
                   const SizedBox(height: 16),
                   FilledButton(
                     onPressed: () => context.go('/study'),
-                    child: const Text('Go to Study'),
+                    child: Text(l10n.goToStudy),
                   ),
                 ],
               ),
@@ -374,7 +379,7 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
             body: Center(
               child: FilledButton(
                 onPressed: () => context.go('/study'),
-                child: const Text('Session Complete'),
+                child: Text(l10n.sessionComplete),
               ),
             ),
           );
@@ -382,7 +387,7 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Flashcard Session'),
+            title: Text(l10n.flashcardSession),
             actions: [
               IconButton(
                 icon: const Icon(Icons.close),

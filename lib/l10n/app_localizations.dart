@@ -148,7 +148,7 @@ abstract class AppLocalizations {
   /// **'Save'**
   String get save;
 
-  /// Cancel button label
+  /// Cancel button
   ///
   /// In en, this message translates to:
   /// **'Cancel'**
@@ -165,6 +165,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Edit'**
   String get edit;
+
+  /// Edit name option
+  ///
+  /// In en, this message translates to:
+  /// **'Edit name'**
+  String get editName;
 
   /// Done button label
   ///
@@ -187,7 +193,7 @@ abstract class AppLocalizations {
   /// Select deck prompt
   ///
   /// In en, this message translates to:
-  /// **'Select Deck'**
+  /// **'Select a Deck'**
   String get selectDeck;
 
   /// Message when no decks are available for study
@@ -292,7 +298,7 @@ abstract class AppLocalizations {
   /// **'Create Deck'**
   String get createDeck;
 
-  /// Folder name input label
+  /// Folder name label
   ///
   /// In en, this message translates to:
   /// **'Folder Name'**
@@ -313,7 +319,7 @@ abstract class AppLocalizations {
   /// Number of cards in deck
   ///
   /// In en, this message translates to:
-  /// **'{count} cards'**
+  /// **'{count, plural, =0{no cards} =1{1 card} other{{count} cards}}'**
   String cardsCount(int count);
 
   /// Add card button
@@ -550,11 +556,11 @@ abstract class AppLocalizations {
   /// **'Deck created successfully'**
   String get deckCreated;
 
-  /// Folder creation success message
+  /// Folder created message
   ///
   /// In en, this message translates to:
-  /// **'Folder created successfully'**
-  String get folderCreated;
+  /// **'Folder \"{name}\" created'**
+  String folderCreated(String name);
 
   /// Card addition success message
   ///
@@ -592,10 +598,10 @@ abstract class AppLocalizations {
   /// **'Are you sure you want to delete this folder? All decks inside will also be deleted.'**
   String get deleteFolderConfirm;
 
-  /// Delete card confirmation message
+  /// Delete card confirmation
   ///
   /// In en, this message translates to:
-  /// **'Are you sure you want to delete this card?'**
+  /// **'Are you sure?'**
   String get deleteCardConfirm;
 
   /// Empty folders state message
@@ -640,11 +646,509 @@ abstract class AppLocalizations {
   /// **'{count} hours ago'**
   String hoursAgo(int count);
 
+  /// Session complete dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Session Complete!'**
+  String get sessionComplete;
+
+  /// Motivational message for good score
+  ///
+  /// In en, this message translates to:
+  /// **'Great job! Keep it up!'**
+  String get greatJob;
+
+  /// Motivational message for low score
+  ///
+  /// In en, this message translates to:
+  /// **'Keep practicing, you\'ll get better!'**
+  String get keepPracticing;
+
+  /// Score label in session complete dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Score'**
+  String get scoreLabel;
+
+  /// Done button in session complete dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get sessionDone;
+
+  /// Cards correct summary
+  ///
+  /// In en, this message translates to:
+  /// **'{correct} of {total} cards correct'**
+  String cardsCorrect(int correct, int total);
+
   /// Time format for days ago
   ///
   /// In en, this message translates to:
   /// **'{count} days ago'**
   String daysAgo(int count);
+
+  /// Button to navigate to study page
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Study'**
+  String get goToStudy;
+
+  /// Message when session is finished
+  ///
+  /// In en, this message translates to:
+  /// **'Session finished'**
+  String get sessionFinished;
+
+  /// Flashcard session page title
+  ///
+  /// In en, this message translates to:
+  /// **'Flashcard Session'**
+  String get flashcardSession;
+
+  /// Create deck page title
+  ///
+  /// In en, this message translates to:
+  /// **'Create Deck'**
+  String get createDeckTitle;
+
+  /// Edit deck page title
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Deck'**
+  String get editDeckTitle;
+
+  /// Save changes dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes?'**
+  String get saveChanges;
+
+  /// Edit more button
+  ///
+  /// In en, this message translates to:
+  /// **'Edit More'**
+  String get editMore;
+
+  /// Delete card dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Delete card?'**
+  String get deleteCard;
+
+  /// Unsaved changes title
+  ///
+  /// In en, this message translates to:
+  /// **'Unsaved Changes'**
+  String get unsavedChanges;
+
+  /// Unsaved changes message
+  ///
+  /// In en, this message translates to:
+  /// **'You have unsaved changes. Do you want to leave?'**
+  String get unsavedChangesMessage;
+
+  /// Stay button
+  ///
+  /// In en, this message translates to:
+  /// **'Stay'**
+  String get stay;
+
+  /// Leave button
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get leave;
+
+  /// Library page title
+  ///
+  /// In en, this message translates to:
+  /// **'Library'**
+  String get libraryPageTitle;
+
+  /// Delete folder dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Folder - {folderName}?'**
+  String deleteFolderTitle(String folderName);
+
+  /// Delete folder confirmation message
+  ///
+  /// In en, this message translates to:
+  /// **'This will also delete all decks and cards inside.'**
+  String get deleteFolderMessage;
+
+  /// Decks section title
+  ///
+  /// In en, this message translates to:
+  /// **'Decks'**
+  String get decksTitle;
+
+  /// Delete deck dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Deck?'**
+  String get deleteDeckTitle;
+
+  /// Delete deck confirmation message
+  ///
+  /// In en, this message translates to:
+  /// **'All {deckTitle} cards will be deleted.'**
+  String deleteDeckMessage(String deckTitle);
+
+  /// Start session button
+  ///
+  /// In en, this message translates to:
+  /// **'Start Session'**
+  String get startSession;
+
+  /// Error title
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get error;
+
+  /// Retry button
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// Loading message
+  ///
+  /// In en, this message translates to:
+  /// **'Loading...'**
+  String get loading;
+
+  /// Study page title
+  ///
+  /// In en, this message translates to:
+  /// **'Study'**
+  String get studyPageTitle;
+
+  /// Stats section title
+  ///
+  /// In en, this message translates to:
+  /// **'Stats'**
+  String get statsTitle;
+
+  /// Study modes section title
+  ///
+  /// In en, this message translates to:
+  /// **'Study Modes'**
+  String get studyModesTitle;
+
+  /// Days in a row label
+  ///
+  /// In en, this message translates to:
+  /// **'Days in a Row'**
+  String get daysInARow;
+
+  /// Invalid project id error
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid project id'**
+  String get invalidProjectId;
+
+  /// Invalid folder id error
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid folder id'**
+  String get invalidFolderId;
+
+  /// Invalid folder or deck id error
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid folder or deck id'**
+  String get invalidFolderOrDeckId;
+
+  /// Deck not found error title
+  ///
+  /// In en, this message translates to:
+  /// **'Deck not found'**
+  String get deckNotFoundTitle;
+
+  /// Developer tools section title
+  ///
+  /// In en, this message translates to:
+  /// **'Developer Tools'**
+  String get developerTools;
+
+  /// Start random 10 cards button
+  ///
+  /// In en, this message translates to:
+  /// **'Start Random 10 Cards'**
+  String get startRandom10Cards;
+
+  /// Quick random study subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Quick random study session'**
+  String get quickRandomStudy;
+
+  /// Begin fresh study session subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Begin a fresh study session'**
+  String get beginFreshSession;
+
+  /// Matching study mode
+  ///
+  /// In en, this message translates to:
+  /// **'Matching'**
+  String get matchingMode;
+
+  /// Pair terms subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Pair terms'**
+  String get pairTerms;
+
+  /// Test mode tile title
+  ///
+  /// In en, this message translates to:
+  /// **'Test Mode'**
+  String get testMode;
+
+  /// Practice mode title
+  ///
+  /// In en, this message translates to:
+  /// **'Practice'**
+  String get practiceMode;
+
+  /// Flashcards mode
+  ///
+  /// In en, this message translates to:
+  /// **'Flashcards'**
+  String get flashcards;
+
+  /// Learn with flashcards subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Learn with flashcards'**
+  String get learnWithFlashcards;
+
+  /// Multiple choice mode
+  ///
+  /// In en, this message translates to:
+  /// **'Multiple Choice'**
+  String get multipleChoice;
+
+  /// Write answer mode
+  ///
+  /// In en, this message translates to:
+  /// **'Write Answer'**
+  String get writeAnswer;
+
+  /// Number of questions
+  ///
+  /// In en, this message translates to:
+  /// **'{count} questions'**
+  String questionsCount(int count);
+
+  /// Card number label
+  ///
+  /// In en, this message translates to:
+  /// **'Card {number}'**
+  String cardNumber(int number);
+
+  /// Front field required error
+  ///
+  /// In en, this message translates to:
+  /// **'Front required'**
+  String get frontRequired;
+
+  /// Back field required error
+  ///
+  /// In en, this message translates to:
+  /// **'Back required'**
+  String get backRequired;
+
+  /// Paste tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Paste from clipboard'**
+  String get pasteFromClipboard;
+
+  /// Validation error message
+  ///
+  /// In en, this message translates to:
+  /// **'Please fix validation errors'**
+  String get fixValidationErrors;
+
+  /// Card validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Card {number}: {error}'**
+  String cardValidationError(int number, String error);
+
+  /// Fill required fields error
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill all required fields'**
+  String get fillRequiredFields;
+
+  /// Deck saved message
+  ///
+  /// In en, this message translates to:
+  /// **'Deck saved'**
+  String get deckSaved;
+
+  /// Deck updated message
+  ///
+  /// In en, this message translates to:
+  /// **'Deck updated'**
+  String get deckUpdated;
+
+  /// Card deleted message
+  ///
+  /// In en, this message translates to:
+  /// **'Card deleted'**
+  String get cardDeleted;
+
+  /// Deck title required error
+  ///
+  /// In en, this message translates to:
+  /// **'Deck title is required'**
+  String get deckTitleRequired;
+
+  /// Saving deck operation
+  ///
+  /// In en, this message translates to:
+  /// **'saving deck'**
+  String get savingDeck;
+
+  /// Updating deck operation
+  ///
+  /// In en, this message translates to:
+  /// **'updating deck'**
+  String get updatingDeck;
+
+  /// Delete card dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Delete card?'**
+  String get deletingCardConfirm;
+
+  /// Confirmation message
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure?'**
+  String get areYouSure;
+
+  /// Remove card tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this card'**
+  String get removeThisCard;
+
+  /// Deck name in confirmation
+  ///
+  /// In en, this message translates to:
+  /// **'Deck: {deckName}'**
+  String deckWithCards(String deckName);
+
+  /// Card count in confirmation
+  ///
+  /// In en, this message translates to:
+  /// **'Cards: {count}'**
+  String cardCountLabel(int count);
+
+  /// Select folder prompt
+  ///
+  /// In en, this message translates to:
+  /// **'Select a Folder'**
+  String get selectFolder;
+
+  /// Creating folder operation
+  ///
+  /// In en, this message translates to:
+  /// **'creating folder'**
+  String get creatingFolder;
+
+  /// Renaming folder operation
+  ///
+  /// In en, this message translates to:
+  /// **'renaming folder'**
+  String get renamingFolder;
+
+  /// Deleting folder operation
+  ///
+  /// In en, this message translates to:
+  /// **'deleting folder'**
+  String get deletingFolder;
+
+  /// Folder renamed message
+  ///
+  /// In en, this message translates to:
+  /// **'Folder \"{old}\" renamed to \"{newName}\"'**
+  String folderRenamed(String old, String newName);
+
+  /// Folder deleted message
+  ///
+  /// In en, this message translates to:
+  /// **'Folder \"{name}\" deleted'**
+  String folderDeleted(String name);
+
+  /// Deck deleted message
+  ///
+  /// In en, this message translates to:
+  /// **'Deck \"{name}\" deleted'**
+  String deckDeleted(String name);
+
+  /// Create new folder title
+  ///
+  /// In en, this message translates to:
+  /// **'Create New Folder'**
+  String get createNewFolder;
+
+  /// Rename folder title
+  ///
+  /// In en, this message translates to:
+  /// **'Rename Folder'**
+  String get renameFolder;
+
+  /// Folder name hint
+  ///
+  /// In en, this message translates to:
+  /// **'Enter folder name'**
+  String get enterFolderName;
+
+  /// Folder name required error
+  ///
+  /// In en, this message translates to:
+  /// **'Folder name is required'**
+  String get folderNameRequired;
+
+  /// Needs review status
+  ///
+  /// In en, this message translates to:
+  /// **'Needs review'**
+  String get needsReview;
+
+  /// In progress status
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
+  String get inProgress;
+
+  /// Good progress status
+  ///
+  /// In en, this message translates to:
+  /// **'Good progress'**
+  String get goodProgress;
+
+  /// Deleting deck operation
+  ///
+  /// In en, this message translates to:
+  /// **'deleting deck'**
+  String get deletingDeck;
+
+  /// Failed to load deck error
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load deck'**
+  String get failedToLoadDeck;
 }
 
 class _AppLocalizationsDelegate

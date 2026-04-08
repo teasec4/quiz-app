@@ -1,6 +1,6 @@
 import 'package:bookexample/data/models/library/deck_entity.dart';
+import 'package:bookexample/l10n/app_localizations.dart';
 import 'package:bookexample/presentation/view_models/library_view_model.dart';
-import 'package:bookexample/core/theme/text_styles.dart';
 import 'package:bookexample/presentation/pages/library/folder/deck/widgets/flip_card.dart';
 import 'package:bookexample/presentation/pages/library/folder/deck/widgets/study_mode_tile.dart';
 import 'package:flutter/material.dart';
@@ -61,6 +61,7 @@ class _DeckPageState extends State<DeckPage>
   }
 
   Widget _buildCardStack(int cardCount) {
+    final l10n = AppLocalizations.of(context)!;
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -102,7 +103,7 @@ class _DeckPageState extends State<DeckPage>
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          '$cardCount cards',
+                          l10n.cardsCount(cardCount),
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.onPrimary,
                             fontSize: 14,
@@ -122,6 +123,7 @@ class _DeckPageState extends State<DeckPage>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final vm = context.watch<LibraryViewModel>();
     final screenHeight = MediaQuery.of(context).size.height;
     final cardHeight = screenHeight * 0.5;
@@ -133,7 +135,7 @@ class _DeckPageState extends State<DeckPage>
         // Show error state with retry option
         if (snapshot.hasError || (vm.hasError && vm.error != null)) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Error')),
+            appBar: AppBar(title: Text(l10n.error)),
             body: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -145,7 +147,7 @@ class _DeckPageState extends State<DeckPage>
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    vm.error?.userFriendlyMessage ?? 'Failed to load deck',
+                    vm.error?.userFriendlyMessage ?? l10n.failedToLoadDeck,
                     style: Theme.of(context).textTheme.titleMedium,
                     textAlign: TextAlign.center,
                   ),
@@ -168,7 +170,7 @@ class _DeckPageState extends State<DeckPage>
         // Show loading state
         if (!snapshot.hasData || vm.isLoading) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Loading...')),
+            appBar: AppBar(title: Text(l10n.loading)),
             body: const Center(child: CircularProgressIndicator()),
           );
         }
@@ -177,28 +179,28 @@ class _DeckPageState extends State<DeckPage>
         final cards = deck.cards.toList();
         final studyModes = [
           StudyMode(
-            title: 'Flashcards',
-            subtitle: '${cards.length} cards',
+            title: l10n.flashcards,
+            subtitle: l10n.cardsCount(cards.length),
             icon: Icons.style,
             onTap: () {
               context.go('/study/session/${widget.folderId}/${widget.deckId}');
             },
           ),
           StudyMode(
-            title: 'Multiple Choice',
-            subtitle: '${cards.length} questions',
+            title: l10n.multipleChoice,
+            subtitle: l10n.questionsCount(cards.length),
             icon: Icons.check_circle_outline,
             disabled: true,
           ),
           StudyMode(
-            title: 'Write Answer',
-            subtitle: '${cards.length} questions',
+            title: l10n.writeAnswer,
+            subtitle: l10n.questionsCount(cards.length),
             icon: Icons.edit,
             disabled: true,
           ),
           StudyMode(
-            title: 'Matching',
-            subtitle: 'Pair terms',
+            title: l10n.matchingMode,
+            subtitle: l10n.pairTerms,
             icon: Icons.connect_without_contact,
             disabled: true,
           ),

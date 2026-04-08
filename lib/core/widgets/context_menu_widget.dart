@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:bookexample/l10n/app_localizations.dart';
 import 'package:bookexample/core/theme/color_scheme_extensions.dart';
 
 /// A universal context menu widget for folder and deck tiles.
@@ -19,7 +20,7 @@ class ContextMenuWidget {
           context: context,
           value: 'edit',
           icon: Icons.edit_outlined,
-          label: 'Edit name',
+          label: AppLocalizations.of(context)!.editName,
           iconColor: Theme.of(context).colorScheme.textSecondary,
           textColor: Theme.of(context).colorScheme.textPrimary,
         ),
@@ -27,7 +28,7 @@ class ContextMenuWidget {
           context: context,
           value: 'delete',
           icon: Icons.delete_outline,
-          label: 'Delete',
+          label: AppLocalizations.of(context)!.delete,
           iconColor: Theme.of(context).colorScheme.error,
           textColor: Theme.of(context).colorScheme.error,
         ),
@@ -55,7 +56,7 @@ class ContextMenuWidget {
             context: context,
             value: 'edit',
             icon: Icons.edit_outlined,
-            label: 'Edit',
+            label: AppLocalizations.of(context)!.edit,
             iconColor: Theme.of(context).colorScheme.textSecondary,
             textColor: Theme.of(context).colorScheme.textPrimary,
             fontSize: 14,
@@ -66,7 +67,7 @@ class ContextMenuWidget {
             context: context,
             value: 'delete',
             icon: Icons.delete_outline,
-            label: 'Delete',
+            label: AppLocalizations.of(context)!.delete,
             iconColor: Theme.of(context).colorScheme.error,
             textColor: Theme.of(context).colorScheme.error,
             fontSize: 14,
@@ -158,46 +159,51 @@ class ContextMenuWidget {
     required VoidCallback? onDelete,
   }) {
     return PopupMenuButton(
-      itemBuilder: (context) => [
-        if (onEdit != null)
-          PopupMenuItem(
-            onTap: onEdit,
-            child: Row(
-              children: [
-                Icon(
-                  Icons.edit_outlined,
-                  size: 20,
-                  color: Theme.of(context).colorScheme.textSecondary,
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  'Edit name',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.textPrimary,
+      itemBuilder: (context) {
+        final l10n = AppLocalizations.of(context)!;
+        return [
+          if (onEdit != null)
+            PopupMenuItem(
+              onTap: onEdit,
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.edit_outlined,
+                    size: 20,
+                    color: Theme.of(context).colorScheme.textSecondary,
                   ),
-                ),
-              ],
+                  const SizedBox(width: 12),
+                  Text(
+                    l10n.edit,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        if (onDelete != null)
-          PopupMenuItem(
-            onTap: onDelete,
-            child: Row(
-              children: [
-                Icon(
-                  Icons.delete_outline,
-                  size: 20,
-                  color: Theme.of(context).colorScheme.error,
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  'Delete',
-                  style: TextStyle(color: Theme.of(context).colorScheme.error),
-                ),
-              ],
+          if (onDelete != null)
+            PopupMenuItem(
+              onTap: onDelete,
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.delete_outline,
+                    size: 20,
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    l10n.delete,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-      ],
+        ];
+      },
     );
   }
 
@@ -208,6 +214,7 @@ class ContextMenuWidget {
   }) {
     return PopupMenuButton(
       itemBuilder: (context) {
+        final l10n = AppLocalizations.of(context)!;
         final items = <PopupMenuItem>[];
 
         if (onEdit != null) {
@@ -223,7 +230,7 @@ class ContextMenuWidget {
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    'Edit',
+                    l10n.edit,
                     style: TextStyle(
                       fontSize: 14,
                       color: Theme.of(context).colorScheme.textPrimary,
@@ -248,7 +255,7 @@ class ContextMenuWidget {
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    'Delete',
+                    l10n.delete,
                     style: TextStyle(
                       fontSize: 14,
                       color: Theme.of(context).colorScheme.error,

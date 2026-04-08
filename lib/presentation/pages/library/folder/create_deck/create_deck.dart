@@ -1,5 +1,6 @@
 import 'package:bookexample/data/models/library/flashcard_entity.dart';
 import 'package:bookexample/data/models/card_form_fields.dart';
+import 'package:bookexample/l10n/app_localizations.dart';
 import 'package:bookexample/presentation/view_models/library_view_model.dart';
 import 'package:bookexample/core/validation/validators.dart';
 import 'package:bookexample/core/extensions/snackbar_extensions.dart';
@@ -24,6 +25,7 @@ class _CreateDeckState extends State<CreateDeck> {
   List<CardFormFields> cards = [CardFormFields()];
   final _deckTitle = TextEditingController();
   late FocusNode _deckTitleFocus;
+  late AppLocalizations l10n;
   bool _hasChanges = false;
   bool _deckTitleError = false;
   String? _deckTitleErrorMessage;
@@ -112,7 +114,7 @@ class _CreateDeckState extends State<CreateDeck> {
       }
 
       context.showErrorSnackBar(
-        titleError ?? cardsError ?? 'Please fix validation errors',
+        titleError ?? cardsError ?? l10n.fixValidationErrors,
         duration: const Duration(seconds: 2),
       );
       return;
@@ -128,7 +130,7 @@ class _CreateDeckState extends State<CreateDeck> {
 
       if (!cardValidation.isValid) {
         context.showErrorSnackBar(
-          'Card ${i + 1}: ${cardValidation.errors.values.first}',
+          l10n.cardValidationError(i + 1, cardValidation.errors.values.first),
           duration: const Duration(seconds: 2),
         );
         return;
@@ -138,7 +140,7 @@ class _CreateDeckState extends State<CreateDeck> {
     // Form validation for additional checks
     if (!_formKey.currentState!.validate()) {
       context.showErrorSnackBar(
-        'Please fill all required fields',
+        l10n.fillRequiredFields,
         duration: const Duration(seconds: 2),
       );
       return;
@@ -148,24 +150,26 @@ class _CreateDeckState extends State<CreateDeck> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: Text(widget.deckId == null ? "Create Deck?" : "Save Changes?"),
+        title: Text(
+          widget.deckId == null ? l10n.createDeckTitle : l10n.saveChanges,
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Deck: ${_deckTitle.text}"),
+            Text(l10n.deckWithCards(_deckTitle.text)),
             const SizedBox(height: 8),
-            Text("Cards: ${cards.length}"),
+            Text(l10n.cardCountLabel(cards.length)),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text("Edit More"),
+            child: Text(l10n.editMore),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text("Save"),
+            child: Text(l10n.save),
           ),
         ],
       ),
@@ -195,12 +199,12 @@ class _CreateDeckState extends State<CreateDeck> {
         if (mounted) {
           if (vm.hasError && vm.error != null) {
             context.showOperationErrorSnackBar(
-              operation: 'saving deck',
+              operation: l10n.savingDeck,
               error: vm.error!,
               onRetry: () => _showSaveConfirmation(),
             );
           } else if (vm.isSuccess) {
-            context.showOperationSuccessSnackBar(operation: 'Deck saved');
+            context.showOperationSuccessSnackBar(operation: l10n.deckSaved);
             context.pop();
             vm.resetSuccess();
           }
@@ -211,12 +215,12 @@ class _CreateDeckState extends State<CreateDeck> {
         if (mounted) {
           if (vm.hasError && vm.error != null) {
             context.showOperationErrorSnackBar(
-              operation: 'updating deck',
+              operation: l10n.updatingDeck,
               error: vm.error!,
               onRetry: () => _showSaveConfirmation(),
             );
           } else if (vm.isSuccess) {
-            context.showOperationSuccessSnackBar(operation: 'Deck updated');
+            context.showOperationSuccessSnackBar(operation: l10n.deckUpdated);
             context.pop();
             vm.resetSuccess();
           }
@@ -225,7 +229,10 @@ class _CreateDeckState extends State<CreateDeck> {
       _hasChanges = false;
     } catch (e) {
       if (mounted) {
-        context.showOperationErrorSnackBar(operation: 'saving deck', error: e);
+        context.showOperationErrorSnackBar(
+          operation: l10n.savingDeck,
+          error: e,
+        );
       }
     }
   }
@@ -268,7 +275,7 @@ class _CreateDeckState extends State<CreateDeck> {
         _hasChanges = true;
       });
       // Card deletion is a local operation, not using ViewModel
-      context.showOperationSuccessSnackBar(operation: 'Card deleted');
+      context.showOperationSuccessSnackBar(operation: l10n.cardDeleted);
     }
   }
 
@@ -283,7 +290,7 @@ class _CreateDeckState extends State<CreateDeck> {
       }
     } catch (e) {
       context.showOperationErrorSnackBar(
-        operation: 'pasting from clipboard',
+        operation: l10n.pasteFromClipboard,
         error: e,
       );
     }
@@ -303,16 +310,19 @@ class _CreateDeckState extends State<CreateDeck> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Card ${index + 1}", style: context.titleMediumSemiBold),
+                Text(
+                  l10n.cardNumber(index + 1),
+                  style: context.titleMediumSemiBold,
+                ),
                 Tooltip(
-                  message: 'Delete card',
+                  message: l10n.deleteCard,
                   child: IconButton(
                     icon: Icon(
                       Icons.close,
                       color: Theme.of(context).colorScheme.secondary,
                     ),
                     onPressed: () => _removeCard(index),
-                    tooltip: 'Remove this card',
+                    tooltip: l10n.removeThisCard,
                   ),
                 ),
               ],
@@ -326,18 +336,18 @@ class _CreateDeckState extends State<CreateDeck> {
                 FocusScope.of(context).requestFocus(card.backFocus);
               },
               decoration: InputDecoration(
-                labelText: "Front",
+                labelText: l10n.frontSide,
                 border: const OutlineInputBorder(),
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.paste),
                   onPressed: () => _pasteToField(card.frontController),
-                  tooltip: "Paste from clipboard",
+                  tooltip: l10n.pasteFromClipboard,
                 ),
               ),
               maxLines: 2,
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return "Front required";
+                  return l10n.frontRequired;
                 }
                 return null;
               },
@@ -351,18 +361,18 @@ class _CreateDeckState extends State<CreateDeck> {
                 FocusScope.of(context).unfocus();
               },
               decoration: InputDecoration(
-                labelText: "Back",
+                labelText: l10n.backSide,
                 border: const OutlineInputBorder(),
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.paste),
                   onPressed: () => _pasteToField(card.backController),
-                  tooltip: "Paste from clipboard",
+                  tooltip: l10n.pasteFromClipboard,
                 ),
               ),
               maxLines: 2,
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return "Back required";
+                  return l10n.backRequired;
                 }
                 return null;
               },
@@ -375,6 +385,7 @@ class _CreateDeckState extends State<CreateDeck> {
 
   @override
   Widget build(BuildContext context) {
+    l10n = AppLocalizations.of(context)!;
     return PopScope(
       canPop: !_hasChanges,
       onPopInvokedWithResult: (didPop, result) async {
@@ -385,18 +396,16 @@ class _CreateDeckState extends State<CreateDeck> {
         final confirm = await showDialog<bool>(
           context: context,
           builder: (dialogContext) => AlertDialog(
-            title: const Text('Unsaved Changes'),
-            content: const Text(
-              'You have unsaved changes. Do you want to leave?',
-            ),
+            title: Text(l10n.unsavedChanges),
+            content: Text(l10n.unsavedChangesMessage),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(dialogContext, false),
-                child: const Text('Stay'),
+                child: Text(l10n.stay),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(dialogContext, true),
-                child: const Text('Leave'),
+                child: Text(l10n.leave),
               ),
             ],
           ),
@@ -465,19 +474,17 @@ class _CreateDeckState extends State<CreateDeck> {
                     final confirm = await showDialog<bool>(
                       context: context,
                       builder: (dialogContext) => AlertDialog(
-                        title: const Text('Unsaved Changes'),
-                        content: const Text(
-                          'You have unsaved changes. Do you want to leave?',
-                        ),
+                        title: Text(l10n.unsavedChanges),
+                        content: Text(l10n.unsavedChangesMessage),
                         actions: [
                           TextButton(
                             onPressed: () =>
                                 Navigator.pop(dialogContext, false),
-                            child: const Text('Stay'),
+                            child: Text(l10n.stay),
                           ),
                           TextButton(
                             onPressed: () => Navigator.pop(dialogContext, true),
-                            child: const Text('Leave'),
+                            child: Text(l10n.leave),
                           ),
                         ],
                       ),
@@ -487,7 +494,7 @@ class _CreateDeckState extends State<CreateDeck> {
                       context.pop();
                     }
                   },
-            tooltip: 'Cancel',
+            tooltip: l10n.cancel,
           ),
         ],
       ),
@@ -510,7 +517,7 @@ class _CreateDeckState extends State<CreateDeck> {
                   },
                   style: context.titleLargeBold.copyWith(fontSize: 18),
                   decoration: InputDecoration(
-                    labelText: "Deck Title",
+                    labelText: l10n.deckName,
                     labelStyle: context.titleMedium,
                     prefixIcon: Icon(
                       Icons.title,
@@ -518,7 +525,7 @@ class _CreateDeckState extends State<CreateDeck> {
                       size: 28,
                     ),
                     errorText: _deckTitleError
-                        ? (_deckTitleErrorMessage ?? 'Deck title is required')
+                        ? (_deckTitleErrorMessage ?? l10n.deckTitleRequired)
                         : null,
                     filled: false,
                     border: OutlineInputBorder(

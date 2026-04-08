@@ -31,19 +31,23 @@
   },
   "save": "Сохранить",
   "@save": {
-    "description": "Кнопка сохранения"
+    "description": "Кнопка сохранить"
   },
   "cancel": "Отмена",
   "@cancel": {
-    "description": "Кнопка отмены"
+    "description": "Кнопка отмена"
   },
   "delete": "Удалить",
   "@delete": {
-    "description": "Кнопка удаления"
+    "description": "Кнопка удалить"
   },
-  "edit": "Редактировать",
+"edit": "Редактировать",
   "@edit": {
-    "description": "Кнопка редактирования"
+    "description": "Edit button label"
+  },
+  "editName": "Переименовать",
+  "@editName": {
+    "description": "Edit name option"
   },
   "done": "Готово",
   "@done": {
@@ -51,32 +55,32 @@
   },
   "confirm": "Подтвердить",
   "@confirm": {
-    "description": "Кнопка подтверждения"
+    "description": "Кнопка подтвердить"
   },
 
   "studyTitle": "Учеба",
   "@studyTitle": {
     "description": "Заголовок страницы учебы"
   },
-  "selectDeck": "Выберите колоду",
+  "selectDeck": "Выбрать колоду",
   "@selectDeck": {
-    "description": "Запрос выбора колоды"
+    "description": "Приглашение выбрать колоду"
   },
   "noDecksAvailable": "Нет доступных колод",
   "@noDecksAvailable": {
     "description": "Сообщение когда нет доступных колод для учебы"
   },
-  "startStudySession": "Начать сессию учебы",
+  "startStudySession": "Начать учебную сессию",
   "@startStudySession": {
-    "description": "Кнопка начала сессии учебы"
+    "description": "Кнопка начать учебную сессию"
   },
   "continueStudy": "Продолжить учебу",
   "@continueStudy": {
-    "description": "Кнопка продолжения учебы"
+    "description": "Кнопка продолжить учебу"
   },
-  "cardsRemaining": "Осталось {count} карточек",
+  "cardsRemaining": "{count} карточек осталось",
   "@cardsRemaining": {
-    "description": "Количество оставшихся карточек в сессии учебы",
+    "description": "Количество оставшихся карточек в учебной сессии",
     "placeholders": {
       "count": {
         "type": "int",
@@ -86,7 +90,7 @@
   },
   "studyComplete": "Учеба завершена!",
   "@studyComplete": {
-    "description": "Сообщение о завершении сессии учебы"
+    "description": "Сообщение о завершении учебной сессии"
   },
   "correctAnswer": "Правильно",
   "@correctAnswer": {
@@ -98,23 +102,23 @@
   },
   "showAnswer": "Показать ответ",
   "@showAnswer": {
-    "description": "Кнопка показа ответа"
+    "description": "Кнопка показать ответ"
   },
   "rateDifficulty": "Оценить сложность",
   "@rateDifficulty": {
-    "description": "Запрос оценки сложности"
+    "description": "Приглашение оценить сложность"
   },
   "easy": "Легко",
   "@easy": {
-    "description": "Оценка сложности: легко"
+    "description": "Легкий уровень сложности"
   },
   "medium": "Средне",
   "@medium": {
-    "description": "Оценка сложности: средне"
+    "description": "Средний уровень сложности"
   },
   "hard": "Сложно",
   "@hard": {
-    "description": "Оценка сложности: сложно"
+    "description": "Сложный уровень сложности"
   },
 
   "libraryTitle": "Библиотека",
@@ -123,19 +127,19 @@
   },
   "folders": "Папки",
   "@folders": {
-    "description": "Заголовок раздела папок"
+    "description": "Заголовок секции папок"
   },
   "decks": "Колоды",
   "@decks": {
-    "description": "Заголовок раздела колод"
+    "description": "Заголовок секции колод"
   },
   "createFolder": "Создать папку",
   "@createFolder": {
-    "description": "Кнопка создания папки"
+    "description": "Кнопка создать папку"
   },
   "createDeck": "Создать колоду",
   "@createDeck": {
-    "description": "Кнопка создания колоды"
+    "description": "Кнопка создать колоду"
   },
   "folderName": "Название папки",
   "@folderName": {
@@ -149,9 +153,9 @@
   "@deckDescription": {
     "description": "Метка ввода описания колоды"
   },
-  "cardsCount": "{count} карточек",
+"cardsCount": "{count, plural, =0{нет карточек} =1{1 карточка} few{от 2 до 4 карточек} other{{count} карточек}}",
   "@cardsCount": {
-    "description": "Количество карточек в колоде",
+    "description": "Number of cards in deck",
     "placeholders": {
       "count": {
         "type": "int",
@@ -161,7 +165,7 @@
   },
   "addCard": "Добавить карточку",
   "@addCard": {
-    "description": "Кнопка добавления карточки"
+    "description": "Кнопка добавить карточку"
   },
   "frontSide": "Лицевая сторона",
   "@frontSide": {
@@ -182,43 +186,43 @@
   },
   "themeSettings": "Настройки темы",
   "@themeSettings": {
-    "description": "Заголовок раздела настроек темы"
+    "description": "Заголовок секции настроек темы"
   },
   "customizeAppearance": "Настройте внешний вид приложения",
   "@customizeAppearance": {
     "description": "Описание настроек темы"
   },
-  "darkMode": "Темная тема",
+  "darkMode": "Тёмная тема",
   "@darkMode": {
-    "description": "Переключатель темной темы"
+    "description": "Метка переключателя тёмной темы"
   },
-  "toggleDarkTheme": "Переключить темную тему",
+  "toggleDarkTheme": "Переключить тёмную тему",
   "@toggleDarkTheme": {
-    "description": "Описание переключателя темной темы"
+    "description": "Описание переключателя тёмной темы"
   },
   "themeVariant": "Вариант темы",
   "@themeVariant": {
     "description": "Метка выбора варианта темы"
   },
-  "minimalTheme": "Минимализм",
+  "minimalTheme": "Минимальная",
   "@minimalTheme": {
-    "description": "Название темы: минимализм"
+    "description": "Название минимальной темы"
   },
   "techTheme": "Техно",
   "@techTheme": {
-    "description": "Название темы: техно"
+    "description": "Название техно темы"
   },
-  "modernTheme": "Модерн",
+  "modernTheme": "Современная",
   "@modernTheme": {
-    "description": "Название темы: модерн"
+    "description": "Название современной темы"
   },
   "resetToDefaults": "Сбросить настройки",
   "@resetToDefaults": {
-    "description": "Кнопка сброса настроек"
+    "description": "Кнопка сбросить настройки"
   },
   "languageSettings": "Настройки языка",
   "@languageSettings": {
-    "description": "Заголовок раздела настроек языка"
+    "description": "Заголовок секции настроек языка"
   },
   "selectAppLanguage": "Выберите язык приложения",
   "@selectAppLanguage": {
@@ -238,7 +242,7 @@
   },
   "resetToEnglish": "Сбросить на английский",
   "@resetToEnglish": {
-    "description": "Кнопка сброса языка на английский"
+    "description": "Кнопка сбросить язык на английский"
   },
   "applicationVersion": "Версия приложения",
   "@applicationVersion": {
@@ -257,9 +261,9 @@
   "@cardsStudied": {
     "description": "Метка изученных карточек"
   },
-  "accuracyRate": "Точность",
+"accuracyRate": "Процент верных ответов",
   "@accuracyRate": {
-    "description": "Метка точности"
+    "description": "Accuracy rate label"
   },
   "streak": "Серия",
   "@streak": {
@@ -267,26 +271,26 @@
   },
   "today": "Сегодня",
   "@today": {
-    "description": "Период: сегодня"
+    "description": "Период сегодня"
   },
-  "thisWeek": "На этой неделе",
+  "thisWeek": "Эта неделя",
   "@thisWeek": {
-    "description": "Период: на этой неделе"
+    "description": "Период эта неделя"
   },
-  "thisMonth": "В этом месяце",
+  "thisMonth": "Этот месяц",
   "@thisMonth": {
-    "description": "Период: в этом месяце"
+    "description": "Период этот месяц"
   },
-  "allTime": "За все время",
+  "allTime": "Всё время",
   "@allTime": {
-    "description": "Период: за все время"
+    "description": "Период всё время"
   },
 
   "errorTitle": "Ошибка",
   "@errorTitle": {
     "description": "Заголовок диалога ошибки"
   },
-  "unexpectedError": "Произошла непредвиденная ошибка",
+  "unexpectedError": "Произошла неожиданная ошибка",
   "@unexpectedError": {
     "description": "Общее сообщение об ошибке"
   },
@@ -294,7 +298,7 @@
   "@networkError": {
     "description": "Сообщение об ошибке сети"
   },
-  "validationError": "Проверьте введенные данные",
+  "validationError": "Проверьте ввод",
   "@validationError": {
     "description": "Сообщение об ошибке валидации"
   },
@@ -304,14 +308,14 @@
   },
   "deckNotFound": "Колода не найдена",
   "@deckNotFound": {
-    "description": "Ошибка: колода не найдена"
+    "description": "Ошибка колода не найдена"
   },
   "folderNotFound": "Папка не найдена",
   "@folderNotFound": {
-    "description": "Ошибка: папка не найдена"
+    "description": "Ошибка папка не найдена"
   },
 
-  "successTitle": "Успех",
+  "successTitle": "Успешно",
   "@successTitle": {
     "description": "Заголовок диалога успеха"
   },
@@ -327,16 +331,16 @@
   "@cardAdded": {
     "description": "Сообщение об успешном добавлении карточки"
   },
-  "changesSaved": "Изменения успешно сохранены",
+  "changesSaved": "Изменения сохранены",
   "@changesSaved": {
     "description": "Сообщение об успешном сохранении изменений"
   },
-  "studySessionSaved": "Сессия учебы сохранена",
+  "studySessionSaved": "Учебная сессия сохранена",
   "@studySessionSaved": {
-    "description": "Сообщение о сохранении сессии учебы"
+    "description": "Сообщение об успешном сохранении учебной сессии"
   },
 
-  "confirmDelete": "Подтверждение удаления",
+  "confirmDelete": "Подтвердить удаление",
   "@confirmDelete": {
     "description": "Заголовок диалога подтверждения удаления"
   },
@@ -353,29 +357,29 @@
     "description": "Сообщение подтверждения удаления карточки"
   },
 
-  "noFolders": "Пока нет папок",
+  "noFolders": "Папок пока нет",
   "@noFolders": {
-    "description": "Сообщение при пустом состоянии папок"
+    "description": "Сообщение о пустых папках"
   },
-  "noDecks": "Пока нет колод",
+  "noDecks": "Колод пока нет",
   "@noDecks": {
-    "description": "Сообщение при пустом состоянии колод"
+    "description": "Сообщение о пустых колодах"
   },
-  "noCards": "Пока нет карточек",
+  "noCards": "Карточек пока нет",
   "@noCards": {
-    "description": "Сообщение при пустом состоянии карточек"
+    "description": "Сообщение о пустых карточках"
   },
-  "noStudySessions": "Пока нет сессий учебы",
+  "noStudySessions": "Учебных сессий пока нет",
   "@noStudySessions": {
-    "description": "Сообщение при пустом состоянии сессий учебы"
+    "description": "Сообщение о пустых учебных сессиях"
   },
-  "createFirstItem": "Создайте свой первый {item}, чтобы начать",
+  "createFirstItem": "Создайте первый {item}, чтобы начать",
   "@createFirstItem": {
-    "description": "Запрос создания первого элемента",
+    "description": "Приглашение создать первый элемент",
     "placeholders": {
       "item": {
         "type": "String",
-        "example": "колоду"
+        "example": "deck"
       }
     }
   },
@@ -400,6 +404,38 @@
       }
     }
   },
+  "sessionComplete": "Сессия завершена!",
+  "@sessionComplete": {
+    "description": "Заголовок диалога завершения сессии"
+  },
+  "greatJob": "Отлично! Так держать!",
+  "@greatJob": {
+    "description": "Мотивационное сообщение при хорошем результате"
+  },
+  "keepPracticing": "Продолжай практиковаться, у тебя всё получится!",
+  "@keepPracticing": {
+    "description": "Мотивационное сообщение при низком результате"
+  },
+  "scoreLabel": "Результат",
+  "@scoreLabel": {
+    "description": "Метка результата в диалоге завершения сессии"
+  },
+  "sessionDone": "Готово",
+  "@sessionDone": {
+    "description": "Кнопка 'Готово' в диалоге завершения сессии"
+  },
+  "cardsCorrect": "{correct} из {total} карточек правильно",
+  "@cardsCorrect": {
+    "description": "Итог правильных карточек",
+    "placeholders": {
+      "correct": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "daysAgo": "{count} дней назад",
   "@daysAgo": {
     "description": "Формат времени: дней назад",
@@ -409,5 +445,424 @@
         "example": "3"
       }
     }
+  },
+  "goToStudy": "Перейти к учебе",
+  "@goToStudy": {
+    "description": "Кнопка перехода на страницу учебы"
+  },
+  "sessionFinished": "Сессия завершена",
+  "@sessionFinished": {
+    "description": "Сообщение о завершении сессии"
+  },
+  "flashcardSession": "Карточки",
+  "@flashcardSession": {
+    "description": "Заголовок страницы карточек"
+  },
+  "createDeckTitle": "Создать колоду",
+  "@createDeckTitle": {
+    "description": "Заголовок страницы создания колоды"
+  },
+  "editDeckTitle": "Редактировать колоду",
+  "@editDeckTitle": {
+    "description": "Заголовок страницы редактирования колоды"
+  },
+  "saveChanges": "Сохранить изменения?",
+  "@saveChanges": {
+    "description": "Заголовок диалога сохранения изменений"
+  },
+  "editMore": "Редактировать еще",
+  "@editMore": {
+    "description": "Кнопка редактировать еще"
+  },
+  "deleteCard": "Удалить карточку?",
+  "@deleteCard": {
+    "description": "Заголовок диалога удаления карточки"
+  },
+  "deleteCardConfirm": "Вы уверены?",
+  "@deleteCardConfirm": {
+    "description": "Подтверждение удаления карточки"
+  },
+  "unsavedChanges": "Несохраненные изменения",
+  "@unsavedChanges": {
+    "description": "Заголовок диалога несохраненных изменений"
+  },
+  "unsavedChangesMessage": "У вас есть несохраненные изменения. Вы уверены, что хотите уйти?",
+  "@unsavedChangesMessage": {
+    "description": "Сообщение диалога несохраненных изменений"
+  },
+  "stay": "Остаться",
+  "@stay": {
+    "description": "Кнопка остаться"
+  },
+  "leave": "Уйти",
+  "@leave": {
+    "description": "Кнопка уйти"
+  },
+  "addCard": "Добавить карточку",
+  "@addCard": {
+    "description": "Кнопка добавить карточку"
+  },
+  "libraryPageTitle": "Библиотека",
+  "@libraryPageTitle": {
+    "description": "Заголовок страницы библиотеки"
+  },
+  "deleteFolderTitle": "Удалить папку - {folderName}?",
+  "@deleteFolderTitle": {
+    "description": "Заголовок диалога удаления папки",
+    "placeholders": {
+      "folderName": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteFolderMessage": "Все колоды и карточки внутри также будут удалены.",
+  "@deleteFolderMessage": {
+    "description": "Подтверждение удаления папки"
+  },
+  "decksTitle": "Колоды",
+  "@decksTitle": {
+    "description": "Заголовок секции колод"
+  },
+  "deleteDeckTitle": "Удалить колоду?",
+  "@deleteDeckTitle": {
+    "description": "Заголовок диалога удаления колоды"
+  },
+  "deleteDeckMessage": "Все карточки колоды {deckTitle} будут удалены.",
+  "@deleteDeckMessage": {
+    "description": "Подтверждение удаления колоды",
+    "placeholders": {
+      "deckTitle": {
+        "type": "String"
+      }
+    }
+  },
+  "startSession": "Начать сессию",
+  "@startSession": {
+    "description": "Кнопка начать сессию"
+  },
+  "error": "Ошибка",
+  "@error": {
+    "description": "Заголовок ошибки"
+  },
+  "retry": "Повторить",
+  "@retry": {
+    "description": "Кнопка повторить"
+  },
+  "loading": "Загрузка...",
+  "@loading": {
+    "description": "Сообщение загрузки"
+  },
+  "studyPageTitle": "Учеба",
+  "@studyPageTitle": {
+    "description": "Заголовок страницы учебы"
+  },
+  "statsTitle": "Статистика",
+  "@statsTitle": {
+    "description": "Заголовок секции статистики"
+  },
+  "studyModesTitle": "Режимы учебы",
+  "@studyModesTitle": {
+    "description": "Заголовок секции режимов учебы"
+  },
+  "daysInARow": "Дней подряд",
+  "@daysInARow": {
+    "description": "Метка дней подряд"
+  },
+  "invalidProjectId": "Неверный идентификатор проекта",
+  "@invalidProjectId": {
+    "description": "Ошибка неверного идентификатора проекта"
+  },
+  "invalidFolderId": "Неверный идентификатор папки",
+  "@invalidFolderId": {
+    "description": "Ошибка неверного идентификатора папки"
+  },
+  "invalidFolderOrDeckId": "Неверный идентификатор папки или колоды",
+  "@invalidFolderOrDeckId": {
+    "description": "Ошибка неверного идентификатора папки или колоды"
+  },
+  "deckNotFoundTitle": "Колода не найдена",
+  "@deckNotFoundTitle": {
+    "description": "Заголовок ошибки колода не найдена"
+  },
+  "developerTools": "Инструменты разработчика",
+  "@developerTools": {
+    "description": "Заголовок секции инструментов разработчика"
+  },
+  "startRandom10Cards": "Начать 10 случайных карточек",
+  "@startRandom10Cards": {
+    "description": "Кнопка начала случайных 10 карточек"
+  },
+  "quickRandomStudy": "Быстрая случайная учебная сессия",
+  "@quickRandomStudy": {
+    "description": "Подзаголовок быстрого случайного изучения"
+  },
+  "beginFreshSession": "Начните новую учебную сессию",
+  "@beginFreshSession": {
+    "description": "Подзаголовок начала новой сессии"
+  },
+  "matchingMode": "Сопоставление",
+  "@matchingMode": {
+    "description": "Режим сопоставления"
+  },
+  "pairTerms": "Сопоставьте термины",
+  "@pairTerms": {
+    "description": "Подзаголовок сопоставления"
+  },
+  "testMode": "Тестовый режим",
+  "@testMode": {
+    "description": "Заголовок тестового режима"
+  },
+  "practiceMode": "Практика",
+  "@practiceMode": {
+    "description": "Заголовок режима практики"
+  },
+  "flashcards": "Карточки",
+  "@flashcards": {
+    "description": "Режим карточек"
+  },
+  "learnWithFlashcards": "Учите с карточками",
+  "@learnWithFlashcards": {
+    "description": "Подзаголовок изучения с карточками"
+  },
+  "multipleChoice": "Multiple Choice",
+  "@multipleChoice": {
+    "description": "Режим множественного выбора"
+  },
+  "writeAnswer": "Написать ответ",
+  "@writeAnswer": {
+    "description": "Режим написания ответа"
+  },
+  "questionsCount": "{count} вопросов",
+  "@questionsCount": {
+    "description": "Количество вопросов",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "10"
+      }
+    }
+  },
+  "cardNumber": "Карточка {number}",
+  "@cardNumber": {
+    "description": "Номер карточки",
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "frontRequired": "Лицевая сторона обязательна",
+  "@frontRequired": {
+    "description": "Ошибка обязательного поля лицевой стороны"
+  },
+  "backRequired": "Обратная сторона обязательна",
+  "@backRequired": {
+    "description": "Ошибка обязательного поля обратной стороны"
+  },
+  "pasteFromClipboard": "Вставить из буфера обмена",
+  "@pasteFromClipboard": {
+    "description": "Подсказка вставки"
+  },
+  "fixValidationErrors": "Пожалуйста, исправьте ошибки валидации",
+  "@fixValidationErrors": {
+    "description": "Сообщение об ошибке валидации"
+  },
+  "cardValidationError": "Карточка {number}: {error}",
+  "@cardValidationError": {
+    "description": "Ошибка валидации карточки",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      },
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "fillRequiredFields": "Пожалуйста, заполните все обязательные поля",
+  "@fillRequiredFields": {
+    "description": "Ошибка заполнения обязательных полей"
+  },
+  "deckSaved": "Колода сохранена",
+  "@deckSaved": {
+    "description": "Сообщение о сохранении колоды"
+  },
+  "deckUpdated": "Колода обновлена",
+  "@deckUpdated": {
+    "description": "Сообщение об обновлении колоды"
+  },
+  "cardDeleted": "Карточка удалена",
+  "@cardDeleted": {
+    "description": "Сообщение об удалении карточки"
+  },
+  "unsavedChanges": "Несохранённые изменения",
+  "@unsavedChanges": {
+    "description": "Заголовок несохранённых изменений"
+  },
+  "unsavedChangesMessage": "У вас есть несохранённые изменения. Вы хотите уйти?",
+  "@unsavedChangesMessage": {
+    "description": "Сообщение несохранённых изменений"
+  },
+  "stay": "Остаться",
+  "@stay": {
+    "description": "Кнопка остаться"
+  },
+  "leave": "Уйти",
+  "@leave": {
+    "description": "Кнопка уйти"
+  },
+  "deckTitleRequired": "Название колоды обязательно",
+  "@deckTitleRequired": {
+    "description": "Ошибка названия колоды"
+  },
+  "savingDeck": "сохранение колоды",
+  "@savingDeck": {
+    "description": "Операция сохранения колоды"
+  },
+  "updatingDeck": "обновление колоды",
+  "@updatingDeck": {
+    "description": "Операция обновления колоды"
+  },
+  "deletingCardConfirm": "Удалить карточку?",
+  "@deletingCardConfirm": {
+    "description": "Заголовок удаления карточки"
+  },
+  "areYouSure": "Вы уверены?",
+  "@areYouSure": {
+    "description": "Подтверждение"
+  },
+  "removeThisCard": "Удалить эту карточку",
+  "@removeThisCard": {
+    "description": "Подсказка удаления"
+  },
+  "editMore": "Редактировать ещё",
+  "@editMore": {
+    "description": "Кнопка редактирования"
+  },
+  "deckWithCards": "Колода: {deckName}",
+  "@deckWithCards": {
+    "description": "Название колоды в подтверждении",
+    "placeholders": {
+      "deckName": {
+        "type": "String"
+      }
+    }
+  },
+  "cardCountLabel": "Карточек: {count}",
+  "@cardCountLabel": {
+    "description": "Количество карточек",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cancel": "Отмена",
+  "@cancel": {
+    "description": "Кнопка отмены"
+  },
+  "selectFolder": "Выберите папку",
+  "@selectFolder": {
+    "description": "Выберите папку"
+  },
+  "selectDeck": "Выберите колоду",
+  "@selectDeck": {
+    "description": "Выберите колоду"
+  },
+  "creatingFolder": "создание папки",
+  "@creatingFolder": {
+    "description": "Операция создания папки"
+  },
+  "renamingFolder": "переименование папки",
+  "@renamingFolder": {
+    "description": "Операция переименования папки"
+  },
+  "deletingFolder": "удаление папки",
+  "@deletingFolder": {
+    "description": "Операция удаления папки"
+  },
+  "folderCreated": "Папка \"{name}\" создана",
+  "@folderCreated": {
+    "description": "Сообщение о созданной папке",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "folderRenamed": "Папка \"{old}\" переименована в \"{newName}\"",
+  "@folderRenamed": {
+    "description": "Сообщение о переименованной папке",
+    "placeholders": {
+      "old": {
+        "type": "String"
+      },
+      "newName": {
+        "type": "String"
+      }
+    }
+  },
+  "folderDeleted": "Папка \"{name}\" удалена",
+  "@folderDeleted": {
+    "description": "Сообщение об удалённой папке",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deckDeleted": "Колода \"{name}\" удалена",
+  "@deckDeleted": {
+    "description": "Сообщение об удалённой колоде",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "decksTitle": "Колоды",
+  "@decksTitle": {
+    "description": "Заголовок раздела колод"
+  },
+  "createNewFolder": "Создать новую папку",
+  "@createNewFolder": {
+    "description": "Заголовок создания папки"
+  },
+  "renameFolder": "Переименовать папку",
+  "@renameFolder": {
+    "description": "Заголовок переименования папки"
+  },
+  "enterFolderName": "Введите название папки",
+  "@enterFolderName": {
+    "description": "Подсказка названия папки"
+  },
+  "folderName": "Название папки",
+  "@folderName": {
+    "description": "Метка названия папки"
+  },
+  "folderNameRequired": "Название папки обязательно",
+  "@folderNameRequired": {
+    "description": "Ошибка названия папки"
+  },
+  "needsReview": "Нужно повторить",
+  "@needsReview": {
+    "description": "Статус需要复习"
+  },
+  "inProgress": "В процессе",
+  "@inProgress": {
+    "description": "Статус в процессе"
+  },
+  "goodProgress": "Хороший прогресс",
+  "@goodProgress": {
+    "description": "Статус хорошего прогресса"
+  },
+  "deletingDeck": "удаление колоды",
+  "@deletingDeck": {
+    "description": "Операция удаления колоды"
+  },
+  "failedToLoadDeck": "Не удалось загрузить колоду",
+  "@failedToLoadDeck": {
+    "description": "Ошибка загрузки колоды"
   }
 }

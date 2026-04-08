@@ -1,3 +1,4 @@
+import 'package:bookexample/l10n/app_localizations.dart';
 import 'package:bookexample/presentation/view_models/library_view_model.dart';
 import 'package:bookexample/core/widgets/empty_state_widget.dart';
 import 'package:bookexample/core/theme/spacing.dart';
@@ -20,6 +21,7 @@ class _DeckSelectorState extends State<DeckSelector> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return DraggableScrollableSheet(
       expand: false,
       builder: (context, scrollController) {
@@ -55,8 +57,8 @@ class _DeckSelectorState extends State<DeckSelector> {
                     Expanded(
                       child: Text(
                         selectedFolderId == null
-                            ? 'Select a Folder'
-                            : 'Select a Deck',
+                            ? l10n.selectFolder
+                            : l10n.selectDeck,
                         textAlign: TextAlign.center,
                         style: context.titleLargeBold,
                       ),
