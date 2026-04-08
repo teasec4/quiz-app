@@ -62,9 +62,8 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return Consumer2<ThemeViewModel, LocaleViewModel>(
       builder: (context, themeViewModel, localeViewModel, child) {
-        // Use a default theme while loading to avoid null theme
         final theme = themeViewModel.state == ViewState.loading
-            ? AppThemeFactory.getTheme(AppThemeVariant.minimal)
+            ? AppThemeFactory.getTheme()
             : themeViewModel.currentTheme;
 
         return MaterialApp.router(

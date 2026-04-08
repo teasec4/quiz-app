@@ -27,7 +27,6 @@ class _SettingsPageState extends State<SettingsPage> {
     return Scaffold(
       appBar: AppBar(title: Text(l10n?.settingsTitle ?? 'Settings')),
       body: SingleChildScrollView(
-        padding: AppSpacing.screenPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -40,7 +39,8 @@ class _SettingsPageState extends State<SettingsPage> {
             AppSpacing.verticalLg,
 
             // Developer Section
-            _buildDeveloperSection(context, l10n),
+            // _buildDeveloperSection(context, l10n),
+            // AppSpacing.verticalLg,
           ],
         ),
       ),
@@ -58,32 +58,25 @@ class _SettingsPageState extends State<SettingsPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Section Header
-        Text(
-          l10n?.themeSettings ?? 'Theme Settings',
-          style: context.titleLarge,
+        Padding(
+          padding: AppSpacing.screenPadding,
+          child: Text(
+            l10n?.themeSettings ?? 'Theme Settings',
+            style: context.titleLargeBold,
+          ),
         ),
 
         // Theme Card
-        Card(
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Padding(
-            padding: AppSpacing.cardPadding,
-            child: Column(
-              children: [
-                // Dark Mode Toggle
-                _buildDarkModeToggle(context, themeViewModel, l10n),
-                AppSpacing.verticalMd,
-
-                // Divider
-                Divider(color: theme.colorScheme.outlineVariant, height: 1),
-                AppSpacing.verticalMd,
-
-                // Theme Variants
-                _buildThemeVariants(context, themeViewModel, l10n),
-              ],
+        Padding(
+          padding: AppSpacing.screenPadding,
+          child: Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Padding(
+              padding: AppSpacing.cardPadding,
+              child: _buildDarkModeToggle(context, themeViewModel, l10n),
             ),
           ),
         ),
@@ -132,107 +125,6 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Widget _buildThemeVariants(
-    BuildContext context,
-    ThemeViewModel themeViewModel,
-    AppLocalizations? l10n,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Wrap(
-          spacing: AppSpacing.md,
-          runSpacing: AppSpacing.md,
-          children: themeViewModel.availableVariants.map((variant) {
-            return _buildThemeVariantChip(context, variant, themeViewModel);
-          }).toList(),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildThemeVariantChip(
-    BuildContext context,
-    AppThemeVariant variant,
-    ThemeViewModel themeViewModel,
-  ) {
-    // Theme is used implicitly by Theme.of(context) in child widgets
-    final theme = Theme.of(context);
-    final isSelected = themeViewModel.isSelected(variant);
-    final preview = themeViewModel.getThemePreview(variant);
-    final color = preview['primaryColor'] as Color;
-
-    return GestureDetector(
-      onTap: () async {
-        await themeViewModel.changeThemeVariant(variant);
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        constraints: BoxConstraints(minWidth: 50, maxWidth: 70),
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.sm,
-        ),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? theme.colorScheme.selected
-              : theme.colorScheme.surfaceContainerHighest,
-          borderRadius: AppSpacing.borderRadiusMd,
-          border: Border.all(
-            color: isSelected
-                ? theme.colorScheme.primary
-                : theme.colorScheme.cardBorder,
-            width: isSelected ? 2 : 1,
-          ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: theme.colorScheme.primary.withOpacity(0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                    spreadRadius: 0.5,
-                  ),
-                ]
-              : null,
-        ),
-        child: Column(
-          children: [
-            // Color Preview
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-              width: 30,
-              height: 30,
-              decoration: BoxDecoration(
-                color: color,
-                borderRadius: AppSpacing.borderRadiusSm,
-                boxShadow: [
-                  BoxShadow(
-                    color: color.withOpacity(0.3),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 200),
-                child: isSelected
-                    ? Icon(
-                        Icons.check,
-                        color: Colors.white,
-                        size: 20,
-                        key: UniqueKey(),
-                      )
-                    : SizedBox.shrink(key: UniqueKey()),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildLanguageSection(
     BuildContext context,
     LocaleViewModel localeViewModel,
@@ -244,23 +136,29 @@ class _SettingsPageState extends State<SettingsPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Section Header
-        Text(
-          l10n?.languageSettings ?? 'Language Settings',
-          style: context.titleLarge,
+        Padding(
+          padding: AppSpacing.screenPadding,
+          child: Text(
+            l10n?.languageSettings ?? 'Language Settings',
+            style: context.titleLargeBold,
+          ),
         ),
 
         // Language Card
-        Card(
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Padding(
-            padding: AppSpacing.cardPadding,
-            child: Column(
-              children: localeViewModel.supportedLocales.map((locale) {
-                return _buildLanguageTile(context, locale, localeViewModel);
-              }).toList(),
+        Padding(
+          padding: AppSpacing.screenPadding,
+          child: Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Padding(
+              padding: AppSpacing.cardPadding,
+              child: Column(
+                children: localeViewModel.supportedLocales.map((locale) {
+                  return _buildLanguageTile(context, locale, localeViewModel);
+                }).toList(),
+              ),
             ),
           ),
         ),
@@ -357,7 +255,13 @@ class _SettingsPageState extends State<SettingsPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Section Header
-        Text('Developer Tools', style: context.titleLarge),
+        Padding(
+          padding: AppSpacing.screenPadding,
+          child: Text(
+            l10n?.developerTools ?? 'Developer Tools',
+            style: context.titleLargeBold,
+          ),
+        ),
 
         // Developer Card
         Card(

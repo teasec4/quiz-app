@@ -138,7 +138,7 @@ class _FlashcardsSessionState extends State<FlashcardsSession>
     showDialog(
       context: context,
       barrierDismissible: false,
-      barrierColor: Colors.black87,
+      
       builder: (dialogContext) => Dialog(
         backgroundColor: Theme.of(dialogContext).colorScheme.surface,
         elevation: 8,

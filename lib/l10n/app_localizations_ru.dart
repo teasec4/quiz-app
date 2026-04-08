@@ -124,9 +124,10 @@ class AppLocalizationsRu extends AppLocalizations {
       count,
       locale: localeName,
       other: '$count карточек',
-      few: 'от 2 до 4 карточек',
+      many: '$count карточек',
+      few: '$count карточки',
       one: '1 карточка',
-      zero: 'нет карточек',
+      zero: '0 карточек',
     );
     return '$_temp0';
   }

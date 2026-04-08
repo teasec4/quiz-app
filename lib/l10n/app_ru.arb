@@ -153,7 +153,7 @@
   "@deckDescription": {
     "description": "Метка ввода описания колоды"
   },
-"cardsCount": "{count, plural, =0{нет карточек} =1{1 карточка} few{от 2 до 4 карточек} other{{count} карточек}}",
+"cardsCount": "{count, plural, =0{0 карточек} =1{1 карточка} few{{count} карточки} many{{count} карточек} other{{count} карточек}}",
   "@cardsCount": {
     "description": "Number of cards in deck",
     "placeholders": {

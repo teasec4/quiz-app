@@ -65,11 +65,36 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            Container(
+              width: 40,
+              height: 4,
+              margin: const EdgeInsets.only(bottom: 16),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.outlineVariant,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primaryContainer,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                widget.oldName != null
+                    ? Icons.edit_outlined
+                    : Icons.create_new_folder_outlined,
+                color: Theme.of(context).colorScheme.primary,
+                size: 32,
+              ),
+            ),
+            const SizedBox(height: 16),
             Text(
               widget.oldName != null ? l10n.renameFolder : l10n.createNewFolder,
               style: context.titleLargeBold,
+              textAlign: TextAlign.center,
             ),
             AppSpacing.verticalLg,
             TextField(
@@ -134,15 +159,19 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
               children: [
                 // cancel modal
                 Expanded(
-                  child: ElevatedButton(
+                  child: OutlinedButton(
                     onPressed: () => context.pop(),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(
-                        context,
-                      ).colorScheme.surfaceContainerHighest,
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      side: BorderSide(
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
                     ),
                     child: Text(
-                      'Cancel',
+                      l10n.cancel,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
@@ -152,7 +181,7 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
                 AppSpacing.horizontalMd,
                 // create a new folder
                 Expanded(
-                  child: ElevatedButton(
+                  child: FilledButton(
                     onPressed: () {
                       if (_nameController.text.trim().isEmpty) {
                         setState(() {
@@ -162,7 +191,15 @@ class _CreateFolderSheetState extends State<CreateFolderSheet> {
                       }
                       context.pop(_nameController.text);
                     },
-                    child: Text(widget.oldName != null ? 'Rename' : 'Create'),
+                    style: FilledButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      widget.oldName != null ? l10n.save : l10n.createFolder,
+                    ),
                   ),
                 ),
               ],

@@ -25,7 +25,7 @@ class ModeCard extends StatelessWidget {
       child: ListTile(
         iconColor: disabled
             ? Theme.of(context).colorScheme.onSurfaceVariant
-            : Theme.of(context).colorScheme.secondary,
+            : Theme.of(context).colorScheme.primary,
         leading: Icon(icon, size: 32),
         title: Text(
           title,

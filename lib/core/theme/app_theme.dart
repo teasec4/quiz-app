@@ -194,56 +194,24 @@ class AppTheme {
   }
 }
 
-enum AppThemeVariant { minimal, tech, modern }
-
 class AppThemeFactory {
-  static ThemeData getTheme(AppThemeVariant variant, {bool darkMode = false}) {
-    final scheme = getColorScheme(variant, darkMode: darkMode);
+  static ThemeData getTheme({bool darkMode = false}) {
+    final scheme = getColorScheme(darkMode: darkMode);
     return darkMode ? AppTheme.darkTheme(scheme) : AppTheme.lightTheme(scheme);
   }
 
-  static ColorScheme getColorScheme(
-    AppThemeVariant variant, {
-    bool darkMode = false,
-  }) {
+  static ColorScheme getColorScheme({bool darkMode = false}) {
     final brightness = darkMode ? Brightness.dark : Brightness.light;
 
-    switch (variant) {
-      case AppThemeVariant.minimal:
-        return ColorScheme.fromSeed(
-          seedColor: const Color(0xFF334155),
-          secondary: const Color(0xFF94A3B8),
-          brightness: brightness,
-        ).copyWith(
-          error: AppColors.error,
-          tertiary: AppColors.success,
-          surface: darkMode ? const Color(0xFF1E293B) : null,
-          surfaceContainerHighest: darkMode ? const Color(0xFF334155) : null,
-        );
-
-      case AppThemeVariant.tech:
-        return ColorScheme.fromSeed(
-          seedColor: const Color(0xFF4F46E5),
-          secondary: const Color(0xFFA855F7),
-          brightness: brightness,
-        ).copyWith(
-          error: AppColors.error,
-          tertiary: AppColors.success,
-          surface: darkMode ? const Color(0xFF1E1B4B) : null,
-          surfaceContainerHighest: darkMode ? const Color(0xFF312E81) : null,
-        );
-
-      case AppThemeVariant.modern:
-        return ColorScheme.fromSeed(
-          seedColor: const Color(0xFF2563EB),
-          secondary: const Color(0xFF0D9488),
-          brightness: brightness,
-        ).copyWith(
-          error: AppColors.error,
-          tertiary: AppColors.success,
-          surface: darkMode ? const Color(0xFF0C4A6E) : null,
-          surfaceContainerHighest: darkMode ? const Color(0xFF075985) : null,
-        );
-    }
+    return ColorScheme.fromSeed(
+      seedColor: const Color(0xFF334155),
+      secondary: const Color(0xFF94A3B8),
+      brightness: brightness,
+    ).copyWith(
+      error: AppColors.error,
+      tertiary: AppColors.success,
+      surface: darkMode ? const Color(0xFF1E293B) : null,
+      surfaceContainerHighest: darkMode ? const Color(0xFF334155) : null,
+    );
   }
 }
